@@ -7,7 +7,7 @@
 - Brooklyn Flello (220393591)
 - Mal Hoti (220288770)
 - Faiz Aziz (220478647)
-- Juan Miguel Villalobos Sanchez (200465779),
+- Juan Miguel Villalobos Sanchez (200465779)
 - Hesham Ahmed (220591267)
 
 ## Getting Started
