@@ -14,7 +14,7 @@ export default async (req, res) => {
   try {
     // Fetch user's cryptocurrency balance from the database
     const db = await open({
-      filename: './path/to/your/database.db',
+      filename: './sqlite.db',
       driver: sqlite3.Database,
     });
     const userCryptoBalance = await db.get(
@@ -32,7 +32,7 @@ export default async (req, res) => {
 
     // Fetch the price of the cryptocurrency in GBP from an API endpoint
     const cryptoPriceResponse = await axios.get(
-      `/api/cryptocurrency/${ticker}`
+      `http://localhost:3000/api/cryptocurrency/${ticker}`
     );
     const cryptoPrice = cryptoPriceResponse.data.price;
 
