@@ -27,7 +27,7 @@ const SellPage = () => {
 
   const handleSell = async () => {
     const userData = {
-      userId: 'user123', // Replace with actual user ID
+      userId: '123456', // Replace with actual user ID
       ticker: cryptoData.ticker,
       amount: parseFloat(amount),
     };
