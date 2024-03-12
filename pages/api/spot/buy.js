@@ -17,11 +17,10 @@ export default async (req, res) => {
       filename: './sqlite.db',
       driver: sqlite3.Database,
     });
-    const user = await db.get(
-      'SELECT * FROM user_balances WHERE user_id = ?',
+    const currentUserCashBalance = await db.get(
+      "SELECT amount FROM portfolios WHERE userId = ? and ticker = 'GBP'",
       userId
     );
-    const gbpBalance = user.gbp_balance;
 
     // Fetch the price of the cryptocurrency in GBP from an API endpoint
     const cryptoPriceResponse = await axios.get(
@@ -30,16 +29,16 @@ export default async (req, res) => {
     const cryptoPrice = cryptoPriceResponse.data.price;
 
     // Calculate the total cost in GBP for the trade
-    const totalCost = cryptoPrice * amount;
+    const totalTradeCost = cryptoPrice * amount;
 
-    if (totalCost > gbpBalance) {
+    if (totalTradeCost > gbpBalance) {
       return res.status(400).json({ error: 'Insufficient funds' });
     }
 
     // Deduct the amount from the user's GBP balance
     await db.run(
-      'UPDATE user_balances SET gbp_balance = ? WHERE user_id = ?',
-      gbpBalance - totalCost,
+      "UPDATE portfolios SET amount = ? WHERE userId = ? and ticker = 'GBP'",
+      currentUserCashBalance - totalTradeCost,
       userId
     );
 
