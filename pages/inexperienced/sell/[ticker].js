@@ -13,7 +13,9 @@ const SellPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/cryptocurrency/${ticker}`);
+        const response = await axios.get(
+          `http://localhost:3000/api/cryptocurrency/${ticker}`
+        );
         setCryptoData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -33,7 +35,7 @@ const SellPage = () => {
     };
 
     try {
-      await axios.post('/api/spot/sell', userData);
+      await axios.post('http://localhost:3000/api/spot/sell', userData);
       alert('Sell order placed successfully!');
     } catch (error) {
       console.error('Error placing sell order:', error);
