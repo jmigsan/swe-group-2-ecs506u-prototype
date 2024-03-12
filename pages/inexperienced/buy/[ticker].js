@@ -2,6 +2,7 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Link from 'next/link';
 
 const InexperiencedBuyPage = () => {
   const router = useRouter();
@@ -48,6 +49,9 @@ const InexperiencedBuyPage = () => {
 
   return (
     <div>
+      <Link href={`http://localhost:3000/inexperienced/${cryptoData.ticker}`}>
+        Go Back
+      </Link>
       <h1>
         {cryptoData.name} ({cryptoData.ticker})
       </h1>
