@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import InexperiencedMiniTradingViewWidget from '@/components/InexperiencedMiniTradingViewWidget/InexperiencedMiniTradingViewWidget';
 
 const inexperienced = () => {
   const [cryptocurrencies, setCryptocurrencies] = useState([]);
@@ -31,6 +32,7 @@ const inexperienced = () => {
               <p>Ticker: {crypto.ticker}</p>
               <p>Price: £{crypto.price}</p>
               <p>24hr Change: {crypto['24hr-change']}%</p>
+              <InexperiencedMiniTradingViewWidget crypto={crypto} />
             </div>
           </Link>
           <br />
