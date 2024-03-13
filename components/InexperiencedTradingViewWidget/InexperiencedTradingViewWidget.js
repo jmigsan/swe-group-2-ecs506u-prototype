@@ -1,7 +1,7 @@
 // TradingViewWidget.jsx
 import React, { useEffect, useRef, memo } from 'react';
 
-const TradingViewWidget = ({ ticker }) => {
+const InexperiencedTradingViewWidget = ({ ticker }) => {
   const container = useRef();
 
   useEffect(() => {
@@ -60,4 +60,4 @@ const TradingViewWidget = ({ ticker }) => {
   );
 };
 
-export default memo(TradingViewWidget);
+export default memo(InexperiencedTradingViewWidget);
