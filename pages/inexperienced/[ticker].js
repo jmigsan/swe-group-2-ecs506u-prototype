@@ -56,7 +56,7 @@ const InexperiencedCryptoPage = () => {
       </Link>
       <div
         style={{
-          maxHeight: '362px',
+          maxHeight: '400px',
           overflow: 'hidden',
         }}
       >
