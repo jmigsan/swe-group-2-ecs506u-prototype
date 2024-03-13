@@ -29,7 +29,7 @@ const InexperiencedBuyPage = () => {
 
   const handleBuy = async () => {
     const userData = {
-      userId: '123456', // Replace with actual user ID
+      userId: '1', // Replace with actual user ID
       ticker: cryptoData.ticker,
       amount: parseFloat(amount),
     };
@@ -39,7 +39,10 @@ const InexperiencedBuyPage = () => {
       alert('Buy order placed successfully!');
     } catch (error) {
       console.error('Error placing buy order:', error);
-      alert('Failed to place buy order. Please try again later.');
+      alert(
+        'Failed to place buy order. Please try again later. Error: ' +
+          error.response.data.error
+      );
     }
   };
 

@@ -29,17 +29,23 @@ const SellPage = () => {
 
   const handleSell = async () => {
     const userData = {
-      userId: '123456', // Replace with actual user ID
+      userId: '1', // Replace with actual user ID
       ticker: cryptoData.ticker,
       amount: parseFloat(amount),
     };
 
     try {
-      await axios.post('http://localhost:3000/api/spot/sell', userData);
+      const sell = await axios.post(
+        'http://localhost:3000/api/spot/sell',
+        userData
+      );
       alert('Sell order placed successfully!');
     } catch (error) {
       console.error('Error placing sell order:', error);
-      alert('Failed to place sell order. Please try again later.');
+      alert(
+        'Failed to place sell order. Please try again later. Error: ' +
+          error.response.data.error
+      );
     }
   };
 
