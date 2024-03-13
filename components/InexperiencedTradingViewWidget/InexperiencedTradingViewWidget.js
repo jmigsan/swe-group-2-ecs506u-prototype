@@ -14,7 +14,7 @@ const TradingViewWidget = ({ ticker }) => {
         {
           "symbols": [
             [
-              "KRAKEN:${ticker}GBP|1D"
+              "KRAKEN:${ticker}GBP|1M"
             ]
           ],
           "chartOnly": false,
