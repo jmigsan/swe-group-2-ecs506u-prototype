@@ -25,9 +25,9 @@ const inexperienced = () => {
     <div>
       <h2>Cryptocurrency list</h2>
       {cryptocurrencies.map((crypto, index) => (
-        <div>
+        <div key={index}>
           <Link href={`http://localhost:3000/inexperienced/${crypto.ticker}`}>
-            <div key={index}>
+            <div>
               <p>Name: {crypto.name}</p>
               <p>Ticker: {crypto.ticker}</p>
               <p>Price: £{crypto.price}</p>
