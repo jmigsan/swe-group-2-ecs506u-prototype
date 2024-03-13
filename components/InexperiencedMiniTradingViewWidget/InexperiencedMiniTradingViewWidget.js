@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const TradingViewWidget = ({ crypto }) => {
+const InexperiencedMiniTradingViewWidget = ({ crypto }) => {
   useEffect(() => {
     const scriptId = `tv-widget-script-${crypto.ticker}`;
     const containerId = `tv-widget-container-${crypto.ticker}`;
@@ -46,4 +46,4 @@ const TradingViewWidget = ({ crypto }) => {
   );
 };
 
-export default TradingViewWidget;
+export default InexperiencedMiniTradingViewWidget;
