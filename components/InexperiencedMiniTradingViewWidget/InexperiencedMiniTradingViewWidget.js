@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 
-const InexperiencedMiniTradingViewWidget = ({ crypto }) => {
+const InexperiencedMiniTradingViewWidget = ({ ticker }) => {
   useEffect(() => {
-    const scriptId = `tv-widget-script-${crypto.ticker}`;
-    const containerId = `tv-widget-container-${crypto.ticker}`;
+    const scriptId = `tv-widget-script-${ticker}`;
+    const containerId = `tv-widget-container-${ticker}`;
 
     const existingScript = document.getElementById(scriptId);
     if (existingScript) {
@@ -19,7 +19,7 @@ const InexperiencedMiniTradingViewWidget = ({ crypto }) => {
     script.async = true;
     script.innerHTML = `
       {
-        "symbol": "KRAKEN:${crypto.ticker}GBP",
+        "symbol": "KRAKEN:${ticker}GBP",
         "width": 200,
         "height": 70,
         "locale": "en",
@@ -37,7 +37,7 @@ const InexperiencedMiniTradingViewWidget = ({ crypto }) => {
     container.appendChild(script);
   }, [crypto]);
 
-  const containerId = `tv-widget-container-${crypto.ticker}`;
+  const containerId = `tv-widget-container-${ticker}`;
 
   return (
     <div id={containerId} className='tradingview-widget-container'>

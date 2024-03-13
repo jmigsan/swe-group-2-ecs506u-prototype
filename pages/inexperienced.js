@@ -32,7 +32,7 @@ const inexperienced = () => {
               <p>Ticker: {crypto.ticker}</p>
               <p>Price: £{crypto.price}</p>
               <p>24hr Change: {crypto['24hr-change']}%</p>
-              <InexperiencedMiniTradingViewWidget crypto={crypto} />
+              <InexperiencedMiniTradingViewWidget ticker={crypto.ticker} />
             </div>
           </Link>
           <br />
