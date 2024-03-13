@@ -1,5 +1,6 @@
 // pages/cryptocurrency/[ticker].js
 
+import InexperiencedTradingViewWidget from '@/components/InexperiencedTradingViewWidget/InexperiencedTradingViewWidget';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -42,6 +43,7 @@ const InexperiencedCryptoPage = () => {
       <p>Ticker: {cryptoData.ticker}</p>
       <p>Price: £{cryptoData.price}</p>
       <p>24hr Change: {cryptoData.change_24hr}%</p>
+
       <Link
         href={`http://localhost:3000/inexperienced/buy/${cryptoData.ticker}`}
       >
@@ -52,6 +54,14 @@ const InexperiencedCryptoPage = () => {
       >
         <button>Sell</button>
       </Link>
+      <div
+        style={{
+          maxHeight: '362px',
+          overflow: 'hidden',
+        }}
+      >
+        <InexperiencedTradingViewWidget ticker={cryptoData.ticker} />
+      </div>
     </div>
   );
 };
