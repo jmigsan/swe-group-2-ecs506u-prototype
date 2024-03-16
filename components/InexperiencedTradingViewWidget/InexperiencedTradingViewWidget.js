@@ -1,7 +1,7 @@
 // TradingViewWidget.jsx
 import React, { useEffect, useRef, memo } from 'react';
 
-const InexperiencedTradingViewWidget = ({ ticker }) => {
+const InexperiencedTradingViewWidget = ({ symbol }) => {
   const container = useRef();
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const InexperiencedTradingViewWidget = ({ ticker }) => {
         {
           "symbols": [
             [
-              "KRAKEN:${ticker}GBP|1M"
+              "KRAKEN:${symbol.toUpperCase()}GBP|1M"
             ]
           ],
           "chartOnly": false,

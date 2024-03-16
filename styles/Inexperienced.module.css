@@ -1,0 +1,29 @@
+.coinContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.coinInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.coinImage {
+  margin-right: 10px;
+}
+
+.coinDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.listItem {
+  padding: 8px 0px;
+}
+
+.fullChartOnPage {
+  max-height: '400px';
+  overflow: 'hidden';
+}

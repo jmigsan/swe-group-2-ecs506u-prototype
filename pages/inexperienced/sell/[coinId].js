@@ -1,12 +1,12 @@
-// pages/inexperienced/buy/[ticker].js
+// pages/inexperienced/sell/[coinId].js
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 
-const InexperiencedBuyPage = () => {
+const InexperiencedSellPage = () => {
   const router = useRouter();
-  const { ticker } = router.query;
+  const { coinId } = router.query;
   const [cryptoData, setCryptoData] = useState(null);
   const [amount, setAmount] = useState('');
 
@@ -14,33 +14,36 @@ const InexperiencedBuyPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/cryptocurrency/${ticker}`
+          `http://localhost:3000/api/cryptocurrency/${coinId}`
         );
-        setCryptoData(response.data);
+        setCryptoData(response.data[0]);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    if (ticker) {
+    if (coinId) {
       fetchData();
     }
-  }, [ticker]);
+  }, [coinId]);
 
-  const handleBuy = async () => {
+  const handleSell = async () => {
     const userData = {
       userId: '1', // Replace with actual user ID
-      ticker: cryptoData.ticker,
+      coinId: cryptoData.id,
       amount: parseFloat(amount),
     };
 
     try {
-      await axios.post('http://localhost:3000/api/spot/buy', userData);
-      alert('Buy order placed successfully!');
+      const sell = await axios.post(
+        'http://localhost:3000/api/spot/sell',
+        userData
+      );
+      alert('Sell order placed successfully!');
     } catch (error) {
-      console.error('Error placing buy order:', error);
+      console.error('Error placing sell order:', error);
       alert(
-        'Failed to place buy order. Please try again later. Error: ' +
+        'Failed to place sell order. Please try again later. Error: ' +
           error.response.data.error
       );
     }
@@ -52,22 +55,22 @@ const InexperiencedBuyPage = () => {
 
   return (
     <div>
-      <Link href={`http://localhost:3000/inexperienced/${cryptoData.ticker}`}>
+      <Link href={`http://localhost:3000/inexperienced/${cryptoData.id}`}>
         Go Back
       </Link>
       <h1>
-        {cryptoData.name} ({cryptoData.ticker})
+        {cryptoData.name} ({cryptoData.symbol.toUpperCase()})
       </h1>
-      <p>Price: £{cryptoData.price}</p>
+      <p>Price: £{cryptoData.current_price}</p>
       <input
         type='number'
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        placeholder='Enter amount to buy'
+        placeholder='Enter amount to sell'
       />
-      <button onClick={handleBuy}>Buy</button>
+      <button onClick={handleSell}>Sell</button>
     </div>
   );
 };
 
-export default InexperiencedBuyPage;
+export default InexperiencedSellPage;

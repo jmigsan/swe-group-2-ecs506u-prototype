@@ -9,7 +9,8 @@ export default async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { userId, ticker, amount } = req.body;
+  const { userId, coinId, amount } = req.body;
+
   let db;
 
   try {
@@ -22,15 +23,15 @@ export default async (req, res) => {
     await db.run('BEGIN TRANSACTION');
 
     const currentUserCashBalance = await db.get(
-      "SELECT amount FROM portfolios WHERE userId = ? and ticker = 'GBP'",
+      "SELECT amount FROM portfolios WHERE userId = ? and currency = 'GBP'",
       userId
     );
 
     // Fetch the price of the cryptocurrency in GBP from an API endpoint
     const cryptoPriceResponse = await axios.get(
-      `http://localhost:3000/api/cryptocurrency/${ticker}`
+      `http://localhost:3000/api/cryptocurrency/${coinId}`
     );
-    const cryptoPrice = cryptoPriceResponse.data.price;
+    const cryptoPrice = cryptoPriceResponse.data[0].current_price;
 
     // Calculate the total cost in GBP for the trade
     const totalTradeCost = cryptoPrice * amount;
@@ -41,30 +42,30 @@ export default async (req, res) => {
 
     // Deduct the amount from the user's GBP balance
     await db.run(
-      "UPDATE portfolios SET amount = ? WHERE userId = ? and ticker = 'GBP'",
+      "UPDATE portfolios SET amount = ? WHERE userId = ? and currency = 'GBP'",
       currentUserCashBalance.amount - totalTradeCost,
       userId
     );
 
     // Add the amount of crypto to the user's balance
     const userCryptoBalance = await db.get(
-      'SELECT * FROM portfolios WHERE userId = ? AND ticker = ?',
+      'SELECT * FROM portfolios WHERE userId = ? AND currency = ?',
       userId,
-      ticker
+      coinId
     );
 
     if (userCryptoBalance) {
       await db.run(
-        'UPDATE portfolios SET amount = ? WHERE userId = ? AND ticker = ?',
+        'UPDATE portfolios SET amount = ? WHERE userId = ? AND currency = ?',
         userCryptoBalance.amount + amount,
         userId,
-        ticker
+        coinId
       );
     } else {
       await db.run(
-        'INSERT INTO portfolios (userId, ticker, amount) VALUES (?, ?, ?)',
+        'INSERT INTO portfolios (userId, currency, amount) VALUES (?, ?, ?)',
         userId,
-        ticker,
+        coinId,
         amount
       );
     }

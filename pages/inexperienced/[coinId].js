@@ -4,33 +4,30 @@ import InexperiencedTradingViewWidget from '@/components/InexperiencedTradingVie
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import styles from '@/styles/Inexperienced.module.css';
+import axios from 'axios';
 
 const InexperiencedCryptoPage = () => {
   const router = useRouter();
-  const { ticker } = router.query;
+  const { coinId } = router.query;
   const [cryptoData, setCryptoData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/cryptocurrency/${ticker}`
+        const response = await axios.get(
+          `http://localhost:3000/api/cryptocurrency/${coinId}`
         );
-        if (response.ok) {
-          const data = await response.json();
-          setCryptoData(data);
-        } else {
-          // Handle error
-        }
+        setCryptoData(response.data[0]);
       } catch (error) {
-        // Handle error
+        console.error(error);
       }
     };
 
-    if (ticker) {
+    if (coinId) {
       fetchData();
     }
-  }, [ticker]);
+  }, [coinId]);
 
   if (!cryptoData) {
     return <div>Loading...</div>;
@@ -40,27 +37,18 @@ const InexperiencedCryptoPage = () => {
     <div>
       <Link href={'http://localhost:3000/inexperienced'}>Go Back</Link>
       <h1>{cryptoData.name}</h1>
-      <p>Ticker: {cryptoData.ticker}</p>
-      <p>Price: £{cryptoData.price}</p>
-      <p>24hr Change: {cryptoData.change_24hr}%</p>
+      <p>Symbol: {cryptoData.symbol.toUpperCase()}</p>
+      <p>Price: £{cryptoData.current_price}</p>
+      <p>24hr Change: {cryptoData.price_change_percentage_24h}%</p>
 
-      <Link
-        href={`http://localhost:3000/inexperienced/buy/${cryptoData.ticker}`}
-      >
+      <Link href={`http://localhost:3000/inexperienced/buy/${cryptoData.id}`}>
         <button>Buy</button>
       </Link>
-      <Link
-        href={`http://localhost:3000/inexperienced/sell/${cryptoData.ticker}`}
-      >
+      <Link href={`http://localhost:3000/inexperienced/sell/${cryptoData.id}`}>
         <button>Sell</button>
       </Link>
-      <div
-        style={{
-          maxHeight: '400px',
-          overflow: 'hidden',
-        }}
-      >
-        <InexperiencedTradingViewWidget ticker={cryptoData.ticker} />
+      <div className={styles.fullChartOnPage}>
+        <InexperiencedTradingViewWidget symbol={cryptoData.symbol} />
       </div>
     </div>
   );

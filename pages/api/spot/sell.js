@@ -9,8 +9,10 @@ export default async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { userId, ticker, amount } = req.body;
+  const { userId, coinId, amount } = req.body;
   let db;
+
+  console.log(req.body);
 
   try {
     // Fetch user's cryptocurrency balance from the database
@@ -22,14 +24,16 @@ export default async (req, res) => {
     await db.run('BEGIN TRANSACTION');
 
     const userCryptoBalance = await db.get(
-      'SELECT amount FROM portfolios WHERE userId = ? AND ticker = ?',
+      'SELECT amount FROM portfolios WHERE userId = ? AND currency = ?',
       userId,
-      ticker
+      coinId
     );
+
+    console.log(userCryptoBalance);
+
     const cryptoBalance = userCryptoBalance.amount;
 
     if (amount > cryptoBalance) {
-      console.log('hey');
       return res
         .status(400)
         .json({ error: 'Insufficient cryptocurrency balance' });
@@ -37,32 +41,32 @@ export default async (req, res) => {
 
     // Fetch the price of the cryptocurrency in GBP from an API endpoint
     const cryptoPriceResponse = await axios.get(
-      `http://localhost:3000/api/cryptocurrency/${ticker}`
+      `http://localhost:3000/api/cryptocurrency/${coinId}`
     );
-    const cryptoPrice = cryptoPriceResponse.data.price;
+    const cryptoPrice = cryptoPriceResponse.data[0].current_price;
 
     // Calculate the total value of the cryptocurrency in GBP
     const totalTradeValue = cryptoPrice * amount;
 
     // Get current balance of user
     const currentUserCashBalance = await db.get(
-      "SELECT amount FROM portfolios WHERE userId = ? and ticker = 'GBP'",
+      "SELECT amount FROM portfolios WHERE userId = ? and currency = 'GBP'",
       userId
     );
 
     // Add the amount of GBP to the user's balance
     await db.run(
-      "UPDATE portfolios SET amount = ? WHERE userId = ? and ticker = 'GBP'",
+      "UPDATE portfolios SET amount = ? WHERE userId = ? and currency = 'GBP'",
       totalTradeValue + currentUserCashBalance.amount,
       userId
     );
 
     // Deduct the amount of cryptocurrency from the user's balance
     await db.run(
-      'UPDATE portfolios SET amount = ? WHERE userId = ? AND ticker = ?',
+      'UPDATE portfolios SET amount = ? WHERE userId = ? AND currency = ?',
       cryptoBalance - amount,
       userId,
-      ticker
+      coinId
     );
 
     await db.run('COMMIT');

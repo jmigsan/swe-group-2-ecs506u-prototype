@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
 
-const InexperiencedMiniTradingViewWidget = ({ ticker }) => {
+const InexperiencedMiniTradingViewWidget = ({ symbol }) => {
   useEffect(() => {
-    const scriptId = `tv-widget-script-${ticker}`;
-    const containerId = `tv-widget-container-${ticker}`;
+    const scriptId = `tv-widget-script-${symbol}`;
+    const containerId = `tv-widget-container-${symbol}`;
 
     const existingScript = document.getElementById(scriptId);
     if (existingScript) {
       // Remove existing script to avoid duplicates
       existingScript.remove();
     }
+
+    //TODO: not every coin is on kraken. make it so that if its not on kraken, use a different exchange
 
     const script = document.createElement('script');
     script.id = scriptId;
@@ -19,8 +21,8 @@ const InexperiencedMiniTradingViewWidget = ({ ticker }) => {
     script.async = true;
     script.innerHTML = `
       {
-        "symbol": "KRAKEN:${ticker}GBP",
-        "width": 200,
+        "symbol": "KRAKEN:${symbol.toUpperCase()}GBP",
+        "width": 180,
         "height": 70,
         "locale": "en",
         "dateRange": "12M",
@@ -33,11 +35,15 @@ const InexperiencedMiniTradingViewWidget = ({ ticker }) => {
       }
     `;
 
+    script.onerror = (error) => {
+      console.error('Error loading TradingView widget script:', error);
+    };
+
     const container = document.getElementById(containerId);
     container.appendChild(script);
   }, [crypto]);
 
-  const containerId = `tv-widget-container-${ticker}`;
+  const containerId = `tv-widget-container-${symbol}`;
 
   return (
     <div id={containerId} className='tradingview-widget-container'>
