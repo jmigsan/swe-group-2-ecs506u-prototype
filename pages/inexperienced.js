@@ -4,9 +4,12 @@ import Link from 'next/link';
 import InexperiencedMiniTradingViewWidget from '@/components/InexperiencedMiniTradingViewWidget/InexperiencedMiniTradingViewWidget';
 import Image from 'next/image';
 import styles from '@/styles/Inexperienced.module.css';
+import SorryReloadPage from '@/components/SorryReloadPage/SorryReloadPage';
 
 const inexperienced = () => {
   const [cryptocurrencies, setCryptocurrencies] = useState([]);
+
+  const [fetchErrorCode, setFetchErrorCode] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,11 +20,20 @@ const inexperienced = () => {
         setCryptocurrencies(response.data); //this should only return 10
       } catch (error) {
         console.error('Error fetching data:', error);
+        setFetchErrorCode(error.response.status);
       }
     };
 
     fetchData();
   }, []);
+
+  if (fetchErrorCode !== null) {
+    return <SorryReloadPage errorCode={fetchErrorCode} />;
+  }
+
+  if (!cryptocurrencies) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>

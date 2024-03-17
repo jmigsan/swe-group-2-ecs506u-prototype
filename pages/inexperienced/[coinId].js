@@ -12,12 +12,19 @@ const InexperiencedCryptoPage = () => {
   const { coinId } = router.query;
   const [cryptoData, setCryptoData] = useState(null);
 
+  const [fetchErrorCode, setFetchErrorCode] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
           `http://localhost:3000/api/cryptocurrency/${coinId}`
         );
+
+        if (response.status !== 200) {
+          setFetchErrorCode(response.status);
+        }
+
         setCryptoData(response.data[0]);
       } catch (error) {
         console.error(error);
@@ -28,6 +35,10 @@ const InexperiencedCryptoPage = () => {
       fetchData();
     }
   }, [coinId]);
+
+  if (fetchErrorCode !== null) {
+    return <SorryReloadPage errorCode={fetchErrorCode} />;
+  }
 
   if (!cryptoData) {
     return <div>Loading...</div>;

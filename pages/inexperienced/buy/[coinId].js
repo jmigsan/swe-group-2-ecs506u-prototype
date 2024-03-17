@@ -10,15 +10,19 @@ const InexperiencedBuyPage = () => {
   const [cryptoData, setCryptoData] = useState(null);
   const [amount, setAmount] = useState('');
 
+  const [fetchErrorCode, setFetchErrorCode] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
           `http://localhost:3000/api/cryptocurrency/${coinId}`
         );
+
         setCryptoData(response.data[0]);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setFetchErrorCode(error.response.status);
       }
     };
 
@@ -29,7 +33,7 @@ const InexperiencedBuyPage = () => {
 
   const handleBuy = async () => {
     const userData = {
-      userId: '1', // Replace with actual user ID
+      userId: 1, // Replace with actual user ID
       coinId: cryptoData.id,
       amount: parseFloat(amount),
     };
@@ -45,6 +49,10 @@ const InexperiencedBuyPage = () => {
       );
     }
   };
+
+  if (fetchErrorCode !== null) {
+    return <SorryReloadPage errorCode={fetchErrorCode} />;
+  }
 
   if (!cryptoData) {
     return <div>Loading...</div>;

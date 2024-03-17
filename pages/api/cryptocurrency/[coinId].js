@@ -14,11 +14,9 @@ export default async (req, res) => {
   } catch (error) {
     console.error(error);
     if (error.response.status === 429) {
-      res
-        .status(429)
-        .json({
-          error: 'CoinGecko API servers are overloaded. Try again later.',
-        });
+      res.status(429).json({
+        error: 'CoinGecko API servers are overloaded. Try again later.',
+      });
     } else {
       res.status(500).json({
         error: 'Something went wrong with the individual cryptocurrency data.',

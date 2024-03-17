@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../sqlite.db"
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String
+  portfolios Portfolio[] // This is a one-to-many relationship
+}
+
+model Portfolio {
+  userId   Int
+  currency String
+  amount   Float
+  user     User   @relation(fields: [userId], references: [id])
+
+  // UserId and currency make a composite id. 
+  // So, if you make a 'where:{}' query on Portfolio, do userId_currency:{ userId:..., currency:... } for it to work.
+  @@id([userId, currency])
+}

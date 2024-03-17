@@ -1,8 +1,7 @@
 // pages/api/spot/sell.js
 
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
 import axios from 'axios';
+import prisma from '../_prismaClient';
 
 export default async (req, res) => {
   if (req.method !== 'POST') {
@@ -10,30 +9,19 @@ export default async (req, res) => {
   }
 
   const { userId, coinId, amount } = req.body;
-  let db;
-
-  console.log(req.body);
 
   try {
     // Fetch user's cryptocurrency balance from the database
-    const db = await open({
-      filename: './sqlite.db',
-      driver: sqlite3.Database,
+    const userCryptoBalance = await prisma.portfolio.findUnique({
+      where: {
+        userId_currency: {
+          userId: userId,
+          currency: coinId,
+        },
+      },
     });
 
-    await db.run('BEGIN TRANSACTION');
-
-    const userCryptoBalance = await db.get(
-      'SELECT amount FROM portfolios WHERE userId = ? AND currency = ?',
-      userId,
-      coinId
-    );
-
-    console.log(userCryptoBalance);
-
-    const cryptoBalance = userCryptoBalance.amount;
-
-    if (amount > cryptoBalance) {
+    if (amount > userCryptoBalance.amount) {
       return res
         .status(400)
         .json({ error: 'Insufficient cryptocurrency balance' });
@@ -49,38 +37,44 @@ export default async (req, res) => {
     const totalTradeValue = cryptoPrice * amount;
 
     // Get current balance of user
-    const currentUserCashBalance = await db.get(
-      "SELECT amount FROM portfolios WHERE userId = ? and currency = 'GBP'",
-      userId
-    );
-
-    // Add the amount of GBP to the user's balance
-    await db.run(
-      "UPDATE portfolios SET amount = ? WHERE userId = ? and currency = 'GBP'",
-      totalTradeValue + currentUserCashBalance.amount,
-      userId
-    );
+    const userGbp = await prisma.portfolio.findUnique({
+      where: {
+        userId_currency: {
+          userId: userId,
+          currency: 'GBP',
+        },
+      },
+    });
 
     // Deduct the amount of cryptocurrency from the user's balance
-    await db.run(
-      'UPDATE portfolios SET amount = ? WHERE userId = ? AND currency = ?',
-      cryptoBalance - amount,
-      userId,
-      coinId
-    );
+    const removeUserCrypto = await prisma.portfolio.update({
+      where: {
+        userId_currency: {
+          userId: userId,
+          currency: coinId,
+        },
+      },
+      data: {
+        amount: userCryptoBalance.amount - amount,
+      },
+    });
 
-    await db.run('COMMIT');
+    // Add the amount of GBP to the user's balance
+    const addUserGbp = await prisma.portfolio.update({
+      where: {
+        userId_currency: {
+          userId: userId,
+          currency: 'GBP',
+        },
+      },
+      data: {
+        amount: userGbp.amount + totalTradeValue,
+      },
+    });
 
     res.status(200).json({ message: 'Sell order executed successfully' });
   } catch (error) {
     console.error('Error executing sell order:', error);
-    if (db) {
-      await db.run('ROLLBACK');
-    }
     res.status(500).json({ error: 'Failed to execute sell order' });
-  } finally {
-    if (db) {
-      await db.close();
-    }
   }
 };
