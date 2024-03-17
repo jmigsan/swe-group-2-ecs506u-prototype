@@ -1,5 +1,3 @@
-// pages/api/crypto.js
-
 import axios from 'axios';
 
 export default async (req, res) => {

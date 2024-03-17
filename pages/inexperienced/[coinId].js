@@ -1,5 +1,3 @@
-// pages/cryptocurrency/[ticker].js
-
 import InexperiencedTradingViewWidget from '@/components/InexperiencedTradingViewWidget/InexperiencedTradingViewWidget';
 import Link from 'next/link';
 import { useRouter } from 'next/router';

@@ -1,5 +1,3 @@
-// pages/api/spot/buy.js
-
 import axios from 'axios';
 import prisma from '../_prismaClient';
 
