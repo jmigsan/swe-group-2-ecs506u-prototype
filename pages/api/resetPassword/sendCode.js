@@ -22,7 +22,7 @@ export default async function handler(req, res){
               secure: true,
               auth: {
                 user: "meshoah2005@gmail.com",
-                pass: "abea yyfs xciv liso",
+                pass: password,
               },
             });
 
