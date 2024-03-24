@@ -1,0 +1,188 @@
+.container{
+    background-color: white;
+    display:grid;
+    width:20em;
+    height:17em;
+    grid-template-rows: 0.8fr 0.7fr 1.5fr 1.2fr 1fr 1fr 0.5fr 1.5fr 0.5fr 1fr 0.5fr;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-areas: 
+    'logo logo . . .'
+    '. . . . .'
+    'subheading subheading subheading subheading subheading'
+    '. . . . .'
+    'username username username username username'
+    'animation animation animation animation animation'
+    'register register register . .'
+    '. . . . .'
+    'forgot forgot forgot . .'
+    '. . . . .'
+    'message message button button button';
+    padding: 3em;
+    margin: auto;
+    overflow: hidden;
+}
+
+.signIn{
+    font-weight: bold;
+    font-size:1.5em;
+    width:100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.subTitle{
+    grid-area: subheading;
+}
+.subheading{
+
+    font-size: 0.9em;
+    width: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.logo{
+    margin:0;
+}
+.body{
+    width:100vw;
+    max-width: 100%;
+    height:93vh;
+    display: flex;
+    justify-content: center;
+    background: radial-gradient(circle at top left, rgba(255, 183, 197, 0.3) 0%, rgba(255, 183, 197, 0) 70%),
+    radial-gradient(circle at top right, rgba(140, 199, 255, 0.3) 0%, rgba(140, 199, 255, 0) 70%),
+    radial-gradient(circle at bottom left, rgba(165, 233, 168, 0.3) 0%, rgba(165, 233, 168, 0) 70%),
+    radial-gradient(circle at bottom right, rgba(255, 255, 155, 0.3) 0%, rgba(255, 255, 155, 0) 70%);
+    background-color: #f8f8f8; /* This is the base color */
+}
+
+.heading{
+    display: flex;
+    flex-direction: row;
+    grid-area: logo;
+    height:2em;
+    align-items: center;
+    justify-content: flex-start;
+    gap:0.5em;
+    font-size: 1.2em;
+    color:grey;
+    font-family: Arial, Helvetica, sans-serif;
+   
+}
+
+.error{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-area: message;
+    background-color: #d9190c;
+    border-radius: 0.5em;
+    padding:0.5em;
+    text-align: center;
+    height:1.5em;
+    color:white;
+    margin-right:0.2em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.form{
+    grid-area: username;
+}
+
+.dot{
+    height:1em;
+    width:1em;
+    border-radius: 999em;
+    background-color: grey;
+}
+
+.loadingAnimation{
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap:0.5em;
+    opacity:0.5;
+    grid-area:animation;
+}
+
+.username{
+    width:100%;
+    border:none;
+    border-bottom: 1pt solid grey;
+    font-size:1.2em;
+    padding-bottom: 0.3em;
+}
+
+.username:focus{
+    outline:none;
+}
+
+
+.button{
+    
+    background-color: #0548e9;
+    border-radius: 0;
+    color:white;
+    border:none;
+    width: 100%;
+    height:3em;
+}
+
+.button2{
+    
+    background-color:#c4c4c4;
+    border-radius: 0;
+    color:black;
+    border:none;
+    width: 100%;
+    height:3em;
+}
+
+
+.forgotPassword{
+    grid-area:forgot;
+    
+
+}
+
+.forgotLink{
+    font-size:0.9em;
+    text-decoration: none;
+    color:#1b64d5;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.registerLink{
+    font-size:0.9em;
+    text-decoration: none;
+    color:#1b64d5;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.registerLink:hover{
+    text-decoration: underline;
+}
+
+
+.forgotLink:hover{
+    text-decoration: underline;
+}
+.noAccount{
+    font-size:0.9em;
+    grid-area:register;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.buttonDummy{
+    background-color: white;
+    border-radius: 0;
+    border:none;
+    width: 100%;
+    height:3em;
+}
+.buttons{
+    grid-area:button;
+    display: flex;
+    flex-direction: row;
+    gap:0.2em;
+    
+}

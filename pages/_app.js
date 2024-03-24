@@ -1,13 +1,15 @@
-import Navbar from '@/components/Navbar/Navbar';
-import '@/styles/globals.css';
-
-const App = ({ Component, pageProps }) => {
+import "@/styles/globals.css";
+import NavBar from "@/components/NavBar";
+import { SessionProvider } from "next-auth/react";
+export const metadata = {
+  title: "NovaTrade",
+  description:'Trade cryptocurrencies in a fun and safe environment'
+}
+export default function App({ Component, pageProps: { session, ...pageProps }, }) {
   return (
-    <>
-      <Navbar />
-      <Component {...pageProps} />
-    </>
-  );
-};
-
-export default App;
+      <SessionProvider session={session}>
+          <NavBar />
+          <Component {...pageProps} />
+      </SessionProvider>
+  )
+}

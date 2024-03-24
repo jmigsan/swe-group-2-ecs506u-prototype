@@ -1,116 +1,97 @@
-import Head from 'next/head';
+'use client';
+import styles from '@/styles/home.module.css';
+import feed from '@/public/images/feed.png'
+import { useRouter } from 'next/router';
+import { useInView } from "react-intersection-observer";
+import {motion, useAnimation} from "framer-motion";
+import { useEffect, useState } from 'react';
+import Options from "./options";
 import Image from 'next/image';
-import { Inter } from 'next/font/google';
-import styles from '@/styles/Home.module.css';
+import AOS from "aos";
+import "aos/dist/aos.css";
+export default function Home(){
+  
+  useEffect(() => {
+    AOS.init();
+    AOS.refresh();
+  }, []);
 
-const inter = Inter({ subsets: ['latin'] });
+  const router = useRouter();
 
-const Home = () => {
+  const animations = {
+    initial: {y:50},
+    animate: {y:0},
+    exit: {y:-50},
+  };
+
+  const animations2 = {
+    hidden: {x:100},
+    visible: {x:0},
+
+  };
+
+ 
+const controls = useAnimation();
+const [ref, inView] = useInView();
+
+useEffect(() => {
+    if (inView) {
+      controls.start("visible");
+    }
+
+    else{
+      controls.start("hidden");
+    }
+  }, [inView]);
+
+
+
+
   return (
-    <>
-      <Head>
-        <title>Homepage - Novatrade</title>
-        <meta name='description' content='ECS506U Group 2 Prototype' />
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <main className={`${styles.main} ${inter.className}`}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.js</code>
-          </p>
-          <div>
-            <a
-              href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              By{' '}
-              <Image
-                src='/vercel.svg'
-                alt='Vercel Logo'
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
+    <div className={styles.home}>
+      <motion.div variants={animations} initial="initial" animate="animate" exit="exit" transition={{duration:1.5, ease: "easeOut"}} className={styles.container}>
+        <section className={styles.title}>
+          Trade, Socialize, Explore
+        </section>
+        <section className={styles.title2}> with NovaTrade</section>
+        <section className={styles.body}>
+          NovaTrade is an innovative crypto currency exchange platform which brings together social media and trading
+          into one center. Here you can trade and socialize with your friends using our integrated post feed. Take a trade, share
+          it with your friends, and see what they are doing as well! Whether you are an experienced trader in the market or a beginner
+          looking to learn, NovaTrade ensures that you are well taken care of.
+        </section>
+      </motion.div>
 
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src='/next.svg'
-            alt='Next.js Logo'
-            width={180}
-            height={37}
-            priority
-          />
-        </div>
+      <div className={styles.phoneBackground}>
+        <section className={styles.section2}>
+          <section className={styles.section2Title}>
+              Meet NovaTrade!
+          </section>
+          <section className={styles.section2Body}>
+            See what your friends are trading and post your own trades as well!
+          </section>
+          <section className={styles.section2footer}>
+            Open an account and start trading today
+          </section>
+          <button className={styles.getStarted} onClick={()=>{
+            router.replace("/signUp")
+          }}>Get started</button>
+        </section>
 
-        <div className={styles.grid}>
-          <a
-            href='https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-            className={styles.card}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <h2>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
+         <motion.section  ref= {ref} variants={animations2} initial="hidden" animate={controls} transition={{duration:1, ease: "easeOut"}}>
+          <figure data-aos="flip-down"  data-aos-duration="2000">
+            <Image
+            src={feed}
+            alt="Picture of Iphone"
+            className={styles.post}
+            />
+          </figure>
+         </motion.section>
+      </div>
 
-          <a
-            href='https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-            className={styles.card}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <h2>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
+      <Options controls={controls}/>
+      
 
-          <a
-            href='https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-            className={styles.card}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <h2>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href='https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-            className={styles.card}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <h2>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-    </>
-  );
-};
-
-export default Home;
+    </div>
+  )
+}

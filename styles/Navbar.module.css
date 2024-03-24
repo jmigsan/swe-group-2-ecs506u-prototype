@@ -1,0 +1,175 @@
+.heading{
+    display:flex;
+    align-items: center;
+    gap:0.5em;
+    padding-left: 0.5em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.leftNav{
+    display:flex;
+    flex-direction: row;
+    width:85%;
+    align-items: center;
+    justify-content: flex-start;
+    gap:1em;
+}
+
+.dropDown:hover .toggleMenu{
+    display: flex;
+}
+
+.dropDown{
+    position: relative;
+}
+.rightOption{
+    display: flex;
+    flex-direction: column;
+    gap:0.2em;
+}
+.boldText{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.Icon{
+    margin:0;
+}
+
+.subHeading{
+    color:gray;
+    font-size: 0.8em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.toggleMenu{
+    background:white;
+    width:15em;
+    height:auto;
+    
+    padding: 3em 2em 2em 2em;
+    position: absolute;
+
+    display: none;
+    border-radius: 0 0 0.5em 0.5em;
+    flex-direction: column;
+    align-items: center;
+
+
+}
+
+
+.boldText:hover{
+    color:#5AA056;
+}
+.menuOption{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:1em;
+   
+}
+.loginLinks{
+    display: flex;
+    flex-direction: row;
+    gap:1em;
+}
+.title{
+    font-weight:bold;
+}
+.logo{
+    margin:0;
+}
+.links{
+    list-style-type: none;
+    display:flex;
+    flex-direction: row;
+    padding-right:0.5em;
+    gap:1em;
+    align-items: center;
+    width:30%;
+    height:100%;
+}
+
+.welcome{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1em;
+}
+
+.nav{
+    display: flex;
+    flex-direction: column;
+    width:100vw;
+    max-width: 100%;
+    box-shadow:0 2px 4px -2px rgba(0,0,0,.2);
+    top:0;
+    background-color: white;
+    z-index: 9999;
+    position: sticky;
+    height:4em;
+    justify-content: center;
+}
+.navbar{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width:100vw;
+    max-width: 100%;
+    margin:0;
+    height:100%;
+
+    
+}
+
+.link{
+    width:auto;
+    text-decoration: none;
+    color:black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:1em;
+    height:100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.button{
+    background-color:#C7CF24;
+    border: none;
+    border-radius: 0.3em;
+    padding:0.5em;
+    height:auto;
+    width:auto;
+    text-decoration: none;
+    color:black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:1em;
+}
+
+.mobileLink{
+    text-decoration: none;
+    color:black;
+    font-family: Arial, Helvetica, sans-serif;
+    pointer-events: all;
+}
+.menu{
+   display: none;
+   margin: 0;
+}
+
+@media screen and (max-width:768px){
+    .links{
+        display:none;
+    }
+
+    .menu{
+        display: inline;
+        margin: 0;
+
+        padding-right:0.5em;
+    }
+
+    
+}
