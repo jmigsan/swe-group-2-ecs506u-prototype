@@ -45,6 +45,7 @@
     width:100vw;
     max-width: 100%;
     height:93vh;
+    position: fixed;
     display: flex;
     justify-content: center;
     background: radial-gradient(circle at top left, rgba(255, 183, 197, 0.3) 0%, rgba(255, 183, 197, 0) 70%),
@@ -88,19 +89,60 @@
 
 .dot{
     height:1em;
-    width:1em;
-    border-radius: 999em;
-    background-color: grey;
+    width:0.5em;
+    background-color: white;
 }
 
+.close{
+    position: relative;
+    top:-2em;
+}
+
+.twoFactorForm{
+    z-index: 9999;
+    margin: 5em auto auto auto;
+    width:40em;
+    height:20em;
+    background-color: white;
+    border-radius: 1em;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+.verificationHeader{
+    display: flex;
+    flex-direction: column;
+    gap:1em;
+    width:80%;
+}
+
+.verificationTop{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width:100%;
+    align-items: center;
+}
+
+
+.close:hover{
+    opacity:0.5;
+}
+.twoFactor{
+    display:none;
+    position: fixed;
+    z-index: 9999;
+    width:100%;
+    height:100%;
+    background: rgba(0, 0, 0, 0.3);
+}
 .loadingAnimation{
     width:100%;
-    display: flex;
+    display: none;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap:0.5em;
-    opacity:0.5;
     grid-area:animation;
 }
 
@@ -118,7 +160,9 @@
 
 
 .button{
-    
+    display:flex;
+    align-items: center;
+    justify-content: center;
     background-color: #0548e9;
     border-radius: 0;
     color:white;
@@ -185,4 +229,119 @@
     flex-direction: row;
     gap:0.2em;
     
+}
+
+.verificationForm{
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    height:80%;
+    align-items:flex-start;
+    padding:2em;
+    gap:1em;
+    justify-content: space-between;
+}
+
+.options{
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    justify-content: center;
+    gap:1em;
+}
+
+.verificationTitle{
+    font-size: 2em;
+    font-weight:bold;
+}
+
+.emailTop{
+    width:110%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.verificationSubTitle{
+    font-size: 1em;
+    color:gray;
+}
+
+.verificationOption{
+    width:90%;
+    background:rgba(90, 160, 86, 0.3);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.verificationOptionTitle{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:1em;
+    width:85%;
+    justify-content: flex-start;
+}
+
+.verificationOption:hover{
+    background:rgba(90, 160, 86, 0.7);
+}
+
+.verificationOptionText{
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.codeError{
+    font-size: 1em;
+    color:red;
+}
+
+.emailForm{
+    display: flex;
+    flex-direction: column;
+    padding:2em;
+    width:100%;
+    gap:2em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.emailVerification{
+    width: 100%;
+    height:100%;
+    display: flex;
+    align-items: center;
+}
+
+
+.middlePart{
+    width:98%;
+}
+.codeInput{
+    width:100%;
+    height:2em;
+    border-radius: 0.5em;
+    border:1pt solid gray;
+    padding:0.5em;
+    align-self: center;
+}
+
+.codeInput:focus{
+    outline:none;
+}
+
+.codeButton{
+    width:100%;
+    text-align: center;
+
+    font-size: 1.2em;
+    border:none;
+    background-color: #5AA056;
+    padding:0.5em;
+    border-radius: 0.5em;
+    color:black;
+    font-family: Arial, Helvetica, sans-serif;
 }
