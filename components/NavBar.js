@@ -142,8 +142,8 @@ export default function NavBar(){
                                                 <figure className={styles.Icon}>
                                                     <Image 
                                                         src={posts}
-                                                        width={50}
-                                                        height={50}
+                                                        width={45}
+                                                        height={45}
                                                         alt="Logo"
                                                         className={styles.Icon}
                                                     />
@@ -157,8 +157,8 @@ export default function NavBar(){
                                                 <figure className={styles.Icon}>
                                                     <Image 
                                                         src={create}
-                                                        width={50}
-                                                        height={50}
+                                                        width={45}
+                                                        height={45}
                                                         alt="Logo"
                                                         className={styles.Icon}
                                                     />
@@ -172,8 +172,8 @@ export default function NavBar(){
                                                 <figure className={styles.Icon}>
                                                     <Image 
                                                         src={searchFriends}
-                                                        width={50}
-                                                        height={50}
+                                                        width={45}
+                                                        height={45}
                                                         alt="Logo"
                                                         className={styles.Icon}
                                                     />
