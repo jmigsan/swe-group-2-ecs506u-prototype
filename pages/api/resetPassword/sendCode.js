@@ -4,11 +4,10 @@ import password from '@/pages/config';
 export default async function handler(req, res){
 
     const registry = Users.getInstance();
-
+    console.log(password);
     const exists = await registry.findUniqueUser(req.body.to, [true, true, true]);
 
     if(exists){
-      console.log("here1");
       const body = req.body;
       const code = body.code;
       const from ="meshoah2005@gmail.com";
@@ -34,7 +33,6 @@ export default async function handler(req, res){
       }
 
       else{
-        console.log("here2");
         res.status(404).json({message: "User Not Found"});
       }
 }
