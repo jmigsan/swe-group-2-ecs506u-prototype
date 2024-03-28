@@ -110,6 +110,12 @@ export default function Support() {
     };
 
     const handleTicketSubmit = async (event) =>{
+
+        setViewingTickets(false);
+        setCreatingTicket(true);
+
+
+
         event.preventDefault();
         console.log("handleTicketSubmit has this formData ", JSON.stringify(formData))
         try {
@@ -171,12 +177,25 @@ export default function Support() {
 
             {/* conditional rendering for different sections */}
             {tickets.length > 0 && (
-                <motion.div className={styles.ticketSection}>
+                <motion.div className={styles.ticketSection} variants={animations} initial="initial" animate="animate" exit="exit" transition={{duration:0.5, ease: "easeOut"}}>
                     <h2>Tickets:</h2>
                     <ul>
                         {tickets.map((ticket, index) => (
                             <li key={index}>
-                                Issue Type: {ticket.issueType}, Issue Description: {ticket.issueDescription}, Date Created: {ticket.dateCreated}
+                                <div className={styles.ticket}>
+                                    <div className={styles.ticketInfo}>
+                                        <span className={styles.label}>Issue Type:</span>
+                                        <span className={styles.issueType}>{ticket.issueType}</span>
+                                    </div>
+                                    <div className={styles.ticketInfo}>
+                                        <span className={styles.label}>Issue Description:</span>
+                                        <span className={styles.issueDescription}>{ticket.issueDescription}</span>
+                                    </div>
+                                    <div className={styles.ticketInfo}>
+                                        <span className={styles.label}>Date Created:</span>
+                                        <span className={styles.dateCreated}>{ticket.dateCreated}</span>
+                                    </div>
+                                </div>
                             </li>
                         ))}
                     </ul>
