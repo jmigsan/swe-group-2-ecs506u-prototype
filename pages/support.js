@@ -79,9 +79,6 @@ export default function Support() {
 
         console.log("---------retrieved session userEmail:", JSON.stringify(userEmail))
         try {
-
-
-
             const res = await fetch('api/tickets/viewTicket', {
                 method: 'POST',
                 headers: {
@@ -111,8 +108,7 @@ export default function Support() {
 
     const handleTicketSubmit = async (event) =>{
 
-        setViewingTickets(false);
-        setCreatingTicket(true);
+
 
 
 
@@ -153,6 +149,13 @@ export default function Support() {
         }
     };
 
+    const handleCreateTicket = async =>{
+        setCreatingTicket(true);
+        setViewingTickets(false);
+        setTalkingToSupport(false);
+        setTalkingToAI(false);
+    };
+
     return (
         <motion.div className={styles.supportContainer}
                     variants={animations} initial="initial" animate="animate" exit="exit" transition={{duration:0.5, ease: "easeOut"}}>
@@ -164,7 +167,7 @@ export default function Support() {
                 <div className={styles.option} onClick={handleViewTickets}>
                     <h2>View Ongoing Tickets</h2>
                 </div>
-                <div className={styles.option} onClick={() => setCreatingTicket(true)}>
+                <div className={styles.option} onClick={handleCreateTicket}>
                     <h2>Create New Ticket</h2>
                 </div>
                 <div className={styles.option} onClick={() => setTalkingToSupport(true)}>
@@ -176,7 +179,7 @@ export default function Support() {
             </section>
 
             {/* conditional rendering for different sections */}
-            {tickets.length > 0 && (
+            {tickets.length > 0 && viewingTickets && (
                 <motion.div className={styles.ticketSection} variants={animations} initial="initial" animate="animate" exit="exit" transition={{duration:0.5, ease: "easeOut"}}>
                     <h2>Tickets:</h2>
                     <ul>
