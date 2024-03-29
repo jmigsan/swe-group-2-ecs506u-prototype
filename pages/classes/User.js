@@ -41,7 +41,7 @@ export default class Users{
     // which fields to return of the user
     async findUniqueUser(username, requiredFields){
         try{
-            const user = await prisma.users.findUnique({
+            const user = await prisma.user.findUnique({
                 where:{
                     email:username,
                 },
@@ -74,6 +74,49 @@ export default class Users{
 
     }
 
+    
+    async signUp(name, email, password, role){
+        try{
+            const user = await this.findUniqueUser(email);
+
+            if(user){
+                return false;
+            }
+
+            else{
+                const hashedpassword = await bcrypt.hash(password, 10);
+                const data= {
+                    firstName:name,
+                    email:email,
+                    password:hashedpassword,
+                    role:role,
+                }
+                const newUser = await prisma.user.create({data: data});
+                
+                switch(role){
+                    
+                    case "Investor":
+                        const Investortdata ={
+                            userId:newUser.email,
+                        }
+                        const investor = await prisma.investor.create({data:Investortdata})
+                        break;
+                    case "Staff":
+                        const Staffdata ={
+                            userId:newUser.email,
+                        }
+                        const staff = await prisma.staff.create({data:Staffdata})
+                        break;
+                }
+
+                return true;
+            }
+        }
+
+        catch(error){
+            return false;
+        }
+    }
     // method to check if the inputted password matches the user's password
     // in database. If wrong, it returns false
     // else returns true
@@ -81,7 +124,7 @@ export default class Users{
     async checkPassword(username, inputted_password){
         
         try{
-            const getUser = await prisma.users.findUnique({
+            const getUser = await prisma.user.findUnique({
                 where: {
                     email: username,
                     },
@@ -90,6 +133,7 @@ export default class Users{
                         firstName: true,
                         password: true,
                         email: true,
+                        role:true,
                         }
                 })
 
@@ -122,7 +166,7 @@ export default class Users{
         const hashedpassword = await bcrypt.hash(new_password, 10);
         console.log(hashedpassword);
         try{
-            const update = await prisma.users.update({
+            const update = await prisma.user.update({
                 where:{
                     email: username,
                 },

@@ -1,15 +1,21 @@
 import Users from "@/pages/classes/User";
+
 export default async function handler(req, res){
-    const registry = Users.getInstance();
-    const username = req.body.username;
-
-    const exists = await registry.findUniqueUser(username, [true, true, true]);
-
-    if(exists){
-        res.status(200).json({message: "valid user"});
+    const body= req.body;
+    const username =body.username;
+    
+    try{
+        const registry = Users.getInstance();
+        const exists = await registry.findUniqueUser(username, [true, true, true])
+        if(exists){
+            res.status(200).json({message:"Valid Username"});
+        }
+        else{
+            res.status(404).json({message:"User does not exist"});
+        }
     }
 
-    else{
-        res.status(404).json({message: "invalid user"});
+    catch(err){
+        res.status(500).json({message:"error Occurred"})
     }
 }

@@ -219,6 +219,7 @@ export default function Login(){
                                                     src={close}
                                                     width={20}
                                                     height={20}
+                                                    alt="close"
                                                     className={styles.logo}
                                                 />
                                             </figure>
@@ -284,6 +285,7 @@ export default function Login(){
                                                     <figure className={styles.close} onClick={()=>{handleClose();}}>
                                                         <Image
                                                             src={close}
+                                                            alt="logo"
                                                             width={20}
                                                             height={20}
                                                             className={styles.logo}

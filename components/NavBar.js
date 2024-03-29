@@ -17,9 +17,10 @@ import posts from '@/public/images/posts.png'
 import searchFriends from '@/public/images/searchFriends.png'
 import trade from '@/public/images/trade.png'
 import ticket from '@/public/images/ticket.png'
+import { useRouter } from 'next/router'
 export default function NavBar(){
     const {data: session} = useSession();
-   
+    const router = useRouter();
     const animations = {
     initial: {opacity:0},
     animate: {opacity:1},
@@ -129,7 +130,7 @@ export default function NavBar(){
                                                     />
                                                     </figure>
                                                     <section className={styles.rightOption}>
-                                                    <section className={styles.boldText}>Trade on Charts</section>
+                                                    <section className={styles.boldText} onClick={()=>{router.replace("/ExperiencedTrading/experienced")}}>Trade on Charts</section>
                                                     <section className={styles.subHeading}>View live price action as you trade</section>
                                                     </section>
                                             </section>

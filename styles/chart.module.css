@@ -1,0 +1,32 @@
+.chart{
+    height:50vh;
+    width:100vw;
+}
+
+.addSymbol{
+    position:relative;
+    z-index:50;
+    top:10%;
+    left:97.5%;
+    width:fit-content;
+    height:auto;
+    padding: 0.3em;
+    border-radius: 0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.addSymbol:hover{
+    background-color: lightgray;
+
+}
+
+.logo{
+    margin:0;
+}
+@media screen and (max-width:768px){
+    .chart{
+        width:100%;
+    }
+}

@@ -31,63 +31,34 @@ export default function SignUp(){
             setError("");
         }
 
-        const userExists = await checkUserExists(email);
-        if(userExists){
+
+
             try{
+                const role="Investor"
                 const res = await fetch('api/register/signup' , {
                     method: "POST",
                     headers:{
                     "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({name, email, password}),
+                    body: JSON.stringify({name, email, password, role}),
                 });
 
                 if(res.ok){
-                    setSuccess("Successfully registered")
+                    setSuccess("Successfully registered");
                 }
                 else{
-                    setError("Error Occurred");
+                    setError("User Exists");
                 }
             }
             
             catch{
                 console.log("error");
             }
-        }
-
-        else{
-            setError("User Exists")
-        }
         
         document.getElementById("form").reset();
     }
 
-    async function checkUserExists(email){
-        
-        try{
-            const res = await fetch('api/userExists/checkuser', {
-                method: "POST",
-                headers:{
-                    "Content-Type": "application/json"
-                    },
-                body: JSON.stringify({email}),
-            })
-
-            if(res.ok){
-               
-                return true;
-            }
-            else{
-                
-                return false;
-            }
-        }
-        catch(error){
-
-            setError("Error occurred")
-            return false;
-        }
-    }
+    
         return (
         <div className={styles.body}>
             <div className={styles.container}>

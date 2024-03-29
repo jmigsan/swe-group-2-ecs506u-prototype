@@ -15,11 +15,33 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model users{
-  firstName String
-  email String  @id
-  password String
-  createDate DateTime @default(now())
-  updateDate DateTime @updatedAt
+
+
+model favorites{
+  coin String
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  @@id([userId, coin])
 }
 
+model User {
+  firstName  String
+  email      String   @id
+  password   String
+  createDate DateTime @default(now())
+  updateDate DateTime @updatedAt
+  role       String
+  staff      Staff?
+  investor   Investor?
+}
+
+model Staff {
+  userId      String @unique @id
+  user        User   @relation(fields: [userId], references: [email])
+}
+
+model Investor {
+  userId      String @unique @id
+  user        User   @relation(fields: [userId], references: [email])
+  Favorites favorites[]
+}
