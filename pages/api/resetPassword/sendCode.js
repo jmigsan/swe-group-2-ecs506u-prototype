@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import Users from '@/pages/classes/User';
-import password from '@/pages/config';
+import {password} from '@/pages/config';
 export default async function handler(req, res){
 
     const registry = Users.getInstance();
