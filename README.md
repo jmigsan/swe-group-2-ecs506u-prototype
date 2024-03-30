@@ -1,7 +1,5 @@
 # ECS506U - Group 2 - Prototype
 
-# Novatrade
-
 - Abdul Ghafor Rahmatzada (220214584)
 - Naz Bilgen (220434274)
 - Brooklyn Flello (220393591)
@@ -9,6 +7,22 @@
 - Faiz Aziz (220478647)
 - Juan Miguel Villalobos Sanchez (200465779)
 - Hesham Ahmed (220591267)
+
+# Novatrade
+
+Novatrade is a web application that provides a social platform for cryptocurrency trading, allowing users to buy, sell, and manage various cryptocurrencies. The platform also includes features for experienced and inexperienced investors, along with a support system and an administrator panel.
+
+## Features
+
+- User Registration and Authentication
+- Portfolio Management
+- Cryptocurrency Trading (Buy and Sell)
+- Limit Order Functionality
+- Social Feed for Posting and Interacting
+- Support Ticket System
+- Administrative Controls
+- Experienced Investor Features (Stop Loss, Take Profit, Charts)
+- Inexperienced Investor Features (Educational Resources, Simplified Interface)
 
 ## Getting Started
 
@@ -28,25 +42,3 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
