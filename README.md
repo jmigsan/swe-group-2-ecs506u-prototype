@@ -1,6 +1,18 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ECS506U - Group 2 - Prototype
+
+# Novatrade
+
+- Abdul Ghafor Rahmatzada (220214584)
+- Naz Bilgen (220434274)
+- Brooklyn Flello (220393591)
+- Mal Hoti (220288770)
+- Faiz Aziz (220478647)
+- Juan Miguel Villalobos Sanchez (200465779)
+- Hesham Ahmed (220591267)
 
 ## Getting Started
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 First, run the development server:
 
