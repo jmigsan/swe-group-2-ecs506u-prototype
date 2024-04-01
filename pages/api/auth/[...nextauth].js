@@ -32,6 +32,21 @@ export default NextAuth({
         strategy: "jwt",
     },
 
+    callbacks: {
+        async session({ session, token, user }) {
+            if (token && token.role) {
+                session.user.role = token.role; // Add the role to the session
+            }
+            return session;
+        },
+        async jwt({ token, user }) {
+            if (user) {
+                token.role = user.role; // Include the role in the JWT
+            }
+            return token;
+        }
+    },
+    
     secret: process.env.NEXTAUTH_SECRET,
 
 })
