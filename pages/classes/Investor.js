@@ -18,7 +18,31 @@ export default class Investor{
         }
     }
 
-    async addFavorite(username, coin_name){
+    async Trade(type, username, bought, sold, amountBought, amountSold, price){
+        try{
+            const data={
+                userId:username,
+                Bought:bought,
+                Sold:sold,
+                Type:type,
+                Price:price,
+                AmountSold:amountSold,
+                AmountBought:amountBought,
+            }
+
+            await this.updateBalance(amountBought, bought, username);
+            await this.updateBalance(-amountSold, sold, username);
+
+            await prisma.trade.create({data:data})
+            return true;
+        }
+        catch(error){
+            console.error(error);
+            return false;
+        }
+    }
+
+    async addFavorite(username, coin_name, coin_symbol){
         try{
 
             const favorite = await prisma.favorites.findUnique({
@@ -45,6 +69,7 @@ export default class Investor{
                 const favorite ={
                     userId: username,
                     coin: coin_name,
+                    symbol: coin_symbol,
                 }
                 await prisma.favorites.create({data:favorite});
                 return true;
@@ -57,6 +82,72 @@ export default class Investor{
         }
     }
 
+    async getBalance(user){
+        try{
+            const balance = await prisma.balance.findMany({
+                where:{
+                    userId:user,
+                },
+
+                select:{
+                    currency:true,
+                    amount:true,
+                }
+            })
+
+            return balance;
+        }
+        catch(error){
+            console.error(error);
+            return 0;
+        }
+    }
+
+    async updateBalance(amount, Currency, user){
+        try{
+            const currency = await prisma.balance.findUnique({
+                where:{
+                    userId_currency:{
+                        userId: user,
+                        currency: Currency,
+                    }
+                }
+            })
+
+            if(currency){
+                const new_currency = currency.amount+ amount;
+                await prisma.balance.update({
+                    where:{
+                        userId_currency:{
+                            userId: user,
+                            currency: Currency,
+                        }
+                    },
+
+                    data:{
+                        amount: new_currency,
+                    }
+                })
+
+                return true;
+            }
+
+            else{
+            const data ={
+                currency:Currency,
+                amount:amount,
+                userId:user,
+            }
+            await prisma.balance.create({data:data});
+            return true;
+        }
+        }
+
+        catch(error){
+            console.error(error)
+            return false;
+        }
+    }
     async getFavorites(username){
         try{
             const favoritedCoins = await prisma.favorites.findMany({
@@ -65,6 +156,7 @@ export default class Investor{
                 },
                 select:{
                     coin:true,
+                    symbol:true,
                 }
             })
 

@@ -19,6 +19,7 @@ datasource db {
 
 model favorites{
   coin String
+  symbol String
   user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
   userId String
   @@id([userId, coin])
@@ -44,4 +45,37 @@ model Investor {
   userId      String @unique @id
   user        User   @relation(fields: [userId], references: [email])
   Favorites favorites[]
+  Currencies Balance []
+  Trades Trade[]
 }
+
+
+model Cryptos{
+  coin String @id
+  id Int
+  symbol String
+  createDate DateTime @default(now())
+}
+
+model Balance{
+  currency String
+  amount Float
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  @@id([userId, currency])
+}
+
+
+model Trade{
+  id Int @id @default(autoincrement())
+  Bought String
+  Sold String
+  Type String
+  Price Float
+  AmountBought Float
+  AmountSold Float
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  createDate DateTime @default(now())
+}
+

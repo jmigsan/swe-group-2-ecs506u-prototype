@@ -20,6 +20,27 @@
     height:3em;
     gap:0.4em;
 }
+
+.remove{
+    background-color: red;
+    color:white;
+    font-family: 'Roboto', sans-serif;
+    border:none;
+    padding:0.5em;
+    border-radius: 0.5em;
+    width:6em;
+    text-align: center;
+}
+.Add{
+    width:6em;
+    text-align: center;
+    background-color: green;
+    color:white;
+    font-family: 'Roboto', sans-serif;
+    border:none;
+    padding:0.5em;
+    border-radius: 0.5em;
+}
 .underline{
     display: none;
     width:2em;

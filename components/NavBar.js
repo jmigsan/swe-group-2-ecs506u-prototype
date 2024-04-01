@@ -47,6 +47,8 @@ export default function NavBar(){
             redirect:false,
         }
         )
+
+        router.replace("/");
     }
 
     catch(error){
@@ -82,7 +84,7 @@ export default function NavBar(){
                             {session?.user?.email? (
                                 <>
                                 <div className={styles.dropDown}>
-                                    <Link className={styles.link} href="/viewCryptos">Buy Crypto</Link>
+                                    <section className={styles.link} >Buy Crypto</section>
                                         <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
                                             <section className={styles.menuOption}>
                                                 <figure className={styles.Icon}>
@@ -95,10 +97,10 @@ export default function NavBar(){
                                                     />
                                                     </figure>
                                                     <section className={styles.rightOption}>
-                                                    <section className={styles.boldText}>Buy Crypto via Deposit</section>
+                                                    <section className={styles.boldText} onClick={()=>{router.replace("/Deposit/DepositWrapper")}}>Buy Crypto via Deposit</section>
                                                     <section className={styles.subHeading}>Use balance to buy crypto</section>
                                                     </section>
-                                                    </section>
+                                            </section>
                                         </motion.div>
                                 </div>
                                 <div className={styles.dropDown}>

@@ -1,0 +1,10 @@
+-- CreateTable
+CREATE TABLE "Trade" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "Currency" TEXT NOT NULL,
+    "Price" INTEGER NOT NULL,
+    "Amount" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
+    "createDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Trade_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Investor" ("userId") ON DELETE CASCADE ON UPDATE CASCADE
+);
