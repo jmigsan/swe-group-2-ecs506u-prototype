@@ -1,79 +1,162 @@
 .supportContainer {
+    width: 100vw;
+    height: auto;
+    max-width: 80%;
+    margin: auto;
+    max-height: 100%;
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 2rem;
-}
-
-.heading {
-    margin-bottom: 2rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    padding-top: 3.5em;
+    font-family: 'Roboto', sans-serif;
 }
 
 .supportOptions {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 30%;
-    background-color: #f5f5f5;
-    padding: 1rem;
-    border-radius: 0.5rem;
+    flex-direction: row;
+    gap:1.5em;
+    align-items: center;
+    /*justify-content: flex-start;*/
+    font-family: Arial, Helvetica, sans-serif;
+    width:90%;
+
+    justify-content:space-between;
+    margin-top: 2em;
+}
+.option {
+    /*padding: 0.5em 1em;*/
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    font-size: 1.2em;
+    color: gray;
+    cursor: pointer;
+    /*transition: color 0.3s ease;*/
+
 }
 
-.option {
+
+.option:hover {
+    color: black;
+}
+
+.option h2 {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #484D56;
+    margin: 0;
+}
+
+
+
+
+
+/* Ticket Section */
+    .ticketSection {
+        width: 95%;
+
+        padding: 1em;
+        margin-top: 2em;
+    }
+
+    .ticketSection h2 {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #484D56;
+        margin-bottom: 1em;
+
+    }
+
+
+    .ticketsTable {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .ticketsTable td {
+        padding: 1.5em;
+        margin-bottom: 10em;
+    }
+
+    .ticketsTable label {
+        font-weight: 600;
+        color: #484D56;
+        display: block;
+        margin-bottom: 0.5em;
+    }
+    .issueTypeSelect,
+    .otherIssueTypeInput,
+    .issueDescriptionTextarea {
+        width: 100%;
+        padding: 0.5em;
+        border: 1pt solid lightgray;
+        border-radius: 0.3em;
+        font-family: 'Roboto', sans-serif;
+        color: #666;
+    }
+
+    .submitButton {
+        padding: 0.5em 1em;
+        border: none;
+        border-radius: 0.3em;
+        background-color: #5AA056;
+        color: #fff;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 1em;
+    }
+
+    .submitButton:hover {
+        background-color: #4a8848;
+    }
+
+.ticketsTable th {
+    font-weight: 600;
+    color: #484D56;
+}
+
+.ticketsTable td {
+    color: #666;
+}
+
+
+
+/* Form Styles */
+.form {
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    padding: 1rem;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.label {
+    font-weight: 600;
+    color: #484D56;
+}
+
+.input,
+.textarea,
+.select {
+    padding: 0.5em;
+    border: 1pt solid lightgray;
+    border-radius: 0.3em;
+    font-family: 'Roboto', sans-serif;
+    color: #666;
+}
+
+.button[type="submit"] {
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: #5AA056;
+    color: #fff;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.option:hover {
-    background-color: #e0e0e0;
-}
-
-.ticketSection {
-    width: 65%;
-    background-color: #f5f5f5;
-    padding: 2rem;
-    border-radius: 0.5rem;
-}
-
-.ticket {
-    background-color: #ffffff;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1rem;
-}
-
-.ticketInfo {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.label {
-    font-weight: bold;
-    margin-right: 0.5rem;
-}
-
-.backToHome {
-    margin-top: 2rem;
-}
-
-.backToHome a {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 0.25rem;
-    transition: background-color 0.3s ease;
-}
-
-.backToHome a:hover {
-    background-color: #0056b3;
+.button[type="submit"]:hover {
+    background-color: #4a8848;
 }
