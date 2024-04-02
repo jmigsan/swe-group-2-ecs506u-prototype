@@ -1,6 +1,8 @@
 'use client'
 import React, { useState } from 'react';
 import OpenAI from 'openai';
+import styles from '@/styles/chatbot.module.css';
+
 export default function Chatbot(){
     const [userInput, setUserInput] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
@@ -40,15 +42,15 @@ export default function Chatbot(){
     };
     //const {messages, input, handleInputChange, handleSubmit, isLoading, error} = useChat();
     return(
-        <div className="chatbot-container">
-            <div className="chat-history">
+        <div className={styles.chatbotContainer}>
+            <div className={styles.chatHistory}>
                 {chatHistory.map((message, index) => (
                     <div key={index} className={`message ${message.role}`}>
                         {message.content}
                     </div>
                 ))}
             </div>
-            <div className="user-input">
+            <div className={styles.userInput}>
                 <input
                     type="text"
                     value={userInput}
