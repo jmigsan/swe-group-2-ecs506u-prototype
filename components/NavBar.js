@@ -187,7 +187,7 @@ export default function NavBar(){
                                         </motion.div>
                                 </div>
                                 <div className={styles.dropDown}>
-                                        <Link className={styles.link} href="/support">Support</Link>
+                                        <Link className={styles.link} href="/Support/support">Support</Link>
                                         <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
                                             <section className={styles.menuOption}>
                                                 <figure className={styles.Icon}>
