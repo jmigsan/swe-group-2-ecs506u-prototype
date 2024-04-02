@@ -33,6 +33,9 @@ model User {
   role       String
   staff      Staff?
   investor   Investor?
+
+
+  tickets   Ticket[]
 }
 
 model Staff {
@@ -44,4 +47,17 @@ model Investor {
   userId      String @unique @id
   user        User   @relation(fields: [userId], references: [email])
   Favorites favorites[]
+}
+
+model Ticket {
+  id               Int      @id @default(autoincrement())
+  issueType        String
+  otherIssueType   String
+  issueDescription String
+  dateCreated      DateTime @default(now())
+  solved           Boolean  @default(false)
+
+
+  user             User     @relation(fields: [userEmail], references: [email])
+  userEmail        String      // Foreign key
 }
