@@ -24,6 +24,15 @@ model favorites{
   @@id([userId, coin])
 }
 
+model portfolioItem {
+  coin String
+  amountOwned Float
+  averagePrice Float
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  @@id([userId, coin])
+}
+
 model User {
   firstName  String
   email      String   @id
@@ -44,4 +53,5 @@ model Investor {
   userId      String @unique @id
   user        User   @relation(fields: [userId], references: [email])
   Favorites favorites[]
+  Portfolio portfolioItem[]
 }

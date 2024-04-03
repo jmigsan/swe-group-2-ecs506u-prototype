@@ -1,0 +1,32 @@
+#ListTable
+{
+    width: 100%;
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.ListRow
+{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.ListItem
+{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.ListHeader
+{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#PageHeader
+{
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+}
