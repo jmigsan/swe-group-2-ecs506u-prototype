@@ -128,7 +128,6 @@ export default function Experienced(){
     let new_arr = shownData.sort(sortFunction);
     new_arr=[...new_arr];
     setShownData(new_arr);
-    console.log(marketData.sort(dynamicSort("new")))
  }, [filterAsc, marketData]);
  
 function sortFunction(a, b){
@@ -437,7 +436,7 @@ function toggle(index, element){
             }
         }
  }
-
+ console.log(favorites);
     const url = '/ExperiencedTrading/chart?coin=' + coin_string + '&&watchlist=[' + watchlist_arr + ']' + '&&number=' + favorites.length;
     router.replace(url);
 

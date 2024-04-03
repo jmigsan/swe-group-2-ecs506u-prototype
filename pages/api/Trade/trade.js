@@ -17,7 +17,7 @@ export default async function handler(req, res){
     try{
         const investor = Investor.getInstance();
         const opened = investor.Trade(type, username, bought, sold, amountBought, amountSold, price);
-
+        
         if(opened){
             console.log("here2")
             res.status(200).json({message: "Trade opened successfully"})

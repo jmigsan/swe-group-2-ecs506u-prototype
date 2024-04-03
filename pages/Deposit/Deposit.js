@@ -3,7 +3,7 @@ import styles from '@/styles/deposit.module.css'
 import { useState, useEffect } from 'react'
 import Image from 'next/image';
 import { useRef } from 'react';
-import { motion } from 'framer-motion'; 
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 export default function Deposit(){
     const [currency, setCurrency]= useState("GBP");
@@ -22,8 +22,9 @@ export default function Deposit(){
     const dropdownRef2 = useRef(null);
     const [onCurrencyForm, setOnCurrencyForm]= useState(false);
     const [amount, setAmount]= useState(0);
-    const [amountCoin, setAmountCoin]= useState(0.050234);
+    const [amountCoin, setAmountCoin]= useState(0);
     const [duration, setDuration]= useState(15);
+    const [trade, setTrade]= useState(false);
     const {data: session} = useSession();
     const priceRef = useRef(price);
     const confirmRef = useRef(onConfirm);
@@ -44,6 +45,22 @@ export default function Deposit(){
         }
     }
 
+    const animations3={
+        initial:{
+            opacity:0,
+            y:-100,
+        },
+        animate:{
+            opacity:1,
+            y:0,
+        },
+
+        exit:{
+            opacity:0,
+            y:-100,
+        }
+    }
+
     const animations2={
         initial:{
             x:50,
@@ -58,6 +75,17 @@ export default function Deposit(){
     }, [])
 
 
+    useEffect(() => {
+        let timeout;
+    
+        if (trade) {
+            timeout = setTimeout(() => {
+                setTrade(false);
+            }, 2000); // Delay should be long enough for the exit animation
+        }
+    
+        return () => clearTimeout(timeout); // Clear the timeout if the component unmounts
+    }, [trade]);
     async function handlePayment(){
         const username= session.user.email;
         try{
@@ -109,9 +137,16 @@ export default function Deposit(){
     }, [Coin, currency]);
 
     useEffect(()=>{
+        if(price && (option=="buy" || option=="sell")){
+            handleSpendChange();
+        }
+    },[price])
+
+    useEffect(()=>{
         
         if(session){
            fetchBalance();
+           
         }
     },[session]);
 
@@ -131,6 +166,7 @@ export default function Deposit(){
         catch(error){
             console.error(error);
         }
+       
      }
     const handleCurrencyChange =(e)=>{
         const str = e.target.value;
@@ -226,6 +262,7 @@ export default function Deposit(){
         };
       }, []); 
 
+
     function handleOptionClick(index){
         const options = document.querySelectorAll("#option");
 
@@ -245,9 +282,15 @@ export default function Deposit(){
     },[]);
 
     function handleSpendChange(){
+
         const amount = Number(document.getElementById("amountSpend").value);
         setAmount(amount);
-        if(amount>getAmount(currency)){
+
+        if(option=="buy"){
+        if(amount==0){
+            document.getElementById("payCurrency").style.backgroundColor="lightgray";
+        }
+        else if(amount>getAmount(currency)){
             document.getElementById("payCurrency").style.backgroundColor="lightgray";
         }
         else{
@@ -258,13 +301,39 @@ export default function Deposit(){
             setAmountCoin(0);
         }
         else{
-        const amountCoin = (amount/price).toFixed(8);
-        document.getElementById("amountRecieved").value = amountCoin;
-        setAmountCoin(amountCoin);
+   
+            const amountCoin = (amount/price).toFixed(8);
+            document.getElementById("amountRecieved").value = amountCoin;
+            setAmountCoin(amountCoin);
+         
         }
+    }
+    else if(option=="sell"){
+        if(amount==0){
+            document.getElementById("payCurrency").style.backgroundColor="lightgray";
+        }
+        else if(amount>getAmount(Coin.symbol)){
+            document.getElementById("payCurrency").style.backgroundColor="lightgray";
+        }
+        else{
+            document.getElementById("payCurrency").style.backgroundColor="transparent";
+        }
+        if(amount==0){
+            document.getElementById("amountRecieved").value = 0;
+            setAmountCoin(0);
+        }
+        else{
+   
+            const amountCoin = (amount*price).toFixed(5);
+            document.getElementById("amountRecieved").value = amountCoin;
+            setAmountCoin(amountCoin);
+         
+        }
+    }
     }
 
 
+    
     useEffect(()=>{
         if(onConfirm){
             handleCountdown();
@@ -272,30 +341,44 @@ export default function Deposit(){
     }, [onConfirm])
 
     async function handleConfirmClick(){
-        const username=session.user.email;
-        const sold=currency;
-        const bought=Coin.symbol;
-        const amountBought=amountCoin;
-        const amountSold= amount;
-        const type="Buy";
 
-        try{
-            await fetch('../api/Trade/trade',{
-                method: 'POST',
-                headers:{'Content-Type': 'application/json'},
-                body: JSON.stringify({username, price, sold, bought, amountBought, amountSold, type})
-            })
+                const username=session.user.email;
+                let sold;
+                let bought; 
+                let type;
+                if(option=="buy"){
+                 sold=currency;
+                 bought=Coin.symbol;
+                 type="Buy";
+                }
+                else{
+                    sold=Coin.symbol;
+                    bought=currency;
+                    type="Sell";
+                }
+                
+                const amountBought=amountCoin;
+                const amountSold= amount;
+                
+                
 
-        }
+                try{
+                    await fetch('../api/Trade/trade',{
+                        method: 'POST',
+                        headers:{'Content-Type': 'application/json'},
+                        body: JSON.stringify({username, price, sold, bought, amountBought, amountSold, type})
+                    })
 
-        catch(error){
-            console.log(error);
-        }
-        setOnConfirm(false);
-        setOption("buy");
-        handleOptionClick(0);
-        document.getElementById("amountSpend").value ="";
-        document.getElementById("amountRecieved").value ="";
+                }
+
+                catch(error){
+                    console.log(error);
+                }
+                fetchBalance();
+                setOnConfirm(false);
+                reset();
+                handleSpendChange();
+        
     }
 
     async function handleCountdown(){
@@ -311,10 +394,16 @@ export default function Deposit(){
                         clearInterval(interval);
                     }
                     else{
+                      
                     setAmountCoin((amount/priceRef.current).toFixed(8))
                     
                     }
                 } else {
+                    if(!confirmRef.current){
+                        setDuration(15);
+                        time=15;
+                        clearInterval(interval);
+                    }
                     setDuration((duration)=>{
                         return duration-1;
                     });
@@ -334,14 +423,33 @@ export default function Deposit(){
 
         return 0.00
     }
-    return (
+
+    function reset(){
+        setAmount(0);
+        document.getElementById("amountRecieved").value="";
+        document.getElementById("amountSpend").value="";
+    }
+    return (<>
+        {trade && (
+            <AnimatePresence>
+                <motion.div  key="uniqueKey" variants={animations3} initial="initial" animate="animate" exit="exit" transition={{duration:0.5}} className={styles.successfulMessage}>
+                    <Image 
+                        src={`/images/checkmark.png`}
+                        alt="tick"
+                        width={30}
+                        height={30}
+                    />
+                    <section>Transaction Successful</section>
+                </motion.div>
+            </AnimatePresence>
+        )}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <section className={styles.option} onClick={()=>{handleOptionClick(0); setOption("buy")}} id="option">Buy Crypto</section>
                     <section className={styles.option} onClick={()=>{handleOptionClick(1);  setOption("deposit"); setStep(1)}} id="option">Deposit</section>
                     <section className={styles.option} onClick={()=>{handleOptionClick(2); setOption("history")}} id="option">Transaction History</section>
                 </div>
-                {option=="buy" && (
+                {(option=="buy" || option=="sell") && (
                     <>
                 <div className={styles.body}>
                     
@@ -388,7 +496,7 @@ export default function Deposit(){
                     <div className={styles.form}>
                         <form className={styles.buySellForm}>
                             <div className={styles.buttons}>
-                                <button className={styles.button} type="button" onClick={(e)=>{setOnCool(false); e.target.style.backgroundColor="white"; document.getElementById("sell").style.backgroundColor="#F5F5F5"; document.getElementById("sell").style.color="#B8BDC5";e.target.style.color="#21262F"}} id="buy">Buy</button>
+                                <button className={styles.button} type="button" onClick={(e)=>{setOnCool(false); e.target.style.backgroundColor="white"; document.getElementById("sell").style.backgroundColor="#F5F5F5"; document.getElementById("sell").style.color="#B8BDC5";e.target.style.color="#21262F"; setOption("buy"); reset(); handleSpendChange();}} id="buy">Buy</button>
                                 {onCool ?(
                                     <Image 
                                         src={`/images/coolButton2.png`}
@@ -406,60 +514,21 @@ export default function Deposit(){
                                     className={styles.cool}
                                 />
                                 )}
-                                <button className={styles.button2} type="button" id="sell" onClick={(e)=>{setOnCool(true); e.target.style.backgroundColor="white"; document.getElementById("buy").style.backgroundColor="#F5F5F5";document.getElementById("buy").style.color="#B8BDC5"; e.target.style.color="#21262F"}}>Sell</button>
+                                <button className={styles.button2} type="button" id="sell" onClick={(e)=>{setOnCool(true); e.target.style.backgroundColor="white"; document.getElementById("buy").style.backgroundColor="#F5F5F5";document.getElementById("buy").style.color="#B8BDC5"; e.target.style.color="#21262F"; setOption("sell"); reset();handleSpendChange();}}>Sell</button>
                             </div>
                     
                             <div className={styles.spend} id="spend">
-                                <section className={styles.spendHeader}>Spend</section>
-                                <div className={styles.inputs}>
+                                {option=="sell"? (
+                                    <section className={styles.spendHeader}>Sell</section>
+                                ):(
+                                    <section className={styles.spendHeader}>Spend</section>
+                                )}
+                                
+                                
+                                {option=="sell"? (
+                                    <div className={styles.inputs}>
                                     <input type="text" placeholder="5-5000" id="amountSpend"className={styles.input} onChange={()=>{handleSpendChange();}}/>
-                                    <div className={styles.currencyButton} onClick={()=>{toggleDropdown();}}>
-                                                        <Image
-                                                            src={`/images/currencies/${currency}.png`}
-                                                            alt="currency"
-                                                            width={30}
-                                                            height={30}
-                                                        />
-                                                    <section className={styles.text}>{currency}</section>
-                                                        <Image
-                                                            src={`/images/currencies/downArrow.png`}
-                                                            alt="currency"
-                                                            width={14}
-                                                            height={14}
-                                                        />
-                                    </div>
-                            </div>
-
-                            <div className={styles.test2} ref={dropdownRef}>
-                                    <div className={styles.test} id="dropdown">
-                                        <form className={styles.currencyForm}>
-                                            <input type="text" placeholder="Search" className={styles.search} onChange={handleCurrencyChange}/>
-                                            {shownCurrencies.map((currency, index) =>{
-                                                return(
-                                                    <div key={index} className={styles.currencyTicker} onClick={()=>{setCurrency(currency)}}>
-                                                        <Image
-                                                            src={`/images/currencies/${currency}.png`}
-                                                            alt="currency"
-                                                            width={30}
-                                                            height={30}
-                                                        /> 
-                                                        <section className={styles.payCurrencyText}>{currency}</section>
-                                                    </div>
-                                                )
-                                            })
-
-                                            }
-                                        </form>
-                                    </div>
-                            </div>
-        
-    
-                            </div>
-                            <div className={styles.recieve}>
-                                 <section className={styles.spendHeader}>Recieve</section>
-                                <div className={styles.inputs}>
-                                    <input type="text" placeholder="0.00" id="amountRecieved"className={styles.input} disabled/>
-                                    <div className={styles.currencyButton} onClick={()=>{toggleDropdown2();}}>
+                                    <div className={styles.currencyButton} onClick={()=>{toggleDropdown();}}  >
                                                     {allowedCoins && (
                                                         <Image
                                                             src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${Coin.id}.png`}
@@ -481,8 +550,161 @@ export default function Deposit(){
                                                                  
                                     </div>
                                 </div>
+                                ):(
+                                    <div className={styles.inputs}>
+                                        <input type="text" placeholder="5-5000" id="amountSpend"className={styles.input} onChange={()=>{handleSpendChange();}}/>
+                                        <div className={styles.currencyButton} onClick={()=>{toggleDropdown();}}>
+                                                            <Image
+                                                                src={`/images/currencies/${currency}.png`}
+                                                                alt="currency"
+                                                                width={30}
+                                                                height={30}
+                                                            />
+                                                        <section className={styles.text}>{currency}</section>
+                                                            <Image
+                                                                src={`/images/currencies/downArrow.png`}
+                                                                alt="currency"
+                                                                width={14}
+                                                                height={14}
+                                                            />
+                                        </div>
+                                    </div>
+                                )}
+                                 
+                         
+                                 {option=="sell"? (
+                                <div className={styles.test2} ref={dropdownRef}>
+                                    <div className={styles.test} id="dropdown">
+                                        <form className={styles.currencyForm}>
+                                                <input type="text" placeholder="Search" className={styles.search} onChange={handleCoinChange}/>
+                                                {shownCoins?.map((coin, index) =>{
+                                                    return(
+                                                        <div key={index} className={styles.currencyTicker} onClick={()=>{setCoin(coin)}}>
+                                                        <Image
+                                                                src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${coin.id}.png`}
+                                                                alt="currency"
+                                                                width={30}
+                                                                height={30}
+                                                            />
+                                                            <section className={styles.payCurrencyText}>{coin.coin}</section>
+                                                        </div>
+                                                    )
+                                                })
+
+                                                }
+                                            </form>
+                                    </div>
+                                </div>
+                                ):(
+                                    <div className={styles.test2} ref={dropdownRef}>
+                                        <div className={styles.test} id="dropdown">
+                                            <form className={styles.currencyForm}>
+                                                <input type="text" placeholder="Search" className={styles.search} onChange={handleCurrencyChange}/>
+                                                {shownCurrencies.map((currency, index) =>{
+                                                    return(
+                                                        <div key={index} className={styles.currencyTicker} onClick={()=>{setCurrency(currency)}}>
+                                                            <Image
+                                                                src={`/images/currencies/${currency}.png`}
+                                                                alt="currency"
+                                                                width={30}
+                                                                height={30}
+                                                            /> 
+                                                            <section className={styles.payCurrencyText}>{currency}</section>
+                                                        </div>
+                                                    )
+                                                })
+
+                                                }
+                                            </form>
+                                        </div>
+                                    </div>
+                                )}
+                                    
+                                
+
+                            
+        
+    
                             </div>
-                            <div className={styles.dropDown} ref={dropdownRef2} id="dropdownMenu">
+                            <div className={styles.recieve}>
+                                
+                                 <section className={styles.spendHeader}>Recieve</section>
+
+                                 {option=="sell"? (
+                                    <div className={styles.inputs}>
+                                    <input type="text" placeholder="0.00" id="amountRecieved"className={styles.input} disabled/>
+                                    <div className={styles.currencyButton} onClick={()=>{toggleDropdown2();}}>
+                                                            <Image
+                                                                src={`/images/currencies/${currency}.png`}
+                                                                alt="currency"
+                                                                width={30}
+                                                                height={30}
+                                                            />
+                                                        <section className={styles.text}>{currency}</section>
+                                                            <Image
+                                                                src={`/images/currencies/downArrow.png`}
+                                                                alt="currency"
+                                                                width={14}
+                                                                height={14}
+                                                            />
+                                        </div>
+                                </div>
+
+                                    
+                                ):(
+                                    <div className={styles.inputs}>
+                                    <input type="text" placeholder="0.00" id="amountRecieved"className={styles.input} disabled/>
+                                    <div className={styles.currencyButton} onClick={()=>{toggleDropdown2();}}  >
+                                                    {allowedCoins && (
+                                                        <Image
+                                                            src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${Coin.id}.png`}
+                                                            alt="currency"
+                                                            width={30}
+                                                            height={30}
+                                                        />
+                                                    )}
+                                                    {allowedCoins && (
+        
+                                                        <section className={styles.text}>{Coin.symbol}</section>
+                                                    )} 
+                                                        <Image
+                                                                src={`/images/currencies/downArrow.png`}
+                                                                alt="currency"
+                                                                width={14}
+                                                                height={14}
+                                                            />
+                                                                 
+                                    </div>
+                                </div>
+                                )}
+                                
+                            </div>
+                            
+                            {option=="sell"? (
+                                    <div className={styles.dropDown} ref={dropdownRef2}>
+                                    <div className={styles.dropDownMenu} id="dropdown2">
+                                    <form className={styles.currencyForm}>
+                                                <input type="text" placeholder="Search" className={styles.search} onChange={handleCurrencyChange}/>
+                                                {shownCurrencies.map((currency, index) =>{
+                                                    return(
+                                                        <div key={index} className={styles.currencyTicker} onClick={()=>{setCurrency(currency)}}>
+                                                            <Image
+                                                                src={`/images/currencies/${currency}.png`}
+                                                                alt="currency"
+                                                                width={30}
+                                                                height={30}
+                                                            /> 
+                                                            <section className={styles.payCurrencyText}>{currency}</section>
+                                                        </div>
+                                                    )
+                                                })
+
+                                                }
+                                            </form>
+                                    </div>
+                                </div>
+                                ):(
+                                    <div className={styles.dropDown} ref={dropdownRef2}>
                                     <div className={styles.dropDownMenu} id="dropdown2">
                                         <form className={styles.currencyForm}>
                                             <input type="text" placeholder="Search" className={styles.search} onChange={handleCoinChange}/>
@@ -503,13 +725,17 @@ export default function Deposit(){
                                             }
                                         </form>
                                     </div>
-                            </div>
+                                </div>
+                                )}
+                                
+                        
+                            
 
                           
-
-                            <div className={styles.pay}>
+                                {option=="buy"? (
+                                    <div className={styles.pay}>
                                     <section className={styles.payText}>Pay With</section>
-                                    <div className={styles.payWidget} id="payCurrency" onClick={()=>{setOnConfirm(true)}}>
+                                    <div className={styles.payWidget} id="payCurrency" onClick={()=>{if(getAmount(currency)>amount && amount!=0){setOnConfirm(true)}}}>
                                         <div className={styles.payCurrency} >
                                             <Image
                                                 src={`/images/currencies/${currency}.png`}
@@ -520,10 +746,31 @@ export default function Deposit(){
                                             <section className={styles.payCurrencyText}>{currency}</section>
                                         </div> 
                                         {balance &&(
-                                            <section className={styles.amount}>{getAmount(currency)}</section>
+                                            <section className={styles.amount}>{getAmount(currency).toFixed(0)}</section>
                                         )}
                                     </div>
                             </div>
+                                ):(
+                                    <div className={styles.pay}>
+                                    <section className={styles.payText}>Pay With</section>
+                                    <div className={styles.payWidget} id="payCurrency" onClick={()=>{if(getAmount(Coin.symbol)>amount && amount!=0){setOnConfirm(true)}}}>
+                                        <div className={styles.payCurrency} >
+                                            <Image
+                                                src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${Coin.id}.png`}
+                                                alt="currency"
+                                                width={30}
+                                                height={30}
+                                                />
+                                            <section className={styles.payCurrencyText}>{Coin.symbol}</section>
+                                        </div> 
+                                        {balance &&(
+                                            <section className={styles.amount}>{getAmount(Coin.symbol).toFixed(6)}</section>
+                                        )}
+                                    </div>
+                            </div>
+                                )}
+
+                           
                         </form>
                     </div> 
                     
@@ -532,9 +779,20 @@ export default function Deposit(){
                     {(onConfirm && Coin) &&(
                         <div className={styles.confirmWrapper}>
                             <form className={styles.confirmForm} onSubmit={(e)=>{e.preventDefault()}}>
-                                <section className={styles.confirmationTitle}>Confirmation</section>
+                                <section className={styles.confirmCancel}>
+                                    <section className={styles.confirmationTitle}>Confirmation</section>
+                                    <Image
+                                            src={`/images/cancel.png`}
+                                            alt="cancel"
+                                            width={24}
+                                            height={24}
+                                            onClick={()=>{setOnConfirm(false);}}
+                                            className={styles.payCancel}
+                                        /> 
+                                </section>
                                 <section className={styles.buying}>
-                                    <section className={styles.buyingCoin}>
+                                    {option=="buy" ? (
+                                        <section className={styles.buyingCoin}>
                                             <Image
                                                 src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${Coin.id}.png`}
                                                 alt="currency"
@@ -542,25 +800,51 @@ export default function Deposit(){
                                                 height={30}
                                                 />
                                             <section className={styles.payCurrencyText}>{Coin.symbol}</section>
-                                    </section>
+                                        </section>
 
+                                    ):(
+                                        <section className={styles.buyingCoin}>
+                                            <Image
+                                                src={`/images/currencies/${currency}.png`}
+                                                alt="currency"
+                                                width={30}
+                                                height={30}
+                                                />
+                                                <section className={styles.payCurrencyText}>{currency}</section>
+                                        </section>
+                                    )}
+                                    
                                     <section className={styles.amountGetting}> + {amountCoin}</section>
                                 </section>
                                 <section className={styles.selling}>
+                                    {option=="sell" ? (
                                     <section className={styles.buyingCoin}>
-                                                        <Image
-                                                            src={`/images/currencies/${currency}.png`}
-                                                            alt="currency"
-                                                            width={30}
-                                                            height={30}
-                                                        />
+                                        <Image
+                                            src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${Coin.id}.png`}
+                                            alt="currency"
+                                            width={30}
+                                            height={30}
+                                            />
+                                        <section className={styles.payCurrencyText}>{Coin.symbol}</section>
+                                    </section>
+
+                                    ):(
+                                        <section className={styles.buyingCoin}>
+                                            <Image
+                                                src={`/images/currencies/${currency}.png`}
+                                                alt="currency"
+                                                width={30}
+                                                height={30}
+                                                />
                                                 <section className={styles.payCurrencyText}>{currency}</section>
                                         </section>
+                                    )}
+                                   
 
                                     <section className={styles.amountPaying}> - {amount}</section>
                                 </section>
 
-                                <button className={styles.confirmButton} onClick={()=>{handleConfirmClick()}}>Confirm {duration}</button>
+                                <button className={styles.confirmButton} onClick={()=>{handleConfirmClick(); setTrade(true)}}>Confirm {duration}</button>
                             </form>
                         </div>
 
@@ -746,5 +1030,6 @@ export default function Deposit(){
                     </div>  
                 )}
             </div>
+            </>
     )
 }

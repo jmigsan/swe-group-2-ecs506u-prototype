@@ -1,0 +1,70 @@
+.test{
+    width:105%;
+    height:20vh;
+    z-index:9999;
+    position: absolute;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+.test2{
+    right:2%;
+    width:100%;
+    height:100%;
+    position:relative;
+}
+
+.overflow{
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    align-items: center;
+    overflow: scroll;
+}
+
+.currencyForm{
+    width:95%;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border:1pt solid lightgray;
+    border-radius:1em;
+
+    gap:1em;
+}
+
+
+.search{
+    width:80%;
+    margin-top: 5%;
+    background-color: transparent;
+    padding:1em;
+    border: 1pt solid lightgray;
+    border-radius: 0.5em;
+}
+
+.search:focus{
+    outline:none;
+    border:1pt solid #5AA056;
+}
+
+.currencyTicker{
+    display: flex;
+    flex-direction: row;
+    gap:1em;
+    width:88%;
+    padding: 1em;
+}
+
+.currencyTicker:hover{
+    background-color: #F5F5F5;
+}
+.payCurrencyText{
+    font-family: 'Roboto', sans-serif;
+    color:#21262F;
+    margin-top: 0.6em;
+
+}

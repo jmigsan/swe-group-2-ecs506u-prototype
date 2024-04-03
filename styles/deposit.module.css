@@ -20,6 +20,11 @@
     gap:1em;
 }
 
+.errorMessage{
+    display: flex;
+    flex-direction: column;
+    width:100%;
+}
 .payCurrency{
     width:70%;
     height:90%;
@@ -117,6 +122,7 @@
     width:100%;
     height:100%;
     border: 1pt solid lightgray;
+    background-color: lightgray;
     border-radius: 1em;
     display: flex;
     flex-direction: row;
@@ -124,7 +130,13 @@
     justify-content: space-around;
 }
 
+.confirmCancel{
+    width:90%;
+    display: flex;
+    flex-direction: row;
 
+    justify-content: space-around;
+}
 .input{
     width:70%;
     height:100%;
@@ -134,6 +146,12 @@
     text-align: left;
     font-family: 'Arial ',sans-serif;
     font-weight: 700;
+}
+
+.payCancel{
+    align-self: flex-start;
+    margin-top: 1em;
+    margin-left: 7em;
 }
 
 .amountInput{
@@ -289,7 +307,20 @@
 }
 
 
-
+.successfulMessage{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:1em;
+    position:fixed;
+    z-index: 9999;
+    top:8%;
+    left:83%;
+    box-shadow:0 2px 4px -2px rgba(0,0,0,.2);
+    color:#02BC7D;
+    font-size: 1.2em;
+    padding:0.5em;
+}
 
 .title{
     font-family: 'Roboto', sans-serif;
@@ -308,7 +339,7 @@
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     color:#21262F;
-    font-size:3em;
+    font-size:4em;
     width:80%;
 }
 

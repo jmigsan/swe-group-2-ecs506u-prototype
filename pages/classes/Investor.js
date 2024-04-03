@@ -33,7 +33,7 @@ export default class Investor{
             await this.updateBalance(amountBought, bought, username);
             await this.updateBalance(-amountSold, sold, username);
 
-            await prisma.trade.create({data:data})
+            const trade =await prisma.trade.create({data:data})
             return true;
         }
         catch(error){
