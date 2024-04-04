@@ -56,6 +56,8 @@ export default async function handler(req, res) {
             console.log("THIS IS ADMIN FETCH TICKETS")
             const tickets = await prisma.Ticket.findMany({
                 select: {
+                    id: true,
+                    userEmail: true,
                     issueType: true,
                     otherIssueType: true,
                     issueDescription: true,
@@ -63,6 +65,7 @@ export default async function handler(req, res) {
                     solved: true,
                 },
             });
+            console.log("ticket info ", tickets.solved)
 
             // Return the tickets information for the admin
             res.status(200).json({
