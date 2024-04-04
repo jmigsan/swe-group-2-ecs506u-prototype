@@ -3,8 +3,7 @@
 import {useEffect, useState, useLayoutEffect} from 'react';
 import { motion } from 'framer-motion';
 import styles from '@/styles/support.module.css';
-import { useSession } from "next-auth/react";
-import Link from 'next/link';
+import Modal from './adminComment';
 
 
 export default function Support() {
@@ -24,6 +23,18 @@ export default function Support() {
     const [adminComments, setAdminComments] = useState('');
     const [successFlash, setSuccessFlash] = useState(false);
     const [errorFlash, setErrorFlash] = useState(false);
+
+
+    const [showModal, setShowModal] = useState(false);
+
+
+    function handleOpenModal(){
+        setShowModal(true);
+    }
+    function handleCloseModal(){
+        setShowModal(false);
+    }
+
 
     const [formData, setFormData] = useState({
         issueType: '',
@@ -398,25 +409,34 @@ export default function Support() {
                                     </td>
                                     {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined && (
                                         <>
-                                        <td className={styles.commentContainer}>
-                                                <textarea
-                                                    className={styles.input}
-                                                    type="text"
-                                                    placeholder="Enter comments"
-                                                    onChange={(e) => setAdminComments(e.target.value)}
-                                                    value={adminComments}
+                                            <button onClick={handleOpenModal}>submit comments</button>
+                                            {showModal && (
+                                                <Modal
+                                                    adminComments={adminComments}
+                                                    setAdminComments={setAdminComments}
+                                                    handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
+                                                    onClose={handleCloseModal}
                                                 />
-                                        </td>
+                                            )}
+                                        {/*<td className={styles.commentContainer}>*/}
+                                        {/*        <textarea*/}
+                                        {/*            className={styles.input}*/}
+                                        {/*            type="text"*/}
+                                        {/*            placeholder="Enter comments"*/}
+                                        {/*            onChange={(e) => setAdminComments(e.target.value)}*/}
+                                        {/*            value={adminComments}*/}
+                                        {/*        />*/}
+                                        {/*</td>*/}
 
-                                        <td className={styles.commentContainer}>
+                                        {/*<td className={styles.commentContainer}>*/}
 
-                                            <button
-                                                className={styles.button}
-                                                onClick={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
-                                            >
-                                                Confirm
-                                            </button>
-                                        </td>
+                                        {/*    <button*/}
+                                        {/*        className={styles.button}*/}
+                                        {/*        onClick={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}*/}
+                                        {/*    >*/}
+                                        {/*        Confirm*/}
+                                        {/*    </button>*/}
+                                        {/*</td>*/}
                                         </>
                                 )}
                             </>
