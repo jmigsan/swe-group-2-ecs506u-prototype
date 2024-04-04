@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useLayoutEffect} from 'react';
 import { motion } from 'framer-motion';
 import styles from '@/styles/support.module.css';
 import { useSession } from "next-auth/react";
@@ -17,9 +17,13 @@ export default function Support() {
     const [success, setSuccess] = useState('');
 
 
+
     const [userEmail , setUserEmail] = useState('')
     const [userRole , setUserRole] = useState('')
-
+    const [adminTicketResolved , setAdminTicketResolved] = useState({})
+    const [adminComments, setAdminComments] = useState('');
+    const [successFlash, setSuccessFlash] = useState(false);
+    const [errorFlash, setErrorFlash] = useState(false);
 
     const [formData, setFormData] = useState({
         issueType: '',
@@ -40,7 +44,6 @@ export default function Support() {
         animate: {y:0},
         exit: {y:-50},
     };
-
     const animations2 = {
         hidden: {x:100},
         visible: {x:0},
@@ -59,6 +62,48 @@ export default function Support() {
         // Fetch user session information when the component mounts
         fetchUserSession();
     }, []);
+
+    useLayoutEffect(() => {
+        if (errorFlash) {
+            console.log("errrororororo flash sd sdf sdfsd")
+            const view = document.querySelector(`.${styles.entireView}`);
+
+
+            view.classList.remove(styles.errorFlash);
+
+            // Trigger reflow
+            void view.offsetWidth;
+            view.classList.add(styles.errorFlash);
+
+            const timer = setTimeout(() => {
+                // view.style.backgroundColor = 'white';
+                view.classList.remove(styles.errorFlash);
+                setErrorFlash(false);
+            }, 700);
+
+            return () => clearTimeout(timer);
+        }
+
+        if (successFlash) {
+            const view = document.querySelector(`.${styles.entireView}`);
+            // view.classList.add('flash');
+            // view.style.backgroundColor = 'rgb(141, 205, 141)';
+
+            view.classList.remove(styles.flash);
+
+            // Trigger reflow
+            void view.offsetWidth;
+            view.classList.add(styles.flash);
+
+            const timer = setTimeout(() => {
+                // view.style.backgroundColor = 'white';
+                view.classList.remove(styles.flash);
+                setSuccessFlash(false);
+            }, 700);
+
+            return () => clearTimeout(timer);
+        }
+    }, [successFlash, errorFlash]);
 
     const fetchUserSession = async () => {
         try {
@@ -79,8 +124,6 @@ export default function Support() {
             setError('Internal Server Error');
         }
     };
-
-
 
     const handleViewTickets = async (index) => {
 
@@ -191,6 +234,13 @@ export default function Support() {
         setTalkingToSupport(false);
         setTalkingToAI(false);
     };
+    const handleTempSolvedChange = (ticketId, newValue) => {
+        setAdminTicketResolved((prevState) => ({
+            ...prevState,
+            [ticketId]: newValue === 'true',
+        }));
+    };
+
 
     const handleAgent = async =>{
         const viewTicket = document.getElementById('viewTicket');
@@ -232,10 +282,60 @@ export default function Support() {
         const day = String(date.getDate()).padStart(2, '0');
         return `${day}/${month}/${year}`;
     }
+    function formatSolved(solved) {
+        return solved ? "Yes" : "No";
+    }
+    function flashScreen(){
+        setShowConfirmation(true); // Set showConfirmation to true
+
+        setTimeout(() => {
+            setShowConfirmation(false);
+        }, 2000); // Reset flash after 2 seconds
+    }
+
+    const  handleConfirmChange = async (ticketId, newValue) => {
+        console.log("ticketId is ", ticketId)
+        console.log("newValue is ", newValue)
+        if(adminComments !== ""){
+            try {
+                // Submit the updated solved value to the updateTicket API endpoint
+                const response = await fetch(`/api/tickets/updateTicket?id=${ticketId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        newValue: newValue,
+                        adminComments: adminComments,
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setSuccessFlash(true);
+                    console.log('Ticket updated successfully:', data.message);
+
+                } else {
+
+                    console.error('Error with changing value:', response.statusText);
+                }
+            } catch (error) {
+                console.error('internal Error:', error);
+            }
+            setAdminComments("")
+        }else{
+            console.log("no comments so it should be flashiung")
+            setErrorFlash(true)
+        }
+
+
+
+    };
+
 
     return (
 
-
+        <div className= {styles.entireView} >
         <motion.div className={styles.supportContainer}
                     variants={animations} initial="initial" animate="animate" exit="exit" transition={{duration:0.5, ease: "easeOut"}}>
 
@@ -267,24 +367,70 @@ export default function Support() {
                     <table className={styles.ticketsTable}>
                         <thead>
                         <tr>
+                            {userRole === 'Admin' && <th>User</th>}
                             <th>Issue Type</th>
                             <th>Issue Description</th>
                             <th>Date Created</th>
+                            <th>Resolved</th>
+                            {adminTicketResolved && userRole === 'Admin' && <th></th>}
+                            {adminTicketResolved && userRole === 'Admin' && <th></th>}
                         </tr>
                         </thead>
                         <tbody>
                         {tickets.map((ticket, index) => (
                             <tr key={index}>
+                                {userRole === 'Admin' && <th>{ticket.userEmail}</th>}
                                 <td>{ticket.issueType}</td>
                                 <td>{ticket.issueDescription}</td>
                                 <td>{formatDate(ticket.dateCreated)}</td>
-                            </tr>
-                        ))}
 
-                        </tbody>
-                    </table>
+                                {userRole === 'Admin' ? (
+                                    <>
+                                    <td>
+                                        <select
+                                            className={styles.select}
+                                            value={adminTicketResolved[ticket.id] !== undefined ? adminTicketResolved[ticket.id].toString() : ticket.solved.toString()}
+                                            onChange={(e) => handleTempSolvedChange(ticket.id, e.target.value)}
+                                        >
+                                            <option value="true">Yes</option>
+                                            <option value="false">No</option>
+                                        </select>
+                                    </td>
+                                    {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined && (
+                                        <>
+                                        <td className={styles.commentContainer}>
+                                                <textarea
+                                                    className={styles.input}
+                                                    type="text"
+                                                    placeholder="Enter comments"
+                                                    onChange={(e) => setAdminComments(e.target.value)}
+                                                    value={adminComments}
+                                                />
+                                        </td>
+
+                                        <td className={styles.commentContainer}>
+
+                                            <button
+                                                className={styles.button}
+                                                onClick={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
+                                            >
+                                                Confirm
+                                            </button>
+                                        </td>
+                                        </>
+                                )}
+                            </>
+                        ) : (
+                            <td className={styles.solved}>{formatSolved(ticket.solved)}</td>
+                        )}
+                    </tr>
+
+                    ))}
+
+                </tbody>
+                </table>
                 </motion.div>
-            )}
+                )}
 
 
             {/*CREATE A TICKET*/}
@@ -357,7 +503,8 @@ export default function Support() {
                     </motion.div>
                 )
             }
-</motion.div>
+        </motion.div>
+        </div>
 )
     ;
 }
