@@ -18,13 +18,14 @@ export default function Support() {
 
     const [userEmail , setUserEmail] = useState('')
     const [userRole , setUserRole] = useState('')
-    const [adminTicketResolved , setAdminTicketResolved] = useState({})
-    const [adminComments, setAdminComments] = useState('');
+   
     const [successFlash, setSuccessFlash] = useState(false);
     const [errorFlash, setErrorFlash] = useState(false);
+
     const [friendSearch,setFriendSearch] = useState('');
     const [friends,setFriends] = useState([]);
     const [friendRequests,setFriendRequests] = useState([]);
+    const [addPostValue, setAddPostValue] = useState('');
 
 
     const [showModal, setShowModal] = useState(false);
@@ -316,6 +317,35 @@ export default function Support() {
       }  
     }
 
+    const handleAddPost = async ()=>{
+      try {
+        const res = await fetch('../api/feed/addPost', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userEmail:userEmail,
+              post: addPostValue
+            }),
+            
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          /// finish this
+          //console.log(data);
+        } 
+        else {
+          setError('Error occurred while retrieving tickets');
+        }
+      } 
+      catch (error) {
+        console.error('Error:', error);
+        setError('Internal Server Error');
+      }  
+    }
+
     return (
 
         <div className={styles.app}>
@@ -356,6 +386,30 @@ export default function Support() {
 
         
       </div>
+      <div className={styles.postMessage}>
+            <form onSubmit={handleAddPost} className={styles.postForm}>
+                {/* <div className={styles.transactionContainer}>
+                    <label className={styles.transactionLabel}>Transaction History</label>
+                    <select className={styles.transactionSelect} name="transactions" id="transactions">
+                        <option value="None">None</option>
+                        <option value="Sold Etherium at $21250">Sold Etherium at $21250</option>
+                        <option value="Bought Bitcoin at $55000">Bought Bitcoin at $55000</option>
+                    </select>
+                </div> */}
+                <div className={styles.textContainer}>
+                    <label className={styles.textLabel}>Your Text</label>
+                    <input type="text" 
+                    placeholder="Text" 
+                    onChange={(e) => setAddPostValue(e.target.value)}
+                    className={styles.textBox} />
+                </div>
+                <input 
+                type="submit" 
+                value="Post"
+                onChange={(e) => setAddPostValue(e.target.value)}
+                className={styles.postButton}/>
+            </form>
+        </div>
     </div>
     )
     ;

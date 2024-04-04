@@ -1,0 +1,8 @@
+-- CreateTable
+CREATE TABLE "Post" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "post" TEXT NOT NULL,
+    "dateCreated" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userEmail" TEXT NOT NULL,
+    CONSTRAINT "Post_userEmail_fkey" FOREIGN KEY ("userEmail") REFERENCES "User" ("email") ON DELETE RESTRICT ON UPDATE CASCADE
+);
