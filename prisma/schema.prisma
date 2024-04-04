@@ -56,6 +56,7 @@ model Ticket {
   issueDescription String
   dateCreated      DateTime @default(now())
   solved           Boolean  @default(false)
+  comments         String   @default("")
 
 
   user             User     @relation(fields: [userEmail], references: [email])
