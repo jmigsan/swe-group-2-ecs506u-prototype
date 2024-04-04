@@ -49,8 +49,8 @@
   border-radius: 20px;
   padding: 0.8rem;
   margin-top: 0.5rem;
-  margin-bottom: 2rem;
-  width: 90%;
+  margin-bottom: 0.6rem;
+  width: 70%;
 }
 
 .friends {
@@ -239,4 +239,11 @@
   padding: 1rem;
   border: 2px solid rgb(255, 255, 255);
   border-radius: 30px;
+}
+
+.addfriendbutton{
+  background-color: #c4c4c4;
+  padding: 0.5rem;
+  border: 2px solid #0000000D;
+  border-radius: 10px;
 }

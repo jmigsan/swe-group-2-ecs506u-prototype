@@ -1,25 +1,31 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = "file:../sqlite.db"
 }
 
-model users{
-  firstName String
-  email String  @id
-  password String
-  createDate DateTime @default(now())
-  updateDate DateTime @updatedAt
+model User {
+  firstName  String
+  email      String    @id
+  password   String
+  role       String
+  staff      Staff?
+  investor   Investor? @relation(fields: [investorId], references: [id])
+  investorId String?
 }
 
+model Staff {
+  userId String @id @unique
+  user   User   @relation(fields: [userId], references: [email])
+}
+
+model Investor {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  friends   Investor[] @relation("FriendsRelation")
+  friendsOf Investor[] @relation("FriendsRelation")
+  User      User[]
+}

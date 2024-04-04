@@ -1,37 +1,92 @@
 import styles from '/styles/feed.module.css'
+import {useEffect} from 'react';
+
 const profilePic = "https://t3.ftcdn.net/jpg/05/00/54/28/360_F_500542898_LpYSy4RGAi95aDim3TLtSgCNUxNlOlcM.jpg";
+import React, { useState } from 'react';
 
 const feed = () =>{
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [friends, setFriends] = useState([]);
+  const [userId, setUserId] = useState(null); 
+
+  // Function to add a friend
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!userId) {
+      setError('User ID is not set.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/feed/addFriend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId, 
+          friendEmail: email,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add friend');
+      }
+
+      // Clear the input and refetch friends list to update UI
+      setEmail('');
+      fetchFriends();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Function to fetch friends
+  const fetchFriends = async () => {
+    if (!userId) return; 
+
+    try {
+      const response = await fetch(`/api/feed/friends?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch friends');
+      }
+      const data = await response.json();
+      setFriends(data);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchFriends();
+  }, [userId]);
+
     return(
       <div className={styles.app}>
         <div className={styles.sidebar}>
-          <input type="text" placeholder="Search Friends" className={styles.search} />
-          <div className={styles.friendsContainer}>
-            <div className={styles.friends}>Friends</div>
-            <ul className={styles.friendList}>
-                <li className={styles.friendListItem}><img src={profilePic} className={styles.friendPicture} alt="Profile Picture" /><div className={styles.friendName}>Jordan King<div className={styles.friendUsername}>@JordanKing</div></div></li>
-                <li className={styles.friendListItem}><img src={profilePic} className={styles.friendPicture} alt="Profile Picture" /><div className={styles.friendName}>Amy Ford<div className={styles.friendUsername}>@AmyFord</div></div></li>
-                <li className={styles.friendListItem}><img src={profilePic} className={styles.friendPicture} alt="Profile Picture" /><div className={styles.friendName}>James Summer<div className={styles.friendUsername}>@JamesSummer</div></div></li>
-                <li className={styles.friendListItem}><img src={profilePic} className={styles.friendPicture} alt="Profile Picture" /><div className={styles.friendName}>Cass Smith<div className={styles.friendUsername}>@CassSmith</div></div></li>
-            </ul>
-          </div>
-          <div className={styles.friendsRequests}>
-            <div className={styles.friends}>Friends Requests</div>
-            <ul className={styles.friendList}>
-                <li className={styles.friendListItem}>
-                    <img src={profilePic} className={styles.friendPicture} alt="Profile Picture" />
-                    <div className={styles.friendName}>Sean Evan<div className={styles.friendUsername}>@SeanEvan</div></div>
-                    <button className={styles.acpt}>&#9989;</button>
-                    <button className={styles.rjct}>&#10060;</button>
-                </li>
-                <li className={styles.friendListItem}>
-                    <img src={profilePic} className={styles.friendPicture} alt="Profile Picture" />
-                    <div className={styles.friendName}>Melissa Nika<div className={styles.friendUsername}>@MelNika</div></div>
-                    <button className={styles.acpt}>&#9989;</button>
-                    <button className={styles.rjct}>&#10060;</button>
-                </li>
-            </ul>
-          </div>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="email">Friend's Email:</label>
+          <input placeholder="Search Friends" className={styles.search}
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <button className={styles.addfriendbutton} type="submit">Add Friend</button>
+        </form>
+        <div className={styles.friendsList}>
+          <h2>My Friends</h2>
+          {error && <p>{error}</p>}
+          <ul>
+            {friends.map((friend) => (
+              <li key={friend.id}>
+                {friend.name} - {friend.email}
+              </li>
+            ))}
+          </ul>
+        </div>
         </div>
         <div className={styles.feed}>
           <div className={styles.title}>Activity</div>
