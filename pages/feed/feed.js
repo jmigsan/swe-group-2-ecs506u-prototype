@@ -26,7 +26,7 @@ export default function Support() {
     const [friends,setFriends] = useState([]);
     const [friendRequests,setFriendRequests] = useState([]);
     const [addPostValue, setAddPostValue] = useState('');
-
+    const [posts, setPosts] = useState([]);
 
     const [showModal, setShowModal] = useState(false);
 
@@ -80,8 +80,13 @@ export default function Support() {
       if (userEmail){
         handleViewFriends();
         handleViewFriendRequest();
+        handleViewPost();
       }
     },[userEmail])
+
+    useEffect(()=>{
+      handleViewPost();
+    },[friends])
 
     useLayoutEffect(() => {
         if (errorFlash) {
@@ -133,7 +138,7 @@ export default function Support() {
             if (res) {
                 const data = await res.json();
                 const email = data.user.email;
-
+                
                 console.log("role is ", data.user.role)
                 setUserEmail(data.user.email);
                 setUserRole(data.user.role)
@@ -148,7 +153,7 @@ export default function Support() {
     const handleFriendSearch = async (e) =>{
       e.preventDefault();
         try {
-            console.log(userEmail);
+            
             const res = await fetch('../api/feed/searchFriend', {
                 method: 'POST',
                 headers: {
@@ -164,7 +169,7 @@ export default function Support() {
             if (res.ok) {
                 const data = await res.json();
                 /// finish this
-                console.log(data);
+                
             } else {
                 setError('Error occurred while retrieving tickets');
             }
@@ -191,7 +196,7 @@ export default function Support() {
             if (res.ok) {
                 const data = await res.json();
                 /// finish this
-                console.log(data);
+                
             } else {
                 setError('Error occurred while retrieving tickets');
             }
@@ -217,7 +222,7 @@ export default function Support() {
         if (res.ok) {
             const data = await res.json();
             /// finish this
-            console.log(data, "here11");
+            
             setFriends(data.users.friends)
         } else {
             setError('Error occurred while retrieving tickets');
@@ -244,7 +249,7 @@ export default function Support() {
         if (res.ok) {
           const data = await res.json();
           /// finish this
-          console.log(data, "here1");
+          
           setFriendRequests(data.users.friends)
         } 
         else {
@@ -258,7 +263,7 @@ export default function Support() {
     }
 
     const handleAcceptFriend = async (requestEmail,accept) =>{
-      console.log(accept)
+      
       try {
         const res = await fetch('../api/feed/acceptFriend', {
             method: 'POST',
@@ -277,7 +282,7 @@ export default function Support() {
         if (res.ok) {
           const data = await res.json();
           /// finish this
-          //console.log(data);
+          
         } 
         else {
           setError('Error occurred while retrieving tickets');
@@ -305,7 +310,7 @@ export default function Support() {
         if (res.ok) {
           const data = await res.json();
           /// finish this
-          //console.log(data);
+          
         } 
         else {
           setError('Error occurred while retrieving tickets');
@@ -334,7 +339,40 @@ export default function Support() {
         if (res.ok) {
           const data = await res.json();
           /// finish this
-          //console.log(data);
+          
+        } 
+        else {
+          setError('Error occurred while retrieving tickets');
+        }
+      } 
+      catch (error) {
+        console.error('Error:', error);
+        setError('Internal Server Error');
+      }  
+    }
+
+    const handleViewPost = async ()=>{
+      try {
+        
+        const res = await fetch('../api/feed/viewPost', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              friends:friends,
+              userEmail:userEmail,
+              
+            }),
+            
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          /// finish this
+          
+          setPosts(data.posts);
+          
         } 
         else {
           setError('Error occurred while retrieving tickets');
@@ -365,6 +403,7 @@ export default function Support() {
 
         <div>
           <h1>Friend list</h1>
+          
           {friends.map((friend, index)=>(
             <div key={index}>
             <h1>{friend[1]}</h1>
@@ -409,6 +448,21 @@ export default function Support() {
                 onChange={(e) => setAddPostValue(e.target.value)}
                 className={styles.postButton}/>
             </form>
+        </div>
+        <div>
+        
+        {posts.length > 0 &&(
+          <>
+          <h1>posts</h1>
+          {posts.map((post, index)=>(
+            <div key={index}>
+              <h1 >{post.post}</h1>
+              <h2>{post.userEmail}</h2>
+            </div>
+          ))}
+          </>
+        )}
+          
         </div>
     </div>
     )

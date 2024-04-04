@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
 
         // Create a new ticket associated with the user
-        const newTicket = await prisma.post.create({
+        const posts = await prisma.post.create({
             data: {
                 post:post,
                 user: {
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
         });
 
         // Return the newly created ticket
-        res.status(201).json({ message: 'Post created successfully', ticket: newTicket });
+        res.status(201).json({ message: 'Post created successfully'});
     } catch (error) {
         // Handle any errors that occur during the process
         console.error('Error:', error);
