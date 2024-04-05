@@ -6,7 +6,7 @@ import {Prisma } from '@prisma/client'
 export default async function handler(req,res){
     try{
         const {recipientEmail,userEmail} = req.body;
-        console.log(recipientEmail,userEmail)
+        
 
         const recipient = await prisma.user.findUnique({
             where: {
@@ -14,7 +14,7 @@ export default async function handler(req,res){
                 role : "Investor"
             }
         })
-        console.log(recipient);
+        
         if (!recipient) {
             // If the user doesn't exist, return an error response
             return res.status(404).json({ error: 'User not found' });
@@ -29,14 +29,14 @@ export default async function handler(req,res){
         })
         
        
-        console.log("here");
+        
         res.status(201).json({
             user:{ 
                 firstName: recipient.firstName,
                 // add more details if you wish
             }
         })
-        console.log("you are now freinds");
+        
     }
     catch (error){
 
@@ -49,7 +49,7 @@ export default async function handler(req,res){
             
         }
         // Handle any errors that occur during the process
-    console.log(error);
+        console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
     }
     }

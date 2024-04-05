@@ -21,7 +21,7 @@ export default async function handler(req,res){
             return res.status(404).json({ error: 'User not found' });
         }
 
-        console.log(users, 'here at searchfriend')
+        
         res.status(200).json({
             users:users
                 

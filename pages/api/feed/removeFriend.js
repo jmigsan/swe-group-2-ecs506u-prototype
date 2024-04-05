@@ -17,7 +17,7 @@ export default async function handler(req,res){
                 })
         
     
-        console.log("here at removefriend");
+        
         
         if (!users) {
             // If the user doesn't exist, return an error response

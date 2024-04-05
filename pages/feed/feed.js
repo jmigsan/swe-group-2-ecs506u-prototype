@@ -7,20 +7,16 @@ import styles from '@/styles/feed.module.css';
 
 
 export default function Support() {
-    const [viewingTickets, setViewingTickets] = useState(false);
-    const [creatingTicket, setCreatingTicket] = useState(false);
     
-    const [tickets, setTickets] = useState([]);
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+   
 
 
 
     const [userEmail , setUserEmail] = useState('')
     const [userRole , setUserRole] = useState('')
    
-    const [successFlash, setSuccessFlash] = useState(false);
-    const [errorFlash, setErrorFlash] = useState(false);
+    
 
     const [friendSearch,setFriendSearch] = useState('');
     const [friendSearchResult,setFriendSearchResult] = useState([]);
@@ -29,30 +25,12 @@ export default function Support() {
     const [addPostValue, setAddPostValue] = useState('');
     const [posts, setPosts] = useState([]);
 
-    const [showModal, setShowModal] = useState(false);
+    
 
 
-    function handleOpenModal(){
-        setShowModal(true);
-    }
-    function handleCloseModal(){
-        setShowModal(false);
-    }
+    
 
-
-    const [formData, setFormData] = useState({
-        issueType: '',
-        otherIssueType: '',
-        issueDescription: '',
-    });
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: value,
-        }));
-    };
+    
 
     const animations = {
         initial: {y:50},
@@ -98,47 +76,7 @@ export default function Support() {
 
     },[friendSearch])
 
-    useLayoutEffect(() => {
-        if (errorFlash) {
-            console.log("errrororororo flash sd sdf sdfsd")
-            const view = document.querySelector(`.${styles.entireView}`);
-
-
-            view.classList.remove(styles.errorFlash);
-
-            // Trigger reflow
-            void view.offsetWidth;
-            view.classList.add(styles.errorFlash);
-
-            const timer = setTimeout(() => {
-                // view.style.backgroundColor = 'white';
-                view.classList.remove(styles.errorFlash);
-                setErrorFlash(false);
-            }, 700);
-
-            return () => clearTimeout(timer);
-        }
-
-        if (successFlash) {
-            const view = document.querySelector(`.${styles.entireView}`);
-            // view.classList.add('flash');
-            // view.style.backgroundColor = 'rgb(141, 205, 141)';
-
-            view.classList.remove(styles.flash);
-
-            // Trigger reflow
-            void view.offsetWidth;
-            view.classList.add(styles.flash);
-
-            const timer = setTimeout(() => {
-                // view.style.backgroundColor = 'white';
-                view.classList.remove(styles.flash);
-                setSuccessFlash(false);
-            }, 700);
-
-            return () => clearTimeout(timer);
-        }
-    }, [successFlash, errorFlash]);
+    
 
 
 

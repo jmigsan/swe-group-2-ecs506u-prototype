@@ -7,7 +7,7 @@ export default async function handler(req,res){
     
     try{
         const {friendID,userEmail,accept} = req.body;
-        console.log(req.body,"here1")
+        
         
         if (accept){
             const users = await prisma.friends.update({
@@ -19,7 +19,7 @@ export default async function handler(req,res){
                         accepted: true
                     }
                 })
-                console.log(users,"here at acceptfriend request");
+                
 
                 res.status(200).json({
                     message: "User accepted"
@@ -38,23 +38,6 @@ export default async function handler(req,res){
                 })
         }
 
-
-
-        // console.log(users,"here at acceptfriend request");
-        // const friends = users.map(user => {
-        //     if (user.userID === userEmail){
-        //         return user.recipientID
-        //     }
-        //     else if (user.recipientID === userEmail){
-        //         return user.userID;
-
-        //     }else{
-        //         return null;
-        //     }
-        // }).filter(email => email !== null);
-
-        
-        
         res.status(200).json({
             message: ""
         })
