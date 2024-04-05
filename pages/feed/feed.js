@@ -195,6 +195,7 @@ export default function Support() {
 
             if (res.ok) {
                 const data = await res.json();
+                window.location.reload();
                 /// finish this
                 
             } else {
@@ -281,6 +282,7 @@ export default function Support() {
 
         if (res.ok) {
           const data = await res.json();
+          window.location.reload();
           /// finish this
           
         } 
@@ -309,6 +311,7 @@ export default function Support() {
 
         if (res.ok) {
           const data = await res.json();
+          window.location.reload();
           /// finish this
           
         } 
@@ -338,6 +341,7 @@ export default function Support() {
 
         if (res.ok) {
           const data = await res.json();
+          window.location.reload();
           /// finish this
           
         } 
