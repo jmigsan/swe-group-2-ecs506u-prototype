@@ -1,5 +1,4 @@
 import { prisma } from '@/pages/prismaClient';
-import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {
     console.log("VIEW TICKET API ENDPOINT")
