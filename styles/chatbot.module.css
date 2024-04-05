@@ -1,0 +1,84 @@
+.chatbotContainer {
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Adding some padding to the chat history */
+.chatHistory {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow-y: auto;
+    height: 70vh /* Adjust as needed */
+}
+
+
+
+/* Styling for the user input area */
+.userInput {
+    margin-top: 20px;
+    display: flex;
+}
+
+/* Assuming you have an input field for user input */
+.userInput input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+/* Assuming you have a button for submitting */
+.userInput button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+/* Hover effect for the button */
+.userInput button:hover {
+    background-color: #0056b3;
+}
+
+.assistantMessage{
+    text-align: left;
+    border-radius: 5px;
+    border: 1px solid rgb(232, 232, 232);
+    
+    padding: 0.5rem ;
+
+}
+
+.userMessage{
+    text-align: right;
+    border-radius: 5px;
+    border: 1px solid rgb(248, 248, 248);
+    
+    padding: 0.5rem ;
+}
+
+.assistantMessage h1, .userMessage h1{
+    
+    font-size: 1.2rem;
+    margin:3px 0px 3px 0px;
+    
+
+}
+.assistantMessage h2, .userMessage h2{
+    font-weight: 100;
+    font-size: 1rem;
+    margin:3px 0px 3px 0px;
+}

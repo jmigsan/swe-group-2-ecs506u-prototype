@@ -1,0 +1,71 @@
+.supportContainer {
+    background-color: white;
+    width: 20em;
+    height: auto;
+    padding: 3em;
+    margin: auto;
+    overflow: hidden;
+}
+
+.heading {
+
+
+    align-items: center;
+    font-size: 1.5em;
+    background: linear-gradient(90deg, #C7CE26 0%, #3CA34A 48.5%, #087E5F 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+
+}
+
+.heading h1 {
+    margin: 0;
+}
+
+.supportOptions {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.8em;
+    margin-top: 1.5em;
+}
+
+.option {
+    background-color: #f0f0f0;
+    padding: 1em;
+    border-radius: 0.5em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.option:hover {
+    background-color: #e0e0e0;
+}
+
+.option h2 {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.ticketSection {
+    margin-top: 2em;
+}
+
+.backToHome {
+    margin-top: 2em;
+}
+
+.backToHome a {
+    font-size: 1em;
+    text-decoration: none;
+    color: #1b64d5;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.backToHome a:hover {
+    text-decoration: underline;
+}
