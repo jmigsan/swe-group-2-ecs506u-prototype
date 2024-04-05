@@ -39,7 +39,6 @@ const SocketHandler = (req, res) => {
                     if(orders[i].Price>=price){
                         console.log("here");
                         for(let j=0; j<balance.length; j++){
-                            console.log(balance[i].currency, orders[i].Sold)
                             if(balance[j].currency==orders[i].Sold){
                                 if(balance[j].amount>=orders[i].AmountSold){
                                     console.log("here2");
