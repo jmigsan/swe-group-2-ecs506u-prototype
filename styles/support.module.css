@@ -40,15 +40,15 @@
 .supportOptions {
     display: flex;
     flex-direction: row;
-    gap: 1.5em;
+
     align-items: center;
-    justify-content: space-between;
     font-family: Arial, Helvetica, sans-serif;
     width: 90%;
     margin-top: 2em;
 }
 
 .option {
+    margin-right: 10%;
     border: none;
     background-color: transparent;
     box-shadow: none;
