@@ -12,6 +12,7 @@
     "sidebar feed feed feed postMessage";
     justify-content: space-between;
     margin-top: 2rem;
+    width: 100%;
   }
 
 .title {
@@ -33,11 +34,12 @@
   padding-left: 1rem;
   display: flexbox;
   justify-content: center;
+  width: 80%;
 }
 
 .postMessage {
   grid-area: postMessage;
-  width: 100%;
+  width: 90%;
   /* box-shadow: 0px -10px 10px -5px rgba(0, 0, 0, 0.2); */
 }
 .search {
@@ -49,8 +51,20 @@
   border-radius: 20px;
   padding: 0.8rem;
   margin-top: 0.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+
   width: 90%;
+}
+
+.addfriendbutton {
+  font-size: 1rem;
+  background-color: #21a00b;
+  color: white;
+  padding: 1rem;
+  border: 2px solid rgb(255, 255, 255);
+  border-radius: 30px;
+  width: 50%;
+  margin-bottom: 1rem;
 }
 
 .friends {
@@ -84,17 +98,16 @@
   color: grey;
 }
 
+.addfriendbutton:hover,.rjct:hover,.acpt:hover,.postButton:hover {
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
 .acpt, .rjct {
   all: initial;
-}
-
-.acpt {
-  margin-right: 0.8rem;
   margin-left: 1rem;
 }
-
 .post {
-  width: 100%;
+  min-width: 100%;
   margin-bottom: 2rem;
 }
 
@@ -140,7 +153,8 @@
 .details {
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
-  width: 100%;
+  padding: 1rem;
+  min-width: 100%;
   display: flex;
   flex-direction: row;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);

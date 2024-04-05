@@ -2,7 +2,7 @@
 
 import {useEffect, useState, useLayoutEffect} from 'react';
 import { motion } from 'framer-motion';
-import styles from '@/styles/support.module.css';
+import styles from '@/styles/feed.module.css';
 
 
 
@@ -388,38 +388,38 @@ export default function Support() {
 
         <div className={styles.app}>
         <div className={styles.sidebar}>
-        <form onSubmit={handleFriendSearch}>
-          <label htmlFor="email">Friend's Email:</label>
-          <input placeholder="Search Friends" className={styles.search}
-            id="email"
-            type="email"
-            value={friendSearch}
-            onChange={(e) => setFriendSearch(e.target.value)}
-            required
-          />
-          <button onClick={handleFriendSearch}className={styles.addfriendbutton} type="submit">searchFriend</button>
-          <button onClick={handleAddFriend}className={styles.addfriendbutton} type="submit">Add Friend</button>
-        </form>
+          <form onSubmit={handleFriendSearch}>
+            <label htmlFor="email"></label>
+            <input placeholder="Search Friends" className={styles.search}
+              id="email"
+              type="email"
+              value={friendSearch}
+              onChange={(e) => setFriendSearch(e.target.value)}
+              required
+            />
+            <button onClick={handleFriendSearch}className={styles.addfriendbutton} type="submit">Search Friend</button>
+            <button onClick={handleAddFriend}className={styles.addfriendbutton} type="submit">Add Friend</button>
+          </form>
 
-        <div>
-          <h1>Friend list</h1>
-          
-          {friends.map((friend, index)=>(
-            <div key={index}>
-            <h1>{friend[1]}</h1>
-            <button onClick={()=> handleRemoveFriend(friend[0])}>remove</button>
-            </div>
-          ))}
-        </div>
+          <div>
+            <div className={styles.friends}>Friends</div>
+            
+            {friends.map((friend, index)=>(
+              <div className={styles.friendListItem} key={index}>
+              <div>{friend[1]}</div>
+              <button className={styles.rjct} onClick={()=> handleRemoveFriend(friend[0])}>&#10060;</button>
+              </div>
+            ))}
+          </div>
 
-        <div>
-          <h1>Friend request list</h1>
-          {friendRequests.map((friendRequest, index)=>(
-            <div key={index}>
-              <h1 >{friendRequest[1]}</h1>
-              <button onClick={()=> handleAcceptFriend(friendRequest,true)}>accept</button>
-            </div>
-          ))}
+          <div>
+            <div className={styles.friends}>Friend Requests</div>
+            {friendRequests.map((friendRequest, index)=>(
+              <div key={index} className={styles.friendListItem}>
+                <div>{friendRequest[1]}</div>
+                <button className={styles.acpt} onClick={()=> handleAcceptFriend(friendRequest,true)}>&#9989;</button>
+              </div>
+            ))}
         </div>
 
 
@@ -449,15 +449,16 @@ export default function Support() {
                 className={styles.postButton}/>
             </form>
         </div>
-        <div>
+        <div className={styles.feed}>
         
         {posts.length > 0 &&(
           <>
-          <h1>posts</h1>
+          <div className={styles.title}>Activity</div>
           {posts.map((post, index)=>(
-            <div key={index}>
-              <h1 >{post.post}</h1>
-              <h2>{post.userEmail}</h2>
+            <div key={index} className={styles.post}>
+              <div className={styles.name}>{post.username}</div>
+              <div className={styles.name}>{post.userEmail}</div>
+              <div className={styles.details}>{post.post}</div>
             </div>
           ))}
           </>
