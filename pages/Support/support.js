@@ -7,7 +7,7 @@ import Modal from './adminComment';
 
 
 export default function Support() {
-    const [viewingTickets, setViewingTickets] = useState(false);
+    const [viewingTickets, setViewingTickets] = useState(true);
     const [creatingTicket, setCreatingTicket] = useState(false);
     const [talkingToSupport, setTalkingToSupport] = useState(false);
     const [talkingToAI, setTalkingToAI] = useState(false);
@@ -70,9 +70,21 @@ export default function Support() {
     }
 
     useEffect(() => {
-        // Fetch user session information when the component mounts
-        fetchUserSession();
-    }, []);
+        const fetchData = async () => {
+            try {
+
+                const userData = await fetchUserSession();
+
+                handleViewTickets();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+
+        console.log("on render")
+        fetchData();
+    }, [userEmail, userRole]);
 
     useLayoutEffect(() => {
         if (errorFlash) {
@@ -110,6 +122,7 @@ export default function Support() {
                 // view.style.backgroundColor = 'white';
                 view.classList.remove(styles.flash);
                 setSuccessFlash(false);
+                window.location.reload();
             }, 700);
 
             return () => clearTimeout(timer);
@@ -121,27 +134,29 @@ export default function Support() {
 
             const res = await fetch('../api/auth/session');
 
-            if (res) {
+            if (res.ok) {
                 const data = await res.json();
                 const email = data.user.email;
 
                 console.log("role is ", data.user.role)
                 setUserEmail(data.user.email);
                 setUserRole(data.user.role)
+                return data
             } else {
                 setError('Error fetching user session');
+                return null
             }
         } catch (error) {
             setError('Internal Server Error');
+            return null
         }
     };
+
 
     const handleViewTickets = async (index) => {
 
         const viewTicket = document.getElementById('viewTicket');
         const createTicket = document.getElementById('createTicket')
-        const agent = document.getElementById('agent')
-        const bot = document.getElementById('bot')
 
 
         viewTicket.style.transition = "border-bottom 0.5s ease-out";
@@ -149,13 +164,9 @@ export default function Support() {
 
         if (userRole !== 'Admin') {
             createTicket.style.transition = "border-bottom 0.5s ease-out";
-            agent.style.transition = "border-bottom 0.5s ease-out";
-            bot.style.transition = "border-bottom 0.5s ease-out";
 
 
             createTicket.style.borderBottom = "none"
-            agent.style.borderBottom = "none"
-            bot.style.borderBottom = "none"
         }
         // console.log("handleViewTickets")
         // console.log("---------retrieved session userEmail: ", userEmail)
@@ -168,7 +179,6 @@ export default function Support() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({userEmail}),
-                // body: JSON.stringify({ userEmail }),
             });
 
             if (res.ok) {
@@ -188,6 +198,7 @@ export default function Support() {
             setError('Internal Server Error');
         }
     };
+
 
     const handleTicketSubmit = async (event) =>{
 
@@ -232,13 +243,9 @@ export default function Support() {
     const handleCreateTicket = async =>{
         const viewTicket = document.getElementById('viewTicket');
         const createTicket = document.getElementById('createTicket')
-        const agent = document.getElementById('agent')
-        const bot = document.getElementById('bot')
 
         viewTicket.style.borderBottom = "none";
         createTicket.style.borderBottom = "7px solid #5AA056"
-        agent.style.borderBottom = "none"
-        bot.style.borderBottom = "none"
 
         setCreatingTicket(true);
         setViewingTickets(false);
@@ -252,39 +259,6 @@ export default function Support() {
         }));
     };
 
-
-    const handleAgent = async =>{
-        const viewTicket = document.getElementById('viewTicket');
-        const createTicket = document.getElementById('createTicket')
-        const agent = document.getElementById('agent')
-        const bot = document.getElementById('bot')
-
-        viewTicket.style.borderBottom = "none";
-        createTicket.style.borderBottom = "none"
-        agent.style.borderBottom = "7px solid #5AA056"
-        bot.style.borderBottom = "none"
-
-        setCreatingTicket(false);
-        setViewingTickets(false);
-        setTalkingToSupport(true);
-        setTalkingToAI(false);
-    };
-    const handleBot = async =>{
-        const viewTicket = document.getElementById('viewTicket');
-        const createTicket = document.getElementById('createTicket')
-        const agent = document.getElementById('agent')
-        const bot = document.getElementById('bot')
-
-        viewTicket.style.borderBottom = "none";
-        createTicket.style.borderBottom = "none"
-        agent.style.borderBottom = "none"
-        bot.style.borderBottom = "7px solid #5AA056"
-
-        setCreatingTicket(false);
-        setViewingTickets(false);
-        setTalkingToSupport(false);
-        setTalkingToAI(true);
-    };
 
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -308,6 +282,7 @@ export default function Support() {
         console.log("ticketId is ", ticketId)
         console.log("newValue is ", newValue)
         if(adminComments !== ""){
+            handleCloseModal()
             try {
                 // Submit the updated solved value to the updateTicket API endpoint
                 const response = await fetch(`/api/tickets/updateTicket?id=${ticketId}`, {
@@ -325,7 +300,6 @@ export default function Support() {
                     const data = await response.json();
                     setSuccessFlash(true);
                     console.log('Ticket updated successfully:', data.message);
-
                 } else {
 
                     console.error('Error with changing value:', response.statusText);
@@ -360,12 +334,7 @@ export default function Support() {
                     <div className={styles.option} id={"createTicket"} onClick={handleCreateTicket}>
                         <h2>Create Ticket</h2>
                     </div>
-                    <div className={styles.option} id={"agent"} onClick={handleAgent}>
-                        <h2>Talk to Agent</h2>
-                    </div>
-                    <div className={styles.option} id={"bot"} onClick={handleBot}>
-                        <h2>Chat with AI bot</h2>
-                    </div>
+
                     </>
                 )}
             </section>
@@ -383,6 +352,7 @@ export default function Support() {
                             <th>Issue Description</th>
                             <th>Date Created</th>
                             <th>Resolved</th>
+                            {userRole !== 'Admin' && <th>Comments</th>}
                             {adminTicketResolved && userRole === 'Admin' && <th></th>}
                             {adminTicketResolved && userRole === 'Admin' && <th></th>}
                         </tr>
@@ -397,57 +367,58 @@ export default function Support() {
 
                                 {userRole === 'Admin' ? (
                                     <>
-                                    <td>
-                                        <select
-                                            className={styles.select}
-                                            value={adminTicketResolved[ticket.id] !== undefined ? adminTicketResolved[ticket.id].toString() : ticket.solved.toString()}
-                                            onChange={(e) => handleTempSolvedChange(ticket.id, e.target.value)}
-                                        >
-                                            <option value="true">Yes</option>
-                                            <option value="false">No</option>
-                                        </select>
-                                    </td>
-                                    {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined && (
-                                        <>
-                                            <button onClick={handleOpenModal}>submit comments</button>
-                                            {showModal && (
-                                                <Modal
-                                                    adminComments={adminComments}
-                                                    setAdminComments={setAdminComments}
-                                                    handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
-                                                    onClose={handleCloseModal}
-                                                />
-                                            )}
-                                        {/*<td className={styles.commentContainer}>*/}
-                                        {/*        <textarea*/}
-                                        {/*            className={styles.input}*/}
-                                        {/*            type="text"*/}
-                                        {/*            placeholder="Enter comments"*/}
-                                        {/*            onChange={(e) => setAdminComments(e.target.value)}*/}
-                                        {/*            value={adminComments}*/}
-                                        {/*        />*/}
-                                        {/*</td>*/}
+                                        <td>
+                                            <select
+                                                className={styles.select}
+                                                value={adminTicketResolved[ticket.id] !== undefined ? adminTicketResolved[ticket.id].toString() : ticket.solved.toString()}
+                                                onChange={(e) => handleTempSolvedChange(ticket.id, e.target.value)}
+                                            >
+                                                <option value="true">Yes</option>
+                                                <option value="false">No</option>
+                                            </select>
+                                        </td>
+                                        {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined && (
+                                            <>
+                                                <button onClick={handleOpenModal}>submit comments</button>
+                                                {showModal && (
+                                                    <Modal
+                                                        adminComments={adminComments}
+                                                        setAdminComments={setAdminComments}
+                                                        handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
+                                                        onClose={handleCloseModal}
+                                                    />
+                                                )}
+                                                {/*<td className={styles.commentContainer}>*/}
+                                                {/*        <textarea*/}
+                                                {/*            className={styles.input}*/}
+                                                {/*            type="text"*/}
+                                                {/*            placeholder="Enter comments"*/}
+                                                {/*            onChange={(e) => setAdminComments(e.target.value)}*/}
+                                                {/*            value={adminComments}*/}
+                                                {/*        />*/}
+                                                {/*</td>*/}
 
-                                        {/*<td className={styles.commentContainer}>*/}
+                                                {/*<td className={styles.commentContainer}>*/}
 
-                                        {/*    <button*/}
-                                        {/*        className={styles.button}*/}
-                                        {/*        onClick={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}*/}
-                                        {/*    >*/}
-                                        {/*        Confirm*/}
-                                        {/*    </button>*/}
-                                        {/*</td>*/}
-                                        </>
+                                                {/*    <button*/}
+                                                {/*        className={styles.button}*/}
+                                                {/*        onClick={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}*/}
+                                                {/*    >*/}
+                                                {/*        Confirm*/}
+                                                {/*    </button>*/}
+                                                {/*</td>*/}
+                                            </>
+                                        )}
+                                    </>
+                                ) : (
+                                    <td className={styles.solved}>{formatSolved(ticket.solved)}</td>
                                 )}
-                            </>
-                        ) : (
-                            <td className={styles.solved}>{formatSolved(ticket.solved)}</td>
-                        )}
-                    </tr>
+                                <td>{ticket.comments}</td>
+                            </tr>
 
-                    ))}
+                        ))}
 
-                </tbody>
+                        </tbody>
                 </table>
                 </motion.div>
                 )}
