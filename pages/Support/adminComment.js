@@ -5,6 +5,7 @@ const adminComment = ({ adminComments, setAdminComments, handleConfirmChange, on
     return (
         <div className={styles.modalBackground}>
             <div className={styles.modalContent}>
+
                 <textarea
                     className={styles.input}
                     type="text"
@@ -12,13 +13,14 @@ const adminComment = ({ adminComments, setAdminComments, handleConfirmChange, on
                     onChange={(e) => setAdminComments(e.target.value)}
                     value={adminComments}
                 />
+                <button onClick={onClose}>Go Back</button>
                 <button
                     className={styles.button}
                     onClick={() => handleConfirmChange()}
                 >
                     Confirm
                 </button>
-                <button onClick={onClose}>Go Back</button>
+
             </div>
         </div>
     );
