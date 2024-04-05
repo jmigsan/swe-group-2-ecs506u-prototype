@@ -1,32 +1,28 @@
 import { prisma } from '@/pages/prismaClient';
 
 export default async function handler(req,res){
+    
     try{
-        const {name} = req.body;
+        const {postID} = req.body;
 
-
-        const users = await prisma.user.findMany({
-            where: {
-                OR:[
-                    {firstName:{ startsWith: name}},
-                    {firstName:{ contains: name}}   
-                ],
-                
-                role : "Investor"
-            }
-        })
-
+        
+            const users = await prisma.friends.delete({
+                where: {
+                    postID:postID
+                }
+                    
+                })
+        
+    
+        
+        
         if (!users) {
             // If the user doesn't exist, return an error response
             return res.status(404).json({ error: 'User not found' });
         }
-
-        console.log(users, 'here at searchfriend')
+        
         res.status(200).json({
-            users:users
-                
-                // add more details if you wish
-            
+            message: "Post deleted"
         })
         }
         catch(error){

@@ -70,6 +70,7 @@
 .friends {
   font-size: 1.4rem;
   font-weight: bold;
+  
 }
 
 .friendList {
@@ -253,4 +254,77 @@
   padding: 1rem;
   border: 2px solid rgb(255, 255, 255);
   border-radius: 30px;
+}
+
+.searchBar {
+  width: 300px; /* Adjust width as needed */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+  
+}
+
+/* Style for the dropdown */
+.dropdown {
+  position: relative;
+  margin-bottom: 30vh;
+}
+
+/* Style for the dropdown list */
+.dropdownList {
+  position: absolute;
+  top: 40px; /* Adjust top position as needed */
+  width: 300px; /* Adjust width as needed */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+/* Style for each dropdown item */
+.dropdownListItem {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdownListItem:hover {
+  background-color: #f9f9f9;
+}
+
+/* Style for user card */
+.userCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Style for user card name */
+.userCardName {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Style for user card email */
+.userCardEmail {
+  margin: 0;
+  font-size: 14px;
+  color: #888;
+}
+
+/* Style for add friend button */
+.addfriendbutton {
+  padding: 5px 10px;
+  background-color: #3897f0;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.addfriendbutton:hover {
+  background-color: #2681d9;
 }

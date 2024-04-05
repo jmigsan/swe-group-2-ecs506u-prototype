@@ -23,6 +23,7 @@ export default function Support() {
     const [errorFlash, setErrorFlash] = useState(false);
 
     const [friendSearch,setFriendSearch] = useState('');
+    const [friendSearchResult,setFriendSearchResult] = useState([]);
     const [friends,setFriends] = useState([]);
     const [friendRequests,setFriendRequests] = useState([]);
     const [addPostValue, setAddPostValue] = useState('');
@@ -88,6 +89,15 @@ export default function Support() {
       handleViewPost();
     },[friends])
 
+    useEffect(()=>{
+      if(friendSearch){
+      handleSearchFriend();}
+      else{
+        setFriendSearchResult([])
+      }
+
+    },[friendSearch])
+
     useLayoutEffect(() => {
         if (errorFlash) {
             console.log("errrororororo flash sd sdf sdfsd")
@@ -130,6 +140,9 @@ export default function Support() {
         }
     }, [successFlash, errorFlash]);
 
+
+
+
     const fetchUserSession = async () => {
         try {
 
@@ -138,7 +151,7 @@ export default function Support() {
             if (res) {
                 const data = await res.json();
                 const email = data.user.email;
-                
+                console.log("email is ", data.user.email)
                 console.log("role is ", data.user.role)
                 setUserEmail(data.user.email);
                 setUserRole(data.user.role)
@@ -150,8 +163,8 @@ export default function Support() {
         }
     };
 
-    const handleFriendSearch = async (e) =>{
-      e.preventDefault();
+    const handleSearchFriend = async () =>{
+      
         try {
             
             const res = await fetch('../api/feed/searchFriend', {
@@ -161,14 +174,15 @@ export default function Support() {
                 },
                 
                 body: JSON.stringify({
-                  recipientEmail:friendSearch
+                  name:friendSearch
                 }),
                 
             });
 
             if (res.ok) {
                 const data = await res.json();
-                /// finish this
+                setFriendSearchResult(data.users)
+               
                 
             } else {
                 setError('Error occurred while retrieving tickets');
@@ -179,8 +193,8 @@ export default function Support() {
         }
     }
 
-    const handleAddFriend = async (e) =>{
-      e.preventDefault();
+    const handleAddFriend = async (recipientEmail) =>{
+      //e.preventDefault();
         try {
             const res = await fetch('../api/feed/addFriend', {
                 method: 'POST',
@@ -188,7 +202,7 @@ export default function Support() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  recipientEmail: friendSearch,
+                  recipientEmail: recipientEmail,
                   userEmail: userEmail}),
                 
             });
@@ -234,7 +248,7 @@ export default function Support() {
     }
 
     }
-    const handleViewFriendRequest = async (requestEmail,accept) =>{
+    const handleViewFriendRequest = async () =>{
       try {
         const res = await fetch('../api/feed/viewFriendRequest', {
             method: 'POST',
@@ -388,22 +402,69 @@ export default function Support() {
       }  
     }
 
+    const handleRemovePost = async (postID) => {
+      try {
+        
+        const res = await fetch('../api/feed/removePost', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              postID: postID
+              
+            }),
+            
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          /// finish this
+          
+    
+          
+        } 
+        
+      } 
+      catch (error) {
+        console.error('Error:', error);
+        setError('Internal Server Error');
+      }  
+    }
+
     return (
 
         <div className={styles.app}>
         <div className={styles.sidebar}>
-          <form onSubmit={handleFriendSearch}>
-            <label htmlFor="email"></label>
-            <input placeholder="Search Friends" className={styles.search}
-              id="email"
-              type="email"
-              value={friendSearch}
-              onChange={(e) => setFriendSearch(e.target.value)}
-              required
-            />
-            <button onClick={handleFriendSearch}className={styles.addfriendbutton} type="submit">Search Friend</button>
-            <button onClick={handleAddFriend}className={styles.addfriendbutton} type="submit">Add Friend</button>
-          </form>
+          
+            <div className={styles.searchDropdown}>
+              <input placeholder="Search Friends" className={styles.searchBar}
+                id="email"
+                class="search-input"
+                value={friendSearch}
+                onChange={(e) => setFriendSearch(e.target.value)}
+                required
+              />
+              <div className={styles.dropdown}>
+              {friendSearchResult.length>0 &&(
+                  <div className={styles.dropdownList}>
+                    {friendSearchResult.map((user, index) => (
+                      <div key={index} className={styles.dropdownListItem}>
+                        <div className={styles.userCard}>
+                          <h1 className={styles.userCardName}>{user.firstName}</h1>
+                          <h1 className={styles.userCardEmail}>{user.email}</h1>
+                          <button className={styles.addfriendbutton} onClick={() => handleAddFriend(user.email)} type="submit">Add</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                
+                
+              )}
+              </div>
+              {/* <button onClick={handleSearchFriend}className={styles.addfriendbutton} type="submit">Search Friend</button> */}
+            
+            </div>
 
           <div>
             <div className={styles.friends}>Friends</div>
@@ -458,10 +519,14 @@ export default function Support() {
         {posts.length > 0 &&(
           <>
           <div className={styles.title}>Activity</div>
+          
           {posts.map((post, index)=>(
             <div key={index} className={styles.post}>
-              <div className={styles.name}>{post.username}</div>
+              
               <div className={styles.name}>{post.userEmail}</div>
+              {userRole === "Admin" && (
+                <button onClick={handleRemovePost(post.id)}>x</button>
+              )}
               <div className={styles.details}>{post.post}</div>
             </div>
           ))}
