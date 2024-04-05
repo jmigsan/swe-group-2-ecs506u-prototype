@@ -7,9 +7,10 @@ import { useSession } from 'next-auth/react';
 import { useRouter} from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { io } from 'socket.io-client';
 
-const socket = io("http://localhost:8080")
+import io from 'socket.io-client';
+let socket;
+
 function TradingViewWidget() {
   const container = useRef();
   const container2 = useRef();
@@ -30,8 +31,8 @@ function TradingViewWidget() {
   const [balance, setBalance] = useState([]);
   const [total, setTotal] = useState(0);
   const [totalSell, setTotalSell] = useState(0);
-  const [stop, setStop] = useState(-9999);
-  const [tp, setTp] = useState(99999);
+  const [stop, setStop] = useState(0);
+  const [tp, setTp] = useState(0);
   const [Amount, setAmount] = useState(0);
   const [AmountSell, setAmountSell] = useState(0);
   const [confirmed, setConfirmed] = useState(false);
@@ -40,7 +41,33 @@ function TradingViewWidget() {
   const [duration, setDuration]= useState(15);
   const confirmRef = useRef(confirmed);
   const [done, setDone] = useState(false);
-  
+  const [tradeType, setTradeType] = useState("limit");
+  const [incorrectStop, setIncorrectStop] =useState(false);
+  const [incorrectTp, setIncorrectTp] = useState(false);
+  const [limitExecuted, setLimitExecuted] = useState("");
+  useEffect(() => {
+    if(session){
+      socketInitializer()
+    }}, [session])
+
+  async function socketInitializer(){
+    await fetch('../api/ExperiencedTrading/limitSocket')
+    socket = io()
+
+    socket.on('connect', () => {
+      socket.emit('message', session.user.email)
+    })
+
+    socket.on('limitExecuted', (message)=>{
+      setLimitExecuted(message);
+      setTimeout(()=>{
+        setLimitExecuted("");
+      }, [2000])
+    })
+  }
+
+  // ...rest of your component
+
   useEffect(() => {
     confirmRef.current = confirmed;
 }, [confirmed]);
@@ -96,7 +123,7 @@ function handleDone(){
               method: 'GET',
           })
           const res = await coins.json();
-          console.log(res);
+      
           setAllowedCoins(res);
 
       }
@@ -161,6 +188,7 @@ function handleDone(){
 
     async function handleConfirmClick(){
 
+
       const username=session.user.email;
       let sold;
       let bought; 
@@ -168,9 +196,6 @@ function handleDone(){
       let amountBought;
       let amountSold;
       if(Trade=="buy"){
-        if(balance.amount<total){
-          return
-        }
        sold=Currency.curren;
        bought=coin;
        amountBought=Amount;
@@ -191,6 +216,7 @@ function handleDone(){
       
       
     
+      if(tradeType=="spot"){
       try{
           await fetch('../api/Trade/trade',{
               method: 'POST',
@@ -203,6 +229,22 @@ function handleDone(){
           console.log(error);
           return
       }
+    }
+
+    else{
+          try{
+            await fetch('../api/ExperiencedTrading/LimitOrder',{
+                method: 'POST',
+                headers:{'Content-Type': 'application/json'},
+                body: JSON.stringify({username, price, sold, bought, amountBought, amountSold, type})
+            })
+
+        }
+        catch(error){
+            console.log(error);
+            return
+    }
+    }
       setDone(true);
      
       fetchBalance();
@@ -249,7 +291,11 @@ function handleDone(){
     }
   }, [coin, Currency])
 
-
+  useEffect(()=>{
+    if(price){
+      setPriceString(price.toFixed(2) + Currency.curren)
+    }
+  }, [price])
   async function fetchPrice(){
     const currency = Currency.curren;
     try{
@@ -377,6 +423,19 @@ function handleDone(){
     }
     
   }
+
+  function handleFocusError(index){
+    const inputs = document.querySelectorAll("#inputs");
+    for(let i=0; i<inputs.length; i++){
+      if(i==index){
+        inputs[i].style.border="1pt solid red";
+      }
+      else{
+        inputs[i].style.border="1pt solid transparent";
+      }
+    }
+    
+  }
   useEffect(()=>{
 
     if(watchList){
@@ -435,6 +494,63 @@ function handleDone(){
     [symbol]
   );
 
+  function checkInputs(trade){
+    console.log(Number("-10"));
+    console.log(Number("10"));
+    if(trade=="buy"){
+      console.log(total, balance.amount, Amount)
+      if(Amount<=0){
+        handleFocusError(1)
+        return false;
+      }
+
+
+      if(total>balance.amount){
+        handleFocusError(2)
+        return false;
+      }
+
+      if(tp!=0){
+        if(tp<=price){
+          setIncorrectTp(true);
+          
+          setTimeout(()=>{
+            setIncorrectTp(false);
+        }, [2000])
+        return false;
+      }
+    }
+
+      if(stop!=0){
+        if(stop>=price){
+          setIncorrectStop(true);
+          setTimeout(()=>{
+            setIncorrectStop(false);
+        }, [2000])
+          return false;
+        }
+      
+      }
+    
+    }
+
+    else{
+      if(AmountSell<=0){
+       handleFocusError(6);
+        return false;
+      }
+ 
+      if(AmountSell>amount.amount){
+
+        handleFocusError(6);
+        return false;
+      }
+  
+    }
+
+    return true;
+  }
+
   useEffect(()=>{
     if(confirmed){
       handleCountdown();
@@ -461,6 +577,10 @@ function handleDone(){
       getTotalSell();
     }
   }, [price,Amount, AmountSell])
+
+  useEffect(()=>{
+    fetchPrice();
+  }, [tradeType])
   function handleLimitButton(){
     if(onLimit){
       const limit = document.getElementById("limit");
@@ -509,7 +629,26 @@ function handleDone(){
                 width={30}
                 height={30}
               />
-              <section>Transaction Successful</section>
+              {tradeType=="limit" ?(
+                  <section>Limit order opened</section>
+              ):(
+                <section>Trade Executed</section>
+              )}
+              
+          </motion.div>
+        )}
+         {limitExecuted!="" && (
+          <motion.div  variants={animations3} initial="initial" animate="animate" exit="exit" transition={{duration:0.5}} className={styles.successfulMessage}>
+            <Image 
+                src={`/images/checkmark.png`}
+                alt="tick"
+                width={30}
+                height={30}
+              />
+  
+              <section>Limit{limitExecuted} order executed</section>
+              
+              
           </motion.div>
         )}
       {confirmed && (
@@ -602,15 +741,23 @@ function handleDone(){
       
       
       <div className={styles.buttons}>
-          <button className={styles.button} onClick={()=>{handleLimitButton();}} id="limit">Limit</button>
-          <button className={styles.button} onClick={()=>{handleLimitButton();}} id="spot">Spot</button>
+          <button className={styles.button} onClick={()=>{handleLimitButton(); setTradeType("limit")}} id="limit">Limit</button>
+          <button className={styles.button} onClick={()=>{handleLimitButton(); setTradeType("spot")}} id="spot">Spot</button>
       </div>
       <div className={styles.forms}>
               <form className={styles.form}>
                   <div className={styles.buy}>
-                    <div className={styles.inputs} id="inputs" onClick={()=>{setDrop(true)}}>
-                      <input type="text" placeholder="Price" className={styles.input} onFocus={()=>{handleFocus(0)}}/>
-                      <input type="text" value={priceString} className={styles.input2} />
+                    <div className={styles.inputs} id="inputs" >
+                      <input type="text" placeholder="Price" className={styles.input} onFocus={()=>{handleFocus(0)}} disabled/>
+                      {tradeType=="spot" ?(
+                         <input type="text" value={priceString} className={styles.input2} onClick={()=>{setDrop(true)}} readOnly/>
+                      ):(
+                        <>
+                        <input type="text" className={styles.input2} onChange={(e) =>{setPrice(Number(e.target.value))}}/>
+                        <input type="text" className={styles.input3} value={Currency.curren} onClick={()=>{setDrop(true)}} readOnly/>
+                        </>
+                      )}
+                     
                     </div>
                     {drop && (
                       <div ref={dropdownRef} className={styles.drop}>
@@ -619,42 +766,42 @@ function handleDone(){
                      
                       )}
                     <div className={styles.inputs} id="inputs">
-                      <input type="text" placeholder="Amount" value={Amount} className={styles.input} onChange={(e)=>{setAmount(Number(e.target.value))}} onFocus={()=>{handleFocus(1)}}/>
+                      <input type="text" placeholder="Amount" id="AmountBuy" value={Amount} className={styles.input} onChange={(e)=>{console.log(e.target.value );setAmount(Number(e.target.value))}} onFocus={()=>{handleFocus(1)}}/>
                       <input type="text" value={coin} className={styles.input2} disabled/>
                     </div>
            
                     <div className={styles.inputs} id="inputs">
-                      <input type="text" placeholder="Total" value={total} className={styles.input} onFocus={()=>{handleFocus(2)}}/>
+                      <input type="text" placeholder="Total"  id="totalBuy" value={total} className={styles.input} onFocus={()=>{handleFocus(2)}} readOnly/>
                       <input type="text" value={Currency.curren} className={styles.input2} disabled/>
                     </div>
                     {balance && (
                       <section className={styles.text}>Max Buy: <section className={styles.maxBuy} onClick={()=>{setMaxBuy(); getTotal();}}>{balance.amount}</section></section>
                     )} 
                     <section className={styles.text}>Est. fee: <section className={styles.maxBuy}>{10 * Amount}{Currency.curren}</section></section>
-                    <button type="button" className={styles.buyButton} onClick={()=>{setTrade("buy"); setConfirmed(true); }}>Buy {symbol.split(":")[1]}</button>
+                    <button type="button" className={styles.buyButton} onClick={()=>{setTrade("buy"); if(checkInputs("buy")){setConfirmed(true);} }}>Buy {symbol.split(":")[1]}</button>
                   </div>
                  
                   <div className={styles.limits}>
                      <div className={styles.errorMessage}>
-                      {(stop>price && stop!=0) && (
+                      {incorrectStop && (
                       <motion.div className={styles.message} variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}}>
                                 Stop Loss must be above current Price
                           </motion.div>
                       )}
                         <div className={styles.inputsSpecial} id="inputs">
-                          <input type="text" placeholder="Price" className={styles.input} onChange={(e)=>{setStop(Number(e.target.value)); console.log(price)}} onFocus={()=>{handleFocus(3)}}/>   
+                          <input type="text" placeholder="Price" className={styles.input} onChange={(e)=>{setStop(Number(e.target.value));}} onFocus={()=>{handleFocus(3)}}/>   
                           <input type="text" value="Stop Loss" className={styles.input2} disabled/>
                       </div>
   
                     </div>
                     <div className={styles.errorMessage}>
-                      {(tp<price && tp!=0) && (
+                      {incorrectTp && (
                         <motion.div className={styles.message} variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}}>
                                   Take profit must be above current price
                             </motion.div>
                         )}
                         <div className={styles.inputsSpecial} id="inputs">
-                        <input type="text" placeholder="Price" className={styles.input} onChange={(e)=>{setTp(Number(e.target.value)); console.log(price)}} onFocus={()=>{handleFocus(4)}}/>
+                        <input type="text" placeholder="Price" className={styles.input} onChange={(e)=>{setTp(Number(e.target.value));}} onFocus={()=>{handleFocus(4)}}/>
                         <input type="text" value="Take Profit" className={styles.input2} disabled/>
                       </div>
                     </div>
@@ -670,18 +817,18 @@ function handleDone(){
                       <input type="text" value={priceString} className={styles.input2} disabled/>
                     </div>
                     <div className={styles.inputs} id="inputs">
-                      <input type="text" placeholder="Amount" className={styles.input} value={AmountSell} onChange={(e)=>{setAmountSell(Number(e.target.value))}} onFocus={()=>{handleFocus(6)}}/>
+                      <input type="text" placeholder="Amount" id="AmountSell" className={styles.input} value={AmountSell} onChange={(e)=>{setAmountSell(Number(e.target.value))}} onFocus={()=>{handleFocus(6)}}/>
                       <input type="text" value={coin} className={styles.input2} disabled/>
                     </div>
                     <div className={styles.inputs} id="inputs">
-                      <input type="text" placeholder="Total" value={totalSell} className={styles.input} onFocus={()=>{handleFocus(7)}}/>
+                      <input type="text" placeholder="Total" value={totalSell} className={styles.input} onFocus={()=>{handleFocus(7)}} readOnly/>
                       <input type="text" value={Currency.curren} className={styles.input2} disabled/>
                     </div>
                     {amount && (
                     <section className={styles.text}>Max Sell: <section className={styles.maxBuy} onClick={()=>{setMaxSell(); getTotalSell();}}>{amount.amount.toFixed(4)}</section></section>
                       )}
                     <section className={styles.text}>Est. fee: <section className={styles.maxBuy}>{10 * AmountSell}{Currency.curren}</section></section>
-                    <button type="button" className={styles.sellButton} onClick={()=>{setTrade("sell"); setConfirmed(true);}}>Sell {symbol.split(":")[1]}</button>
+                    <button type="button" className={styles.sellButton} onClick={()=>{setTrade("sell"); if(checkInputs("sell")){setConfirmed(true);}}}>Sell {symbol.split(":")[1]}</button>
                   </div>
               </form>
 

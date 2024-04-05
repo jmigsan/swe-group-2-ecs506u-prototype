@@ -47,6 +47,7 @@ model Investor {
   Favorites favorites[]
   Currencies Balance []
   Trades Trade[]
+  LimitOrders LimitOrder[]
 }
 
 
@@ -79,3 +80,24 @@ model Trade{
   createDate DateTime @default(now())
 }
 
+model LimitOrder{
+    id Int @id @default(autoincrement())
+  Bought String
+  Sold String
+  Type String
+  Price Float
+  AmountBought Float
+  AmountSold Float
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+model chatRequests{
+  userId String @id
+}
+
+model chatPairs{
+  userId String 
+  staffId String
+  @@id([userId, staffId])
+}

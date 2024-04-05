@@ -7,22 +7,20 @@ export default async function handler(req, res){
     const bought = body.bought;
     const sold = body.sold;
     const amountBought = parseFloat(body.amountBought);
-
     const amountSold = parseFloat(body.amountSold);
     const type = body.type;
     const price = parseFloat(body.price);
 
     try{
         const investor = Investor.getInstance();
-        const opened = investor.Trade(type, username, bought, sold, amountBought, amountSold, price);
+        const opened = investor.createLimit(type, username, bought, sold, amountBought, amountSold, price);
         
         if(opened){
-            console.log("here2")
-            res.status(200).json({message: "Trade opened successfully"})
+            res.status(200).json({message: "Limit opened successfully"})
         }
 
         else{
-            res.status(404).json({message: "Trade not opened successfully"})
+            res.status(404).json({message: "Limit not opened successfully"})
         }
     }
 
@@ -30,4 +28,5 @@ export default async function handler(req, res){
         console.error(error);
         res.status(404).json({message: "Error opening Trade"})
     }
+
 }

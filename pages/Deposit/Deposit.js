@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
+import Transactions from './TransactionHistory';
 export default function Deposit(){
     const [currency, setCurrency]= useState("GBP");
     const [availableCurrency, setAvailableCurrency]= useState(["USD", "EUR", "GBP", "JPY", "AUD", "CHF", "CAD", "SAR"]);
@@ -447,7 +448,7 @@ export default function Deposit(){
                 <div className={styles.header}>
                     <section className={styles.option} onClick={()=>{handleOptionClick(0); setOption("buy")}} id="option">Buy Crypto</section>
                     <section className={styles.option} onClick={()=>{handleOptionClick(1);  setOption("deposit"); setStep(1)}} id="option">Deposit</section>
-                    <section className={styles.option} onClick={()=>{handleOptionClick(2); setOption("history")}} id="option">Transaction History</section>
+                    <section className={styles.option} onClick={()=>{handleOptionClick(2); setOption("transaction")}} id="option">Transaction History</section>
                 </div>
                 {(option=="buy" || option=="sell") && (
                     <>
@@ -1028,6 +1029,10 @@ export default function Deposit(){
 
                         </div>
                     </div>  
+                )}
+
+                {option=="transaction" && (
+                    <Transactions />
                 )}
             </div>
             </>

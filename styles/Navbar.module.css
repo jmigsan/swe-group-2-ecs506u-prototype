@@ -103,7 +103,7 @@
     box-shadow:0 2px 4px -2px rgba(0,0,0,.2);
     top:0;
     background-color: white;
-    z-index: 9999;
+    z-index: 9997;
     position: sticky;
     height:4em;
     justify-content: center;
@@ -117,7 +117,6 @@
     margin:0;
     height:100%;
 
-    
 }
 
 .link{
@@ -157,9 +156,19 @@
    margin: 0;
 }
 
+.burgerMenu{
+    display: none;
+}
+
+
+
+
 @media screen and (max-width:768px){
     .links{
         display:none;
+    }
+    .loginLinks{
+        display: none;
     }
 
     .menu{
@@ -169,5 +178,7 @@
         padding-right:0.5em;
     }
 
-    
+    .burgerMenu{
+        display: block;
+    }
 }

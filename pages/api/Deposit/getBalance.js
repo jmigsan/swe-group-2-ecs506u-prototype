@@ -5,7 +5,7 @@ export default async function handler(req, res){
 
     try{
         const investor = Investor.getInstance();
-        const balance = await investor.getBalance();
+        const balance = await investor.getBalance(username);
 
         res.status(200).json(balance);
     }

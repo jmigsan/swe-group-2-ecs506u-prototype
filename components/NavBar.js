@@ -21,6 +21,7 @@ import { useRouter } from 'next/router'
 export default function NavBar(){
     const {data: session} = useSession();
     const router = useRouter();
+    const [onBurger, setOnBurger] = useState(false);
     const animations = {
     initial: {opacity:0},
     animate: {opacity:1},
@@ -60,7 +61,7 @@ export default function NavBar(){
 
     return (
         <div>
-            <div className={styles.nav}>
+            <div className={styles.nav} id="nav">
                 <motion.div variants={animations2} initial="initial" animate="animate" transition={{duration: 0.5, ease:"easeInOut"}} className={styles.navbar}>
                     <div className={styles.leftNav}>
                     <header className={styles.heading}>
@@ -263,9 +264,18 @@ export default function NavBar(){
                             )}
                     
                     </section>
-                </motion.div>
+                <section className={styles.burgerMenu}>
+                    <Image 
+                        src={'/images/burger-menu.png'}
+                        alt="burger"
+                        width={30}
+                        height={30}
+                        onClick={()=>{setOnBurger(true);}}
+                    />
+                </section>
+                </motion.div> 
             </div>
-
         </div>
+       
     )
 }

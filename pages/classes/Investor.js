@@ -42,6 +42,78 @@ export default class Investor{
         }
     }
 
+    async getLimits(username){
+        try{
+            const limits = await prisma.limitOrder.findMany({
+                where:{
+                    userId:username,
+                }
+            })
+
+            return limits;
+        }
+
+        catch(error){
+            console.error(error);
+            return null;
+        }
+    }
+
+    async getTransactions(username){
+        try{
+            const transactions = await prisma.trade.findMany({
+                where:{
+                    userId:username,
+                },
+
+                orderBy:{
+                    createDate: 'desc'
+                }
+            });
+
+            return transactions;
+        }
+        catch{
+            console.error(error);
+            return null;
+        }
+    }
+    async createLimit(type, username, bought, sold, amountBought, amountSold, price){
+        try{
+            const data={
+                userId:username,
+                Bought:bought,
+                Sold:sold,
+                Type:type,
+                Price:price,
+                AmountSold:amountSold,
+                AmountBought:amountBought,
+            }
+
+            const trade =await prisma.limitOrder.create({data:data})
+            return true;
+        }
+        catch(error){
+            console.error(error);
+            return false;
+        }
+    }
+
+    async deleteLimit(id){
+        try{
+            await prisma.limitOrder.delete({
+                where:{
+                    id:id,
+                }
+            })
+
+            return true;
+        }
+        catch(error){
+            console.error(error)
+            return false;
+        }
+    }
     async addFavorite(username, coin_name, coin_symbol){
         try{
 
@@ -165,6 +237,47 @@ export default class Investor{
 
         catch(error){
             console.error(error);
+            return null;
+        }
+    }
+
+
+    async createRequest(username){
+        try{
+            const data={
+                userId:username,
+            }
+
+            await prisma.chatRequests.create({data:data});
+        }
+        catch(error){
+            console.error(error);
+            return false;
+        }
+    }
+
+    async getRequests(){
+        try{
+            const requests = await prisma.chatRequests.findMany();
+            return requests;
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    async getLimitOrders(username){
+        try{
+            const orders = await prisma.limitOrder.findMany({
+                where:{
+                    userId:username
+                }
+            })
+
+            return orders;
+        }
+        catch(error){
+            console.error(error)
             return null;
         }
     }
