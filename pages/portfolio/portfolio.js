@@ -1,4 +1,6 @@
 import { Chart } from "react-google-charts";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 import styles from '@/styles/portfolio.module.css';
 /**	
 Proposed table addition
@@ -56,27 +58,46 @@ function List({data})
 
 function Portfolio()
 {
-    //get data using database call(add function(s) to classes/Investor)
-    //Methods to get and update
-    //To update, take coin name, amount and price. Add/Subtract amount. Use new value to recalculate average. If amount = 0, delete entry
+    const {data: session} = useSession();
+    useEffect(()=>{
+       getData();
+     }, [session]);
 
-    //Temporary data for testing
-    let data = [["Coin","Amount","AveragePrice"],
-    ["Coin1",12,135.23],
-    ["Coin2",0.73,126.25],
-    ["Coin3",13.14,35.26],
-    ["Coin4",17,12.84]];
+     async function getData()
+    {
+        if(session)
+        {
+            const username = session.user.email;
+            try{
+                const portfolio = await fetch('../api/portfolio/getPortfolioItems', {
+                    method: 'POST',
+                    headers:{
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({username})
+                })
+                const response =await portfolio.json();
+                console.log(response);
+            }
+            catch(error)
+           {
+                res.status(404).json({message: "error fetching data"});
+            }
+        }
+    }
 
+    const data = getData();
     //altering format for pie chart
-    let pieData = [...data];
+    //let pieData = [...data];
 
-    pieData.forEach((item) => item.pop);
+    //pieData.forEach((item) => item.pop);
 
     return(<>
-    <div id={styles.PageHeader}>Portfolio</div>
-    <PieChart data={pieData} />
-    <List data={data}/>
+
     </>);
+        //<div id={styles.PageHeader}>Portfolio</div>
+        //<PieChart data={pieData} />
+        //<List data={data}/>
 }
 
 export default Portfolio;
