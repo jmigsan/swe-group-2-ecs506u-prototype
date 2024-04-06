@@ -9,28 +9,14 @@ import styles from '@/styles/feed.module.css';
 export default function Support() {
     
     const [error, setError] = useState('');
-   
-
-
-
     const [userEmail , setUserEmail] = useState('')
     const [userRole , setUserRole] = useState('')
-   
-    
-
-    const [friendSearch,setFriendSearch] = useState('');
+   const [friendSearch,setFriendSearch] = useState('');
     const [friendSearchResult,setFriendSearchResult] = useState([]);
     const [friends,setFriends] = useState([]);
     const [friendRequests,setFriendRequests] = useState([]);
     const [addPostValue, setAddPostValue] = useState('');
     const [posts, setPosts] = useState([]);
-
-    
-
-
-    
-
-    
 
     const animations = {
         initial: {y:50},
@@ -112,13 +98,15 @@ export default function Support() {
                 },
                 
                 body: JSON.stringify({
-                  name:friendSearch
+                  name:friendSearch,
+                  userEmail:userEmail
                 }),
                 
             });
 
             if (res.ok) {
                 const data = await res.json();
+                
                 setFriendSearchResult(data.users)
                
                 
@@ -370,6 +358,39 @@ export default function Support() {
       }  
     }
 
+    function convertToDate (timestamp){
+      
+      const currentTime = new Date();
+      const postTime = new Date(timestamp);
+      const timeDifference = currentTime.getTime() - postTime.getTime();
+      const seconds = Math.floor(timeDifference / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+      const weeks = Math.floor(days / 7);
+      const months = Math.floor(days / 30);
+      const years = Math.floor(days / 365);
+  
+      if (years >= 1) {
+          return `${years} year${years !== 1 ? 's' : ''} ago`;
+      } else if (months >= 1) {
+          return `${months} month${months !== 1 ? 's' : ''} ago`;
+      } else if (weeks >= 1 && weeks <= 3) {
+          return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
+      } else if (days >= 1 && days <= 6) {
+          return `${days} day${days !== 1 ? 's' : ''} ago`;
+      } else if (hours >= 1) {
+          return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+      } else if (minutes >= 1) {
+          return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+      } else {
+          return `Just now`;
+      }
+
+    }
+
+
+
     return (
 
         <div className={styles.app}>
@@ -378,20 +399,29 @@ export default function Support() {
             <div className={styles.searchDropdown}>
               <input placeholder="Search Friends" className={styles.searchBar}
                 id="email"
-                class="search-input"
+                
                 value={friendSearch}
                 onChange={(e) => setFriendSearch(e.target.value)}
-                required
               />
               <div className={styles.dropdown}>
               {friendSearchResult.length>0 &&(
                   <div className={styles.dropdownList}>
                     {friendSearchResult.map((user, index) => (
                       <div key={index} className={styles.dropdownListItem}>
+                        
                         <div className={styles.userCard}>
-                          <h1 className={styles.userCardName}>{user.firstName}</h1>
+                          <div className={styles.userCardNameButton}>
+                            <h1 className={styles.userCardName}>{user.firstName}</h1>
+                            {user.isFriend === true ? 
+                                (<button className={styles.addfriendbutton} onClick={() => handleAddFriend(user.email)} type="submit">Tick</button>)
+                                : user.isFriend === false ?
+                                (<button className={styles.addfriendbutton} onClick={() => handleAddFriend(user.email)} type="submit">Pending</button>)
+                                :
+                                (<button className={styles.addfriendbutton} onClick={() => handleAddFriend(user.email)} type="submit">Add</button>)
+                            }
+                          </div>
                           <h1 className={styles.userCardEmail}>{user.email}</h1>
-                          <button className={styles.addfriendbutton} onClick={() => handleAddFriend(user.email)} type="submit">Add</button>
+                          
                         </div>
                       </div>
                     ))}
@@ -400,7 +430,7 @@ export default function Support() {
                 
               )}
               </div>
-              {/* <button onClick={handleSearchFriend}className={styles.addfriendbutton} type="submit">Search Friend</button> */}
+             
             
             </div>
 
@@ -460,8 +490,10 @@ export default function Support() {
           
           {posts.map((post, index)=>(
             <div key={index} className={styles.post}>
-              
-              <div className={styles.name}>{post.userEmail}</div>
+              <div className={styles.postNameDate}>
+                <div className={styles.name}>{post.userEmail}</div>
+                <div className={styles.date}>{convertToDate(post.dateCreated)}</div>
+              </div>
               {userRole === "Admin" && (
                 <button onClick={handleRemovePost(post.id)}>x</button>
               )}
@@ -473,6 +505,5 @@ export default function Support() {
           
         </div>
     </div>
-    )
-    ;
+)
 }

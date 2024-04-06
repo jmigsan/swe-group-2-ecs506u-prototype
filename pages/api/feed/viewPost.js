@@ -16,6 +16,9 @@ export default async function handler(req, res) {
                     { userEmail: { in: friendEmails } } // Check if userEmail matches any email in friendEmails array
                 ]
             },
+            orderBy: {
+                dateCreated: 'desc' // Order posts by createdAt field in descending order
+            }
         });
 
        

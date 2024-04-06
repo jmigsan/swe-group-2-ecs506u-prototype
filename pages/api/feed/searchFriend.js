@@ -2,20 +2,59 @@ import { prisma } from '@/pages/prismaClient';
 
 export default async function handler(req,res){
     try{
-        const {name} = req.body;
+        const {name, userEmail} = req.body;
 
 
         const users = await prisma.user.findMany({
             where: {
-                OR:[
-                    {firstName:{ startsWith: name}},
-                    {firstName:{ contains: name}}   
-                ],
-                
-                role : "Investor"
+                AND: [
+                    {
+                        OR: [
+                            { firstName: { startsWith: name } },
+                            { firstName: { contains: name } }
+                        ]
+                    },
+                    {
+                        NOT: {
+                            email: userEmail // specify the userEmail you want to exclude
+                        }
+                    },
+                    {
+                        role: "Investor"
+                    }
+                ]
             }
-        })
+        });
+        console.log(users, 'users');
+        const userIsFriendArray =[]
+        for (const user of users){
+            const isFriend = await prisma.friends.findUnique({
+                where:{
+                    userID_recipientID: {
+                        userID: userEmail,
+                        recipientID: user.email
+                }
+            }})
 
+            console.log(isFriend, 'isefdafsa')
+            if (isFriend !== null){
+                userIsFriendArray.push({
+                    firstName:user.firstName,
+                    email:user.email,
+                    isFriend: isFriend.accepted})
+            }
+            else{
+                userIsFriendArray.push({
+                    firstName:user.firstName,
+                    email:user.email,
+                    isFriend: null})
+
+            }
+            
+        }
+
+       
+       
         if (!users) {
             // If the user doesn't exist, return an error response
             return res.status(404).json({ error: 'User not found' });
@@ -23,10 +62,7 @@ export default async function handler(req,res){
 
         
         res.status(200).json({
-            users:users
-                
-                // add more details if you wish
-            
+            users:userIsFriendArray   
         })
         }
         catch(error){
