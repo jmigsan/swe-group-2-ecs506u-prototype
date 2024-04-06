@@ -84,34 +84,40 @@ export default function TransactionHistory(){
                 />
                 )
                 }
-            <div className={styles.pageNumber} onClick={()=>{setPageNumber(1)}}>1</div>
-                {pageNumber-2>=1 && (
-                    
-                    <div className={styles.pageNumbers}>
-                    {pageNumber>4 && (
-                        <div className={styles.dots}>...</div>
-                    )}
-                    {Array.from({ length: Math.min(2, pageNumber-2) }).map((_, index) => (
-                        <div key={index} className={styles.pageNumber} onClick={()=>{setPageNumber(Math.max(pageNumber-2, 2)+index)}}>{Math.max(pageNumber-2, 2)+index}</div>
-                      ))}
-                      </div>
-                )
-                }
-                {(pageNumber!=1 && pageNumber!=Math.ceil(transactions.length/10)) && (<div className={styles.underline}>{pageNumber}</div>)}
-                {pageNumber+2<=Math.ceil(transactions.length/10) && (
-                    <div className={styles.pageNumbers}>
-                    {Array.from({ length: Math.min(2, Math.floor(transactions.length/10)-pageNumber) }).map((_, index) => (
-                        <div key={index} className={styles.pageNumber} onClick={()=>{setPageNumber(pageNumber+index+1)}}>{pageNumber+index+1}</div>
-                      ))}
-                      {pageNumber<(Math.floor(transactions.length/10))-2 && (
-                        <div className={styles.dots}>...</div>
-                        )}
-                      </div>
-                )
-                }
+            
+            <div className={styles.pageNumbers}>
 
-                {transactions.length>10 && (<div className={styles.pageNumber} onClick={()=>{setPageNumber(Math.ceil(transactions.length/10))}}>{Math.ceil(transactions.length/10)}</div>)}
-                {pageNumber!=Math.ceil(transactions.length/10) && transactions.length>30 ? (
+   
+                <button className={styles.pageNumber} onClick={() => setPageNumber(1)}>1</button>
+              
+ 
+                {pageNumber > 4 && <span>...</span>}
+          
+                {pageNumber-2>=1 && (
+                    <>
+                      {Array.from({ length: Math.min(2, pageNumber-2) }).map((_, index) => (
+                        <button key={index} className={styles.pageNumber} onClick={() => setPageNumber(pageNumber-2+index)}>{Math.max(2,pageNumber-2+index)}</button>
+                      ))}
+                    </>
+                )}
+
+                {(pageNumber!=1 && pageNumber!= Math.ceil(transactions.length/10))  && (<button className={styles.pageNumber}>{pageNumber}</button>)}
+                
+                {pageNumber+2<=Math.ceil(transactions.length/10) && (
+                    <>
+                      {Array.from({ length: Math.min(2, Math.ceil(transactions.length/10)-pageNumber-1) }).map((_, index) => (
+                        <button key={index} className={styles.pageNumber} onClick={() => setPageNumber(pageNumber+index+1)}>{pageNumber+index+1}</button>
+                      ))}
+                    </>
+                )}
+                {pageNumber+3<Math.ceil(transactions.length/10)  && <span>...</span>}
+
+             
+                <button  className={styles.pageNumber} onClick={() => setPageNumber(Math.ceil(transactions.length/10) )}>{Math.ceil(transactions.length/10) }</button>
+                
+        </div>
+
+            {pageNumber!=Math.ceil(transactions.length/10) && transactions.length>30 ? (
                     <Image 
                         src={nextRight}
                         width={10}

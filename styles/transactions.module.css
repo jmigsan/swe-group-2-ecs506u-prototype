@@ -4,7 +4,6 @@
     height:90%;
     display: flex;
     flex-direction: column;
-    gap:2em;
     align-items: center;
 }
 
@@ -49,32 +48,37 @@
     font-family: 'Roboto', sans-serif;
     font-size: 1.2em;
     border-bottom: 1pt solid lightgray;
-    padding-bottom: 1em;
+    padding: 1.3em;
+
 }
 .pageNumbers{
     display: flex;
     flex-direction: row;
+    gap:0.3em;
+    
 }
 .pageNumber{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding:0.5em;
-    font-family: Arial, Helvetica, sans-serif;
-    border-radius: 0.5em;
-    width:1.2em;
+    border:none;
+    background-color: transparent;
+    font-size: 1em;
+}
+
+.pageNumber:hover{
+    background-color: lightgray;
 }
 
 .nextPage{
     display: flex;
     flex-direction: row;
-    width:95%;
     align-items: center;
     gap:0.5em;
+    width: 100%;
     justify-content: flex-end;
     font-family: Arial, Helvetica, sans-serif;
     color:#484D56;
-    margin-bottom: 5em;
+    margin-top: 0.6em;
+    margin-left: 2em;
+    
 }
 .pageNumber:hover{
     background-color: lightgray;
