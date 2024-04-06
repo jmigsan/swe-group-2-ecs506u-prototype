@@ -222,3 +222,40 @@
 .button + .button {
     margin-left: 10px; /* Add space between buttons */
 }
+
+.boxinfo {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
+    /*display: flex;*/
+    /*justify-content: center;*/
+
+    grid-gap: 24px;
+    margin-bottom: 2.5em;
+}
+.otherTwo{
+
+
+    padding: 24px;
+    background: rgb(238, 238, 238);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    grid-gap: 24px;
+}
+.totalTickets{
+    padding: 24px;
+    background: rgb(238, 238, 238);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    grid-gap: 24px;
+}
+.boxinfo p {
+    font-size: 25px;
+}
+
+.h3 {
+    font-size: 36px;
+    font-weight: 600;
+    color: #000000;
+}
