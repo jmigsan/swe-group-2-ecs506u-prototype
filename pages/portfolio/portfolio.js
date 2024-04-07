@@ -1,6 +1,7 @@
 import { Chart } from "react-google-charts";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios"
 import styles from '@/styles/portfolio.module.css';
 /**	
 Proposed table addition
@@ -20,8 +21,31 @@ ToDo:
     Formatting. May reference any other front end designs to maintain consistency
 */
 
+//Function to format the response data
+function formatData(data)
+{
+    let newData=[];
+    data.forEach((item)=> newData.push([item.coin,item.amountOwned,item.price]));
+
+    return newData;
+}
+
+
+//function to check if prices are present
+function getPrice(marketData,item)
+{
+    for(let i=0; i<marketData.length; i++)
+    {
+        if(marketData[i].symbol === item)
+        {
+            return marketData.quote.USD.price;
+        }
+    }
+    return "N/A";
+}
+
 //function to create the pie chart
-function PieChart({data})
+function PieChart(data)
 {
     return(<Chart 
         chartType="PieChart"
@@ -30,12 +54,38 @@ function PieChart({data})
     />)
 }
 
-function ListRow({data})
+function getAverage(amount,price)
 {
-    return<tr className={styles.ListRow}><ListItem data={data[0]}/><ListItem data={data[1]}/>
-    <ListItem data={data[2]}/><ListItem data="N/A"/><ListItem data="N/A"/></tr>
+    let average = amount/price;
+    //Round to 2dp
+    average = parseInt(average*100);
+    average = parseFloat(average/100);
+    return average
 }
 
+function getChange(ownedPrice,marketPrice)
+{
+    //If currency not found, return N/A
+    if(marketPrice==="N/A")
+    {
+        return marketPrice;
+    }
+    
+    let change= marketPrice-ownedPrice;
+    change = change/ownedPrice;
+    
+    change = parseInt(change*100);
+    change= parseFloat(change/100);
+    return change;
+}
+//Functions to create the list
+function ListRow({data,marketData})
+{
+    let average = getAverage(data[1],data[2]);
+    let marketPrice = getPrice(marketData,data[0]);
+    return<tr className={styles.ListRow}><ListItem data={data[0]}/><ListItem data={data[1]}/>
+    <ListItem data={average}/><ListItem data={marketPrice}/><ListItem data="N/A"/></tr>
+}
 
 function ListItem({data})
 {
@@ -46,9 +96,9 @@ function ListHeading({data})
 {
     return <th className={styles.ListHeader}data>{data}</th>
 }
-function List({data})
+
+function List({data,marketData})
 {
-    data.shift() //Remove headings
     return(<table id={styles.ListTable}>
         <thead><tr><ListHeading data="Coin"/><ListHeading data="Amount"/><ListHeading data="Average Price of Purchase"/>
         <ListHeading data="Current Price"/><ListHeading data="Expected Gain/Loss"/></tr></thead>
@@ -58,10 +108,9 @@ function List({data})
 
 function Portfolio()
 {
+    const[data,setData]=useState([]);
+    const [marketData, setMarketData]= useState([]);
     const {data: session} = useSession();
-    useEffect(()=>{
-       getData();
-     }, [session]);
 
      async function getData()
     {
@@ -77,7 +126,7 @@ function Portfolio()
                     body: JSON.stringify({username})
                 })
                 const response =await portfolio.json();
-                console.log(response);
+                setData(response);
             }
             catch(error)
            {
@@ -86,18 +135,51 @@ function Portfolio()
         }
     }
 
-    const data = getData();
-    //altering format for pie chart
-    //let pieData = [...data];
+    async function getMarketData(){        
+        try{
+             const response=await axios.get('http://localhost:3000/api/ExperiencedTrading/experienced');
+             setMarketData(response.data.data);
+        }
 
-    //pieData.forEach((item) => item.pop);
+        catch(error){
+         console.error(error);
+        }
+    }
 
-    return(<>
+    useEffect(()=>{
+        getData();
+      }, [session]);
 
-    </>);
-        //<div id={styles.PageHeader}>Portfolio</div>
-        //<PieChart data={pieData} />
-        //<List data={data}/>
+    useEffect(()=>{
+        console.log("here");
+        getMarketData();
+    },[]);
+
+
+    //altering format for pie chart and list
+    const newData=formatData(data);
+    //Pie chart formatting
+    let pieData=[];
+    for(let i=0; i<newData.length; i++)
+    {
+        pieData[i]=[...newData[i]];
+        pieData[i].pop();
+    }
+    pieData.unshift(["Coin","Amount owned"]);
+
+    if(newData.length >0)
+    {
+        return(<>
+            <div id={styles.PageHeader}>Portfolio</div>
+            <PieChart data={pieData} />
+            <List data={newData} marketData={marketData}/>
+        </>);
+    }
+    else
+    {
+        return(<>Portfolio empty</>);
+    }
+
 }
 
 export default Portfolio;

@@ -1,6 +1,6 @@
 //File to add test data to the database
 import { useSession } from "next-auth/react";
-async function addData(username,name,amount,price)
+async function addData(username,coin_name,amount,price)
 {
     try{
         const res = await fetch('../api/portfolio/addPortfolioItem', {
@@ -8,7 +8,7 @@ async function addData(username,name,amount,price)
             headers:{
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({username,name,amount,price})
+            body: JSON.stringify({username,coin_name,amount,price})
         })
 
     }
@@ -21,7 +21,7 @@ async function addData(username,name,amount,price)
 function addAll()
 {
     //Temporary data for testing
-    const data = [["Coin","Amount","AveragePrice"],
+    const data = [
     ["BTC",12,135.23],
     ["ETH",0.73,126.25],
     ["Coin3",13.14,35.26],

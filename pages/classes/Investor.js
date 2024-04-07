@@ -77,12 +77,12 @@ export default class Investor{
         }
     }
 
-    async addPortfolioItem(username,coin,_name,amount,purchasePrice)
+    async addPortfolioItem(username,coin_name,amount,purchasePrice)
     {
         try
         {
             //Check if the item is already present
-            const portfolioItem = await prisma.portfolio.findUnique({
+            const portfolioItem = await prisma.portfolioItem.findUnique({
                 where:{
                     userId_coin:{
                         userId: username,
@@ -90,17 +90,16 @@ export default class Investor{
                     }
                 }
             })
-
             //if found, alter the current amoount and average price
             if(portfolioItem)
             {
                 const newAmount = amount+portfolioItem.amountOwned;
-                const newAverage = ((portfolioItem.averagePrice * portfolioItem.amountOwned) + purchasePrice)/newAmount;
+                const newPrice = purchasePrice+portfolioItem.price;
                 
                 //If out of currency, remove from list
                 if(newAmount <= 0)
                 {
-                    await prisma.favorites.delete({
+                    await prisma.portfolioItem.delete({
                         where:{
                             userId_coin:{
                                 userId:username,
@@ -122,14 +121,14 @@ export default class Investor{
                         },
                         data:{
                             amountOwned: newAmount,
-                            averagePrice: newAverage
+                            price: newPrice
                         }
                     })
                     return true;
             }
-
             //if not found, create
-            const addItem = await prisma.portfolio.create({data:portfolioItem})
+            const addItem = await prisma.portfolioItem.create({data:{userId:username,
+                coin:coin_name,amountOwned:amount,price:purchasePrice}})
             return true;
         }
         catch(error){
@@ -140,15 +139,16 @@ export default class Investor{
 
     async getPortfolio(username){
         try{
-            const portfolio = await prisma.portfolio.findMany({
+            const portfolio = await prisma.portfolioItem.findMany({
                 where:{
                     userId:username,
                 },
                 select:{
                     coin:true,
                     amountOwned:true,
-                    averagePrice:true,
-                }
+                    price:true,
+                },
+                orderBy:{amountOwned: 'desc'}
             })
 
             return portfolio;

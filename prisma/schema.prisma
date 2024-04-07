@@ -27,7 +27,7 @@ model favorites{
 model portfolioItem {
   coin String
   amountOwned Float
-  averagePrice Float
+  price Float
   user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
   userId String
   @@id([userId, coin])
