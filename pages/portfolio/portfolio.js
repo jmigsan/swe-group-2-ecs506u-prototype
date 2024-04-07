@@ -38,31 +38,26 @@ function getPrice(marketData,item)
     {
         if(marketData[i].symbol === item)
         {
-            return marketData.quote.USD.price;
+            let marketPrice = marketData[i].quote.USD.price;
+            marketPrice = parseInt(marketPrice*100);
+            marketPrice =parseFloat(marketPrice/100);
+            return marketPrice;
         }
     }
     return "N/A";
 }
 
-//function to create the pie chart
-function PieChart(data)
-{
-    return(<Chart 
-        chartType="PieChart"
-        data={data}
-        options={{is3D:true, height:300}} //Colours can be changed in options, but need to ensure enough colours are present
-    />)
-}
-
+//function to get the average price of owned currency
 function getAverage(amount,price)
 {
-    let average = amount/price;
+    let average = price/amount;
     //Round to 2dp
     average = parseInt(average*100);
     average = parseFloat(average/100);
     return average
 }
 
+//function to get the % change if selling
 function getChange(ownedPrice,marketPrice)
 {
     //If currency not found, return N/A
@@ -72,19 +67,34 @@ function getChange(ownedPrice,marketPrice)
     }
     
     let change= marketPrice-ownedPrice;
-    change = change/ownedPrice;
+    change = (change/ownedPrice)*100;
     
     change = parseInt(change*100);
     change= parseFloat(change/100);
-    return change;
+    if(change > 0)
+    {
+        return "+"+change+"%";
+    }
 }
+
+//function to create the pie chart
+function PieChart({data})
+{
+    return(<Chart 
+        chartType="PieChart"
+        data={data}
+        options={{is3D:true, height:300}} //Colours can be changed in options, but need to ensure enough colours are present
+    />)
+}
+
 //Functions to create the list
 function ListRow({data,marketData})
 {
     let average = getAverage(data[1],data[2]);
     let marketPrice = getPrice(marketData,data[0]);
+    let change = getChange(average,marketPrice);
     return<tr className={styles.ListRow}><ListItem data={data[0]}/><ListItem data={data[1]}/>
-    <ListItem data={average}/><ListItem data={marketPrice}/><ListItem data="N/A"/></tr>
+    <ListItem data={average}/><ListItem data={marketPrice}/><ListItem data={change}/></tr>
 }
 
 function ListItem({data})
@@ -102,7 +112,7 @@ function List({data,marketData})
     return(<table id={styles.ListTable}>
         <thead><tr><ListHeading data="Coin"/><ListHeading data="Amount"/><ListHeading data="Average Price of Purchase"/>
         <ListHeading data="Current Price"/><ListHeading data="Expected Gain/Loss"/></tr></thead>
-        <tbody>{data.map((item) => <ListRow data={item}/>)}</tbody>
+        <tbody>{data.map((item) => <ListRow data={item} marketData={marketData}/>)}</tbody>
     </table>);
 }
 
@@ -151,13 +161,11 @@ function Portfolio()
       }, [session]);
 
     useEffect(()=>{
-        console.log("here");
         getMarketData();
     },[]);
-
-
     //altering format for pie chart and list
     const newData=formatData(data);
+
     //Pie chart formatting
     let pieData=[];
     for(let i=0; i<newData.length; i++)
@@ -166,7 +174,10 @@ function Portfolio()
         pieData[i].pop();
     }
     pieData.unshift(["Coin","Amount owned"]);
-
+    if(marketData.length===0)
+    {
+        return(<>Fetching data</>);
+    }
     if(newData.length >0)
     {
         return(<>
