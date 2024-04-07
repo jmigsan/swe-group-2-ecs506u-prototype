@@ -25,7 +25,7 @@ export default async function handler(req,res){
                 ]
             }
         });
-        console.log(users, 'users');
+        
         const userIsFriendArray =[]
         for (const user of users){
             const isFriend = await prisma.friends.findUnique({
@@ -36,7 +36,7 @@ export default async function handler(req,res){
                 }
             }})
 
-            console.log(isFriend, 'isefdafsa')
+            
             if (isFriend !== null){
                 userIsFriendArray.push({
                     firstName:user.firstName,
