@@ -52,21 +52,9 @@ model Investor {
   LimitOrders LimitOrder[]
 }
 
-<<<<<<<<< Temporary merge branch 1
-model Ticket {
-  id               Int      @id @default(autoincrement())
-  issueType        String
-  otherIssueType   String
-  issueDescription String
-  dateCreated      DateTime @default(now())
-  solved           Boolean  @default(false)
-  comments         String   @default("")
 
 
-  user             User     @relation(fields: [userEmail], references: [email])
-  userEmail        String      // Foreign key
-}
-=========
+
 
 model Cryptos{
   coin String @id
@@ -119,6 +107,8 @@ model chatPairs {
 
   @@id([userId, staffId])
 }
+
+
 
 model Ticket {
   id               Int      @id @default(autoincrement())

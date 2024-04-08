@@ -27,11 +27,8 @@ export default function Support() {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    fetchAll();
   };
-
-
-
-
 
     useEffect(() => {
         // Fetch user session information when the component mounts
@@ -39,9 +36,15 @@ export default function Support() {
     }, []);
     useEffect(()=>{
       if (userEmail){
-        handleViewFriends();
-        handleViewFriendRequest();
-        handleViewPost();
+        if(userRole ==="Investor"){
+          handleViewFriends();
+          handleViewFriendRequest();
+          handleViewPost();
+        }
+        else if(userRole === "Admin"){
+          handleViewPostAdmin();
+        }
+
       }
     },[userEmail])
 
@@ -56,6 +59,14 @@ export default function Support() {
         setFriendSearchResult([])
       }
     },[friendSearch])
+
+    function fetchAll (){
+      handleViewFriendRequest()
+      handleViewFriends()
+      handleViewPost()
+      handleSearchFriend();
+      
+    }
 
     const fetchUserSession = async () => {
         try {
@@ -74,10 +85,11 @@ export default function Support() {
         } catch (error) {
             setError('Internal Server Error');
         }
+
     };
 
     const handleSearchFriend = async () =>{
-      
+        if (friendSearch){
         try {
             const res = await fetch('../api/feed/searchFriend', {
                 method: 'POST',
@@ -100,6 +112,7 @@ export default function Support() {
             console.error('Error:', error);
             setError('Internal Server Error');
         }
+      }
     }
 
     const handleAddFriend = async (recipientEmail) =>{
@@ -117,7 +130,7 @@ export default function Support() {
 
             if (res.ok) {
                 const data = await res.json();
-                window.location.reload(); 
+                 
             } else {
                 setError('Error occurred while retrieving tickets');
             }
@@ -125,6 +138,7 @@ export default function Support() {
             console.error('Error:', error);
             setError('Internal Server Error');
         }
+        fetchAll();
     }
 
     const handleViewFriends = async () =>{
@@ -194,7 +208,7 @@ export default function Support() {
 
         if (res.ok) {
           const data = await res.json();
-          window.location.reload();
+          
 
         } 
         else {
@@ -205,6 +219,7 @@ export default function Support() {
         console.error('Error:', error);
         setError('Internal Server Error');
       }  
+      fetchAll()
     }
     const handleRemoveFriend = async (friendID) =>{
       
@@ -222,7 +237,7 @@ export default function Support() {
 
         if (res.ok) {
           const data = await res.json();
-          window.location.reload();
+          
         } 
         else {
           setError('Error occurred while retrieving tickets');
@@ -232,6 +247,7 @@ export default function Support() {
         console.error('Error:', error);
         setError('Internal Server Error');
       }  
+      fetchAll()
     }
 
     
@@ -265,7 +281,28 @@ export default function Support() {
         setError('Internal Server Error');
       }  
     }
+    const handleViewPostAdmin = async ()=>{
+      try {
+        const res = await fetch('../api/feed/viewPostAdmin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }  
+        });
 
+        if (res.ok) {
+          const data = await res.json();
+          setPosts(data.posts);
+        } 
+        else {
+          setError('Error occurred while retrieving tickets');
+        }
+      } 
+      catch (error) {
+        console.error('Error:', error);
+        setError('Internal Server Error');
+      }  
+    }
     const handleRemovePost = async (postID) => {
       try {
         const res = await fetch('../api/feed/removePost', {
@@ -285,6 +322,7 @@ export default function Support() {
         console.error('Error:', error);
         setError('Internal Server Error');
       }  
+      handleViewPostAdmin();
     }
 
     function convertToDate (timestamp){
@@ -320,6 +358,7 @@ export default function Support() {
 
     return (
         <div className={styles.app}>
+          {userRole ==="Investor" && (
           <div className={styles.sidebar}>
             <div className={styles.searchDropdown}>
               <input placeholder="Search Friends" className={styles.searchBar}
@@ -353,42 +392,51 @@ export default function Support() {
               )}
             </div>
           </div>
-
-          <div>
-            <div className={styles.friends}>Friends</div>
-            <div className={styles.dropdownFriend}>
-              {friends.map((friend, index)=>(
-                <div className={styles.friendListItem} key={index}>
-                  <div>{friend[1]}</div>
-                  <button className={styles.rjct} onClick={()=> handleRemoveFriend(friend[0])}>&#10060;</button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <div className={styles.friendRequest}>Friend Requests</div>
-            <div className={styles.dropdownFriend}>
-              {friendRequests.map((friendRequest, index)=>(
-                <div key={index} className={styles.friendListItem}>
-                  <div>{friendRequest[1]}</div>
-                  <button className={styles.acpt} onClick={()=> handleAcceptFriend(friendRequest,true)}>&#9989;</button>
-                </div>
-              ))}
-            </div>
-          </div>
-            
-        </div>
-        <div>
           
+          <div>
+            <div>
+              <div className={styles.friends}>Friends</div>
+              <div className={styles.dropdownFriend}>
+                {friends.map((friend, index)=>(
+                  <div className={styles.friendListItem} key={index}>
+                    <div>{friend[1]}</div>
+                    <button className={styles.rjct} onClick={()=> handleRemoveFriend(friend[0])}>&#10060;</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className={styles.friendRequest}>Friend Requests</div>
+              <div className={styles.dropdownFriend}>
+                {friendRequests.map((friendRequest, index)=>(
+                  <div key={index} className={styles.friendListItem}>
+                    <div>{friendRequest[1]}</div>
+                    <button className={styles.acpt} onClick={()=> handleAcceptFriend(friendRequest,true)}>&#9989;</button>
+                  </div>
+                ))}
+              </div>
+            </div>  
+          </div>
+        </div>
+        )}
+
+
+        {userRole ==="Investor" && (
+        <div>
+
           <button onClick={openModal} className={styles.createButton}>
             <img className={styles.createButtonImg} src='/images/create.png'></img>
             <h1>Create</h1>
           </button>
           <PostModal isOpen={isModalOpen} onClose={closeModal} userEmail={userEmail} />
         </div>
+
+        )}
+
+
         <div className={styles.feed}>
-        {posts.length > 0 &&(
+        {posts.length > 0 ?(
           <>
             <div className={styles.title}>Activity</div>
             {posts.map((post, index)=>(
@@ -398,13 +446,21 @@ export default function Support() {
                   <div className={styles.date}>{convertToDate(post.dateCreated)}</div>
                 </div>
                 {userRole === "Admin" && (
-                  <button onClick={handleRemovePost(post.id)}>x</button>
+                  <button onClick={()=>handleRemovePost(post.id)}>x</button>
                 )}
                 <div className={styles.details}>{post.post}</div>
               </div>
             ))}
           </>
-        )}   
+        )
+        :
+        (
+          <div>
+            <div className={styles.title}>Activity</div>
+            <div className={styles.post}> No posts</div>
+          </div>
+        )
+        }   
       </div>
     </div>
   )
