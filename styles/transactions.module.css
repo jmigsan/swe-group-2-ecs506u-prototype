@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+.transactionBody{
+    width:80%;
+    height:90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.transactionHeader{
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.col{
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    color: gray;
+    width:20%;
+    text-align: left;
+}
+
+.colT{
+    width:20%;
+    text-align: left;
+}
+
+.green{
+    color:green;
+    width:20%;
+    text-align: left;
+}
+
+.red{
+    color:red;
+    width:20%;
+    text-align: left;
+}
+.transaction{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.2em;
+    border-bottom: 1pt solid lightgray;
+    padding: 1.3em;
+
+}
+.pageNumbers{
+    display: flex;
+    flex-direction: row;
+    gap:0.3em;
+    
+}
+.pageNumber{
+    border:none;
+    background-color: transparent;
+    font-size: 1em;
+}
+
+.pageNumber:hover{
+    background-color: lightgray;
+}
+
+.nextPage{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5em;
+    width: 100%;
+    justify-content: flex-end;
+    font-family: Arial, Helvetica, sans-serif;
+    color:#484D56;
+    margin-top: 0.6em;
+    margin-left: 2em;
+    
+}
+.pageNumber:hover{
+    background-color: lightgray;
+    color:black;
+    border-radius: 0.5em;
+}
+
+.underline{
+    text-decoration: underline;
+}

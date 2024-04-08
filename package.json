@@ -1,0 +1,47 @@
+{
+  "name": "novatrade",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "server": "node server"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.2",
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@next-auth/prisma-adapter": "^0.4.4-canary.81",
+    "@prisma/client": "^5.12.1",
+    "@prisma/extension-accelerate": "^1.0.0",
+    "aos": "^2.3.4",
+    "apexcharts": "^3.48.0",
+    "axios": "^1.6.8",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "framer-motion": "^11.0.13",
+    "fs": "^0.0.1-security",
+    "human-number": "^2.0.4",
+    "human-readable-numbers": "^0.9.5",
+    "next": "14.1.3",
+    "next-auth": "^4.24.7",
+    "nodemailer": "^6.9.13",
+    "nodemon": "^3.1.0",
+    "openai": "^4.33.0",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0-rc2",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-intersection-observer": "^9.8.1",
+    "react-modal": "^3.16.1",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5"
+  },
+  "devDependencies": {
+    "prisma": "^5.12.1"
+  }
+}

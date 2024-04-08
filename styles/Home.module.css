@@ -1,0 +1,117 @@
+.title{
+    font-size:5vw;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 800;
+    width:60vw;
+    text-align: center;
+}
+
+.title2{
+    font-size:5vw;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    background: linear-gradient(90deg, #C7CE26 0%, #3CA34A 48.5%, #087E5F 100%); 
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;   
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height:100vh;
+    width:100vw;
+    max-width: 100%;
+    background: radial-gradient(circle at top left, rgba(255, 183, 197, 0.3) 0%, rgba(255, 183, 197, 0) 70%),
+    radial-gradient(circle at top right, rgba(140, 199, 255, 0.3) 0%, rgba(140, 199, 255, 0) 70%),
+    radial-gradient(circle at bottom left, rgba(165, 233, 168, 0.3) 0%, rgba(165, 233, 168, 0) 70%),
+    radial-gradient(circle at bottom right, rgba(255, 255, 155, 0.3) 0%, rgba(255, 255, 155, 0) 70%);
+
+
+}
+
+.phoneBackground{
+    width:100vw;
+    max-width: 100%;
+    height:100vh;
+    background-color: white;  
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+
+.body{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:2vw;
+    width:85vw;
+    color:#3e3f3b;
+    text-align: center;
+}
+
+
+.section2{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height:45vh;
+    align-items: flex-start;
+    width:50vw;
+}
+
+.section2Title{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 5em;
+}
+
+.section2Body{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 2em;
+    color:#868787;
+}
+
+.section2footer{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1em;
+    color:#868787;
+}
+
+.getStarted{
+    background-color: #0548e9;
+    border-radius: 3em;
+    color:white;
+    border: none;
+    width:25%;
+    font-weight: bold;
+    font-size: 1em;
+    height:5em;
+}
+
+.optionsTitle{
+    color:white;
+    font-size: 10em;
+}
+
+@media screen and (max-width:768px){
+    .body{
+        visibility: hidden;
+    }
+
+    .title{
+        font-size:3em
+    }
+
+    .title2{
+        font-size:3em
+    }
+
+    .phoneBackground{
+        flex-direction: column;
+        align-items: center;
+    }
+
+}

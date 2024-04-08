@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+
+
+model favorites{
+  coin String
+  symbol String
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  @@id([userId, coin])
+}
+
+model User {
+  firstName  String
+  email      String    @id
+  password   String
+  createDate DateTime  @default(now())
+  updateDate DateTime  @updatedAt
+  role       String
+  staff      Staff?
+  investor   Investor?
+
+  tickets                Ticket[]
+  sentFriendRequests     Friends[] @relation("SenderRelation")
+  receivedFriendRequests Friends[] @relation("RecipientRelation")
+  posts                  Post[]
+}
+
+model Staff {
+  userId      String @unique @id
+  user        User   @relation(fields: [userId], references: [email])
+}
+
+model Investor {
+  userId      String @unique @id
+  user        User   @relation(fields: [userId], references: [email])
+  Favorites favorites[]
+  Currencies Balance []
+  Trades Trade[]
+  LimitOrders LimitOrder[]
+}
+
+
+model Cryptos{
+  coin String @id
+  id Int
+  symbol String
+  createDate DateTime @default(now())
+}
+
+model Balance{
+  currency String
+  amount Float
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  @@id([userId, currency])
+}
+
+
+model Trade{
+  id Int @id @default(autoincrement())
+  Bought String
+  Sold String
+  Type String
+  Price Float
+  AmountBought Float
+  AmountSold Float
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  createDate DateTime @default(now())
+}
+
+model LimitOrder{
+    id Int @id @default(autoincrement())
+  Bought String
+  Sold String
+  Type String
+  Price Float
+  AmountBought Float
+  AmountSold Float
+  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+model chatRequests{
+  userId String @id
+}
+
+model chatPairs{
+  userId String 
+  staffId String
+  @@id([userId, staffId])
+}
+
+model Ticket {
+  id               Int      @id @default(autoincrement())
+  issueType        String
+  otherIssueType   String
+  issueDescription String
+  dateCreated      DateTime @default(now())
+  solved           Boolean  @default(false)
+  comments         String   @default("")
+
+  user      User   @relation(fields: [userEmail], references: [email])
+  userEmail String // Foreign key
+}
+
+model Friends {
+  friendID        Int       @id @default(autoincrement())
+  userID          String
+  recipientID     String
+  createdAt       DateTime  @default(now())
+  accepted        Boolean   @default(false)
+
+  sender          User      @relation(name: "SenderRelation", fields: [userID], references: [email])
+  recipient       User      @relation(name: "RecipientRelation", fields: [recipientID], references: [email])
+
+  @@unique([userID, recipientID])
+}
+
+model Post {
+  id               Int      @id @default(autoincrement())
+  post             String
+  dateCreated      DateTime @default(now())
+
+  user      User   @relation(fields: [userEmail], references: [email])
+  userEmail String // Foreign key
+}

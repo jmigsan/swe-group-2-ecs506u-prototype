@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/* Adding some padding to the chat history */
+.chatHistory {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 0.6em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: scroll;
+    height: 90%;/* Adjust as needed */
+    width:90%;
+    display: flex;
+    flex-direction: column;
+
+    gap:0.6em;
+    scrollbar-width: none; /* Hide scrollbar on Firefox */
+    -ms-overflow-style: none;
+   
+}
+
+
+.chatBotHover{
+    background-color: #5AA056;
+    width:4em;
+    height:4em;
+    border-radius: 999em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    top:86vh;
+    left:93vw;
+
+}
+
+.header{
+    width:100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding:0.5em;
+    border-top-left-radius: 0.6em;
+    border-top-right-radius: 0.6em;
+    font-size: 1.2em;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.chatBotHover:hover{
+    width:10em;
+    left:80vw;
+}
+
+
+.chatBotContainer{
+    width:30em;
+    height:40em;
+    border-radius: 0.6em;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #F5F5F5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding:0.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:1em;
+    z-index: 9999;
+    position: fixed;
+    top:30vh;
+    right:2vw;
+}
+
+.chatBotHover:hover .text{
+    display: block;
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+}
+.text{
+    display: none;
+}
+
+
+/* Styling for the user input area */
+.userInput {
+    display: flex;
+    width:98%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.input:focus{
+    outline:none;
+}
+
+.chatBot{
+    position: relative;
+    width: 0em;
+    height: 0em;
+    top:83vh;
+    left:93vw;
+    z-index: 9999;
+}
+
+.chatBot:hover{
+    position: relative;
+    width: 0em;
+    height: 0em;
+    top:83vh;
+    left:88vw;
+}
+
+/* Assuming you have an input field for user input */
+.userInput input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+/* Assuming you have a button for submitting */
+.userInput button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+/* Hover effect for the button */
+.userInput button:hover {
+    background-color: #0056b3;
+}
+
+.assistantMessage{
+    text-align: left;
+    border-radius: 5px;
+    border: 1px solid rgb(232, 232, 232);
+    
+    padding: 0.5rem ;
+
+}
+
+.userMessage{
+    text-align: right;
+    border-radius: 5px;
+    border: 1px solid rgb(248, 248, 248);
+    
+    padding: 0.5rem ;
+}
+
+.assistantMessage h1, .userMessage h1{
+    
+    font-size: 1.2rem;
+    margin:3px 0px 3px 0px;
+    
+}
+.assistantMessage h2, .userMessage h2{
+    font-weight: 100;
+    font-size: 1rem;
+    margin:3px 0px 3px 0px;
+}
