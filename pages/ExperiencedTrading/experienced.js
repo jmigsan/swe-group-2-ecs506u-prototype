@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import styles from "@/styles/experienced.module.css"
 import axios from "axios"
 import Image from "next/image";
@@ -27,19 +27,45 @@ export default function Experienced(){
     const [changeToggled, setChangeToggled] = useState(false);
     const [filter, setFilter]=useState("all");
     const [pageNumber, setPageNumber] = useState(1);
-    const [overView, setOverView] = useState("gainer");
-
+    const [allowedCryptos, setAllowedCryptos] = useState([])
     const {data: session} = useSession();
     const router = useRouter();
-    useEffect(() =>{fetchData();}, [])
-
+  
     async function fetchData(){        
         try{
              const response=await axios.get('http://localhost:3000/api/ExperiencedTrading/experienced');
-            
-             setMarketData(response.data.data);
-             setShownData(response.data.data);
-             setLiked(Array.from(response.data.data, x=>false));
+             const allowedCrypto = await axios.get('http://localhost:3000/api/ExperiencedTrading/allowedCryptos');
+             if(session?.user.role=="Investor"){
+                setMarketData((marketData)=>{
+                    return response.data.data.filter(function(item){
+                        for(let i=0; i<allowedCrypto.data.length; i++){
+                            if(item.name==allowedCrypto.data[i].coin){
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    })
+                });
+            }
+
+            else{
+                setMarketData(response.data.data);
+            }
+
+             setShownData((shownData)=>{
+                return response.data.data.filter(function(item){
+                    for(let i=0; i<allowedCrypto.data.length; i++){
+                        if(item.name==allowedCrypto.data[i].coin){
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })
+            });
+
+            setAllowedCryptos(allowedCrypto.data)
         }
 
         catch(error){
@@ -51,8 +77,11 @@ export default function Experienced(){
 
 
  useEffect(()=>{
-    console.log(session)
-   fetchFavorites();
+    if(session){
+        fetchData();
+        fetchFavorites();
+    }
+
  }, [session]);
 
 
@@ -61,7 +90,7 @@ export default function Experienced(){
     let count=0;
     for(let i=0; i<shownData.length; i++){
         for(let j=0; j<favorites.length; j++){
-            if(shownData[i].symbol.toUpperCase()==favorites[j].coin){
+            if(shownData[i].name==favorites[j].coin){
                 count+=1;
                 new_arr[i]=true;
             }
@@ -264,6 +293,34 @@ function dynamicSort(property){
         else{return 0;}
     }
     }
+
+    else if(property=="new"){
+        return function(a, b){
+            let a_time=-99;
+            let b_time=-99;
+            for(let i=0; i<allowedCryptos.length; i++){
+                if(a.name==allowedCryptos[i].coin){
+                    a_time=allowedCryptos[i].createDate;
+                }
+                else if(b.name==allowedCryptos[i].coin){
+                    b_time=allowedCryptos[i].createDate;
+                }
+            }
+
+            if(a_time==-99){
+                return 1
+            }
+            if(a_time>b_time){
+                return -1;
+            }
+            else if(a_time<b_time){
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
+    }
 }
 function toggle(index, element){
     const new_arr = Array.from(toggles, x=>[false, false]);
@@ -295,7 +352,7 @@ function toggle(index, element){
         let count=0;
         for(let i=0; i<marketData.length; i++){
             for(let j=0; j<favorites.length; j++){
-                if(marketData[i].symbol.toUpperCase()==favorites[j].coin){
+                if(marketData[i].name==favorites[j].coin){
                     count+=1;
                     new_arr.push(marketData[i]);
                 }
@@ -311,6 +368,19 @@ function toggle(index, element){
     else if(filter=="all"){
         const new_arr = marketData.sort(sortFunction);
         setShownData(new_arr);
+    }
+
+    else if(filter=="allowed"){
+        setShownData((shownData)=>{
+            return shownData.filter(function(item){
+                for(let i=0; i<allowedCryptos.length; i++){
+                    if(item.name==allowedCryptos[i].coin){
+                        return true;
+                    }
+                }
+                return false;
+            })
+        })
     }
 
     setPageNumber(1);
@@ -330,6 +400,14 @@ function toggle(index, element){
         }
     }
 
+    else if(filter=="allowed"){
+        for(let i=0; i<allowedCryptos.length; i++){
+            if(coin_name==allowedCryptos[i].coin){
+                return true;
+            }
+        }
+    }
+
     return false;
   }
 
@@ -337,15 +415,29 @@ function toggle(index, element){
     const index= (pageNumber-1)*30 +i;
     const coin = shownData[index];
     const coin_string ="BINANCE:" + coin.symbol.toUpperCase() + "USDT";
-    console.log(coin_string);
     const watchlist_arr=[];
     let temp_coin_string;
-    for(let i=0; i<favorites.length; i++){
-        temp_coin_string="BINANCE:" + favorites[i].coin + "USDT";
-        watchlist_arr.push(temp_coin_string);
-    }
-
-    const url = '/ExperiencedTrading/chart?coin=' + coin_string;
+    const sortedData = shownData.sort((a, b)=>{
+        if(a.name>b.name){
+            return -1;
+        }
+        else if(a.name<b.name){
+            return 1;
+        }
+        else{return 0;}
+    });
+    
+        for(let j=0; j<sortedData.length; j++){
+            for(let i=0; i<favorites.length; i++){
+                if(sortedData[j].name==favorites[i].coin){
+                    temp_coin_string='{ "name":' + '"BINANCE:' + sortedData[j].symbol.toUpperCase() + 'USDT"' + "," + '"displayName":' + '"' + sortedData[j].name + '"' + "}";
+                    watchlist_arr.push(temp_coin_string);
+                }{
+            }
+        }
+ }
+ console.log(favorites);
+    const url = '/ExperiencedTrading/chart?coin=' + coin_string + '&&watchlist=[' + watchlist_arr + ']' + '&&number=' + favorites.length;
     router.replace(url);
 
   }
@@ -353,14 +445,15 @@ function toggle(index, element){
   
     const new_arr= Array.from(liked, x=>x);
     const username = session.user.email;
-    const coin_name = shownData[index].symbol.toUpperCase();
+    const coin_name = shownData[index].name;
+    const coin_symbol = shownData[index].symbol;
     try{
         const res = await fetch('../api/ExperiencedTrading/favorites', {
             method: 'POST',
             headers:{
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({username, coin_name})
+            body: JSON.stringify({username, coin_name, coin_symbol})
         })
 
     }
@@ -377,10 +470,9 @@ function toggle(index, element){
         
         const input = document.getElementById("input").value.toUpperCase();
         const new_arr=[];
-
         for(let i=0; i<marketData.length; i++){
             if(marketData[i].name.toUpperCase().includes(input) || marketData[i].symbol.toUpperCase().includes(input)){
-                if(checkFilter(marketData[i].symbol.toUpperCase())){
+                if(checkFilter(marketData[i].name)){
                     new_arr.push(marketData[i]);
                 }
                 
@@ -391,9 +483,51 @@ function toggle(index, element){
         setShownData(sorted_new_arr);
     }
 
-    useEffect(()=>{
-        handleButtonClick(1);
-    }, [])
+
+    async function removeCrypto(index){
+        const coin = shownData[((pageNumber -1) *30) + index];
+        const coin_name = coin.name;
+
+        try{
+            const res = await fetch('../api/Admin/removeCrypto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({coin_name}),
+            })
+        }
+        catch(error){
+            console.error(error);
+        }
+
+    }
+
+    function isAllowed(i){
+        const coin = shownData[((pageNumber -1) * 30) + i];
+        for(let i=0; i<allowedCryptos.length; i++){
+            if(coin.name == allowedCryptos[i].coin){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    async function addCrypto(index){
+        const coin = shownData[((pageNumber -1) *30) + index];
+        const coin_name = coin.name;
+        const coin_id = coin.id;
+        const coin_symbol = coin.symbol;
+        try{
+            const res = await fetch('../api/Admin/addCrypto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({coin_name, coin_id, coin_symbol}),
+            })
+        }
+        catch(error){
+            console.error(error);
+        }
+    }
     return (
         <div className={styles.container} onClick={()=>{if(changeToggled){document.getElementById("dropdown").style.display="none"; setChangeToggled(false)}}}>
             <div className={styles.pageTitle}>Markets Overview</div>
@@ -419,9 +553,11 @@ function toggle(index, element){
                                 <section className={styles.overViewPrice}>
                                     ${HRNumbers(data.quote.USD.price, n=> Number.parseFloat(n).toFixed(2))}
                                 </section>
-
+                                {data.quote.USD.percent_change_24h>0 ? (
                                 <div className={styles.overViewPlus}>+{HRNumbers((data.quote.USD.percent_change_24h), n=> Number.parseFloat(n).toFixed(2))}</div>
-
+                                ) :(
+                                    <div className={styles.overViewMinus}>+{HRNumbers((data.quote.USD.percent_change_24h), n=> Number.parseFloat(n).toFixed(2))}</div>
+                                )}
                             </div>
                         )
                     })
@@ -449,8 +585,11 @@ function toggle(index, element){
                                     ${HRNumbers(data.quote.USD.price, n=> Number.parseFloat(n).toFixed(2))}
                                 </section>
 
-                                <div className={styles.overViewMinus}>-{HRNumbers((data.quote.USD.percent_change_24h), n=> Number.parseFloat(n).toFixed(2))}</div>
-
+                                {data.quote.USD.percent_change_24h>0 ? (
+                                <div className={styles.overViewPlus}>+{HRNumbers((data.quote.USD.percent_change_24h), n=> Number.parseFloat(n).toFixed(2))}</div>
+                                ) :(
+                                    <div className={styles.overViewMinus}>+{HRNumbers((data.quote.USD.percent_change_24h), n=> Number.parseFloat(n).toFixed(2))}</div>
+                                )}
                             </div>
                         )
                     })
@@ -489,27 +628,73 @@ function toggle(index, element){
                 </div>
                 <div className={styles.dataOverview}>
                     <section className={styles.overViewtTitle}>New Listings</section>
+                    {marketData.sort(dynamicSort("new")).slice(0,3).map((data, i)=>{
+                        return (
+                            <div key={i} className={styles.overViewTicker}>
+                                <section className={styles.overViewcoinHeader}>
+                                    <figure className={styles.logo}>
+                                        <Image
+                                            src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${data.id}.png`}
+                                            width={15}
+                                            height={15}
+                                            alt="coin"
+                                            className={styles.logo}
+                                        />
+                                    </figure>
+                                    <section className={styles.overViewsymbol}>{data.symbol}</section>
+                                </section>
+                         
+                                <section className={styles.overViewPrice}>
+                                    ${HRNumbers(data.quote.USD.price, n=> Number.parseFloat(n).toFixed(2))}
+                                </section>
+                                {data.quote.USD.percent_change_24h>0 ? (
+                                <div className={styles.overViewPlus}>+{HRNumbers((data.quote.USD.percent_change_24h), n=> Number.parseFloat(n).toFixed(2))}</div>
+                                ) :(
+                                    <div className={styles.overViewMinus}>+{HRNumbers((data.quote.USD.percent_change_24h), n=> Number.parseFloat(n).toFixed(2))}</div>
+                                )}
+                            </div>
+                        )
+                    })
+                    }
                 </div>
             </div>
             <nav className={styles.searchBar}>
-                <section className={styles.options}>
-                    <div className={styles.filterClick}>
-                        <button className={styles.button} onClick={()=>{handleButtonClick(0); setFilter("favorites"); handleNavClick("favorites");}} id="filter"><section>Favorites</section></button>
-                        <div className={styles.underline} id="underline"></div>
-                    </div>
-                    <div className={styles.filterClick}>
-                        <button className={styles.button} onClick={()=>{handleButtonClick(1); setFilter("all"); handleNavClick("all");}} id="filter"><section>All Cryptos</section></button>
-                        <div className={styles.underline} id="underline"></div>
-                    </div>
-                    <div className={styles.filterClick}>
-                    <button className={styles.button} onClick={()=>{handleButtonClick(2)}} id="filter"><section>Meme</section></button>
-                        <div className={styles.underline} id="underline"></div>
-                    </div>
-                    <div className={styles.filterClick}>
-                        <button className={styles.button} onClick={()=>{handleButtonClick(3)}} id="filter"><section>AI</section></button>
-                        <div className={styles.underline} id="underline"></div>
-                    </div>
-                </section>
+                    {session?.user.role=="Investor" && (
+                        <section className={styles.options}>
+                            <div className={styles.filterClick}>
+                                <button className={styles.button} onClick={()=>{handleButtonClick(0); setFilter("favorites"); handleNavClick("favorites");}} id="filter"><section>Favorites</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                            <div className={styles.filterClick}>
+                                <button className={styles.button} onClick={()=>{handleButtonClick(1); setFilter("all"); handleNavClick("all");}} id="filter"><section>All Cryptos</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                            <div className={styles.filterClick}>
+                            <button className={styles.button} onClick={()=>{handleButtonClick(2)}} id="filter"><section>Meme</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                            <div className={styles.filterClick}>
+                                <button className={styles.button} onClick={()=>{handleButtonClick(3)}} id="filter"><section>AI</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                        </section>
+                    )}
+
+                    {session?.user.role=="Staff" && (
+                        <section className={styles.options}>
+                            <div className={styles.filterClick}>
+                                <button className={styles.button} onClick={()=>{handleButtonClick(0); setFilter("allowed"); handleNavClick("allowed");}} id="filter"><section>All Cryptos</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                            <div className={styles.filterClick}>
+                                <button className={styles.button} onClick={()=>{handleButtonClick(1); setFilter("all"); handleNavClick("all");}} id="filter"><section>Add Crypto</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                           
+                        </section>
+                    )}
+                
+                
                 <form className={styles.form}>
                     <section className={styles.searchHover} onFocus={()=>{document.getElementById("hover").style.border="1pt solid #5AA056" }} onBlur={()=>{document.getElementById("hover").style.border="2pt solid lightgray"}} id="hover">
                         <svg onMouseOver={() =>{document.querySelector('#input').style.display = 'block';}} className={styles.search2} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FF0000" ><path fillRule="evenodd" clipRule="evenodd" d="M11 6a5 5 0 110 10 5 5 0 010-10zm0-3a8 8 0 017.021 11.838l3.07 3.07-1.59 1.591-1.591 1.591-3.07-3.07A8 8 0 1111 3z" fill="#d3d3d3"></path></svg>
@@ -802,25 +987,44 @@ function toggle(index, element){
                                     <section className={styles.marketCap}>
                                         ${HRNumbers(data.quote.USD.market_cap, n=> Number.parseFloat(n).toFixed(2))}
                                     </section>
-                                    <section className={styles.liked}>
-                                        {liked[(pageNumber-1)*30 +i] ? (
-                                            <Image 
-                                                src={likedImage}
+
+                                    {session?.user.role=="Investor" && (
+                                        <section className={styles.liked}>
+                                            {liked[(pageNumber-1)*30 +i] ? (
+                                                <Image 
+                                                    src={likedImage}
+                                                    width={30}
+                                                    height={30}
+                                                    alt="liked"
+                                                    onClick={()=>{changeLiked((pageNumber-1)*30 + i);}}
+                                                />
+                                            ):(
+                                                <Image 
+                                                src={unliked}
                                                 width={30}
                                                 height={30}
-                                                alt="liked"
-                                                onClick={()=>{changeLiked((pageNumber-1)*30 + i);}}
+                                                alt="unliked"
+                                                onClick={()=>{changeLiked((pageNumber-1)*30 +i);}}
                                             />
-                                        ):(
-                                            <Image 
-                                            src={unliked}
-                                            width={30}
-                                            height={30}
-                                            alt="unliked"
-                                            onClick={()=>{changeLiked((pageNumber-1)*30 +i);}}
-                                        />
-                                        )}
-                                    </section>
+                                            )}
+                                        </section>
+                                    )}
+
+                                    {session?.user.role=="Staff" && (
+                                            <>
+                                            {isAllowed(i) ? (
+                                                <div className={styles.removeCrypto}>
+                                                        <button className={styles.remove} onClick={()=>{removeCrypto(i)}}>Remove</button>
+                                                </div>
+                                            ):(
+                                            <div className={styles.removeCrypto}>
+                                                <button className={styles.Add} onClick={()=>{addCrypto(i)}}>Add</button>
+                                            </div>
+                                            )
+                                            }
+                                            </>   
+                                         )}
+                                
                            </section>
                         </div> 
                     )

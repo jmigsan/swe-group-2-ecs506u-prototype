@@ -19,6 +19,7 @@ export default function Login(){
     const [username, setUsername]= useState("");
     const [error, setError]= useState("");
     const [on2FA, setOn2FA] = useState(false);
+    const [password, setPassword] = useState("");
     const [verificationCode, setCode] = useState("");
     const [onVerification, setOnVerification] = useState(false);
     const [inputted_code, setInputtedCode] = useState("");
@@ -136,19 +137,19 @@ export default function Login(){
         document.getElementById("text2").style.display="none";
         document.getElementById("loading2").style.display="flex";
         const password = document.getElementById("password").value;
-
+        setPassword(password);
        setTimeout(async () =>{ try{
-            const res = await signIn(
-                "credentials", 
-                {
-                    username, 
-                    password,
-                    redirect:false,
-                }
-            )
+            const res = await fetch('api/Login/checkPassword' , {
+                method: "POST",
+                headers:{
+                "Content-Type": "application/json"
+                },
+                body: JSON.stringify({username, password}),
+            });
+
             document.getElementById("text2").style.display="inline";
             document.getElementById("loading2").style.display="none";
-            if(res.error){
+            if(res.status === 404){
                 setError("Invalid Credentials")
                 return
             }
@@ -175,9 +176,19 @@ export default function Login(){
         setInputtedCode(e.target.value);
     }
 
-    function checkCode(){
+    async function checkCode(){
         if(inputted_code==verificationCode){
-            router.replace("/")
+            const res = await signIn(
+                "credentials", 
+                {
+                    username, 
+                    password,
+                    redirect:false,
+                }
+            )
+            if(res.ok){
+                router.replace("/")
+            }
         }
         else{
             setCodeError("Invalid Code");
@@ -185,16 +196,7 @@ export default function Login(){
     }
 
     async function handleClose(){
-        try{
-            await signOut({
-                redirect:false,
-            }
-            )
-        }
-    
-        catch(error){
-            console.error(error)
-        }
+        setCodeError("");
         document.getElementById("2FA").style.display="none";
         setOnVerification(false);
         setOn2FA(false);
