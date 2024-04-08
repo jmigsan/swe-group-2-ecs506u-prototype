@@ -24,7 +24,7 @@ function TradingViewWidget() {
   const [symbol, setSymbol] = useState('');
   const { data: session } = useSession();
   const router = useRouter();
-  const [onLimit, setOnLimit] = useState(true);
+  const [onLimit, setOnLimit] = useState(false);
   const [price, setPrice] = useState(0);
   const [priceString, setPriceString] = useState('');
   const [drop, setDrop] = useState(false);
@@ -370,6 +370,7 @@ function TradingViewWidget() {
 
   useEffect(() => {
     handleLimitButton();
+    setTradeType('spot');
   }, []);
   useEffect(() => {
     if (symbol) {
@@ -581,25 +582,25 @@ function TradingViewWidget() {
     fetchPrice();
   }, [tradeType]);
   function handleLimitButton() {
-    if (onLimit) {
-      const limit = document.getElementById('limit');
-      const spot = document.getElementById('spot');
-      // limit.style.backgroundColor = 'transparent';
-      spot.style.backgroundColor = '#F0F1F2';
-      // limit.style.color = '#B7B7B7';
-      spot.style.color = 'black';
-    } else {
-      const limit = document.getElementById('limit');
-      const spot = document.getElementById('spot');
-      spot.style.backgroundColor = 'transparent';
-      // limit.style.backgroundColor = '#F0F1F2';
-      spot.style.color = '#B7B7B7';
-      // limit.style.color = 'black';
-    }
+    // if (onLimit) {
+    const limit = document.getElementById('limit');
+    const spot = document.getElementById('spot');
+    // limit.style.backgroundColor = 'transparent';
+    spot.style.backgroundColor = '#F0F1F2';
+    // limit.style.color = '#B7B7B7';
+    spot.style.color = 'black';
+    // } else {
+    // const limit = document.getElementById('limit');
+    // const spot = document.getElementById('spot');
+    // spot.style.backgroundColor = 'transparent';
+    // limit.style.backgroundColor = '#F0F1F2';
+    // spot.style.color = '#B7B7B7';
+    // limit.style.color = 'black';
+    // }
 
-    setOnLimit((onLimit) => {
-      return !onLimit;
-    });
+    // setOnLimit((onLimit) => {
+    //   return !onLimit;
+    // });
   }
   const animations3 = {
     initial: {
@@ -802,7 +803,7 @@ function TradingViewWidget() {
           className={styles.button}
           onClick={() => {
             handleLimitButton();
-            setTradeType('spot');
+            // setTradeType('spot');
           }}
           id='spot'
         >
@@ -928,7 +929,6 @@ function TradingViewWidget() {
                 setTrade('buy');
                 if (checkInputs('buy')) {
                   setConfirmed(true);
-                  ``;
                 }
               }}
             >
@@ -969,7 +969,7 @@ function TradingViewWidget() {
                 />
               </div> */}
             </div>
-            <div className={styles.errorMessage}>
+            {/* <div className={styles.errorMessage}>
               {incorrectTp && (
                 <motion.div
                   className={styles.message}
@@ -981,7 +981,7 @@ function TradingViewWidget() {
                   Take profit must be above current price
                 </motion.div>
               )}
-              {/* <div className={styles.inputsSpecial} id='inputs'>
+              <div className={styles.inputsSpecial} id='inputs'>
                 <input
                   type='text'
                   placeholder='Price'
@@ -999,8 +999,8 @@ function TradingViewWidget() {
                   className={styles.input2}
                   disabled
                 />
-              </div> */}
-            </div>
+              </div>
+            </div> */}
           </div>
         </form>
 
