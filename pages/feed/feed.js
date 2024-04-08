@@ -221,6 +221,8 @@ export default function Support() {
       }  
       fetchAll()
     }
+
+    
     const handleRemoveFriend = async (friendID) =>{
       
       try {
@@ -375,9 +377,9 @@ export default function Support() {
                           <div className={styles.userCardNameButton}>
                             <h1 className={styles.userCardName}>{user.firstName}</h1>
                             {user.isFriend === true ? 
-                                (<button className={styles.addfriendButton} onClick={() => handleAddFriend(user.email)} type="submit">Added</button>)
+                                (<button className={styles.addfriendButton}  type="submit">Added</button>)
                                 : user.isFriend === false ?
-                                (<button className={styles.addfriendButton} onClick={() => handleAddFriend(user.email)} type="submit">Pending</button>)
+                                (<button className={styles.addfriendButton}  type="submit">Pending</button>)
                                 :
                                 (<button className={styles.addfriendButton} onClick={() => handleAddFriend(user.email)} type="submit">Add
                                   {/* <img className={styles.addfriendButtonImg} src='/images/addSymbol.png'></img> */}
@@ -413,6 +415,7 @@ export default function Support() {
                   <div key={index} className={styles.friendListItem}>
                     <div>{friendRequest[1]}</div>
                     <button className={styles.acpt} onClick={()=> handleAcceptFriend(friendRequest,true)}>&#9989;</button>
+                    <button className={styles.acpt} onClick={()=> handleAcceptFriend(friendRequest,false)}>&#10060;</button>
                   </div>
                 ))}
               </div>
