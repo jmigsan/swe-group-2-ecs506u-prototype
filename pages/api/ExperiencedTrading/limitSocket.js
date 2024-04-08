@@ -37,11 +37,11 @@ const SocketHandler = (req, res) => {
                     const price = coin_price[coin].quote[curr].price
 
                     if(orders[i].Price>=price){
-                        console.log("here");
+                 
                         for(let j=0; j<balance.length; j++){
                             if(balance[j].currency==orders[i].Sold){
                                 if(balance[j].amount>=orders[i].AmountSold){
-                                    console.log("here2");
+                                 
                                     await investor.Trade(orders[i].Type, orders[i].userId, orders[i].Bought, orders[i].Sold, orders[i].AmountBought, orders[i].AmountSold, price);
                                     socket.emit('limitExecuted', orders[i].id);
                                 }

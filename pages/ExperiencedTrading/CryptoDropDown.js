@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRef } from "react";
 import styles from '@/styles/dropdown.module.css';
 import Image from "next/image";
-export default function DropDown({setCurrency, type}){
+export default function DropDown({setCurrency, type, position}){
     const [shownCurrency, setShown]=useState(null);
     const [allowedCoins, setAllowedCoins]=useState(null);
     const [availableCurrency, setAvailableCurrency]= useState([{curren:"USD"}, {curren:"EUR"}, {curren:"GBP"}, {curren:"JPY"}, {curren:"AUD"}, {curren:"CHF"}, {curren:"CAD"}, {curren:"SAR"}]);
@@ -59,7 +59,7 @@ export default function DropDown({setCurrency, type}){
     }
     return (
         <div className={styles.test2}>
-            <div className={styles.test}>
+            <div className={styles.test} style={{position:position}}>
                 <div className={styles.currencyForm}>
                     <input type="text" placeholder="Search" className={styles.search} onChange={handleCoinChange}/>
                     <div className={styles.overflow}>

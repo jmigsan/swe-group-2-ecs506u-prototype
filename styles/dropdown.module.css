@@ -2,12 +2,10 @@
     width:105%;
     height:20vh;
     z-index:9999;
-    position: absolute;
     background-color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
-
 }
 .test2{
     right:2%;

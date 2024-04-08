@@ -28,11 +28,14 @@ function TradingViewWidget() {
   const [price, setPrice] = useState(0);
   const [priceString, setPriceString] = useState("");
   const [drop, setDrop] = useState(false);
+  const [drop2, setDrop2] = useState(false);
   const [balance, setBalance] = useState([]);
   const [total, setTotal] = useState(0);
   const [totalSell, setTotalSell] = useState(0);
   const [stop, setStop] = useState(0);
   const [tp, setTp] = useState(0);
+  const [stop2, setStop2] = useState(0);
+  const [tp2, setTp2] = useState(0);
   const [Amount, setAmount] = useState(0);
   const [AmountSell, setAmountSell] = useState(0);
   const [confirmed, setConfirmed] = useState(false);
@@ -44,27 +47,29 @@ function TradingViewWidget() {
   const [tradeType, setTradeType] = useState("limit");
   const [incorrectStop, setIncorrectStop] =useState(false);
   const [incorrectTp, setIncorrectTp] = useState(false);
+  const [incorrectStop2, setIncorrectStop2] =useState(false);
+  const [incorrectTp2, setIncorrectTp2] = useState(false);
   const [limitExecuted, setLimitExecuted] = useState("");
-  useEffect(() => {
-    if(session){
-      socketInitializer()
-    }}, [session])
+  // useEffect(() => {
+  //   if(session){
+  //     socketInitializer()
+  //   }}, [session])
 
-  async function socketInitializer(){
-    await fetch('../api/ExperiencedTrading/limitSocket')
-    socket = io()
+  // async function socketInitializer(){
+  //   await fetch('../api/ExperiencedTrading/limitSocket')
+  //   socket = io()
 
-    socket.on('connect', () => {
-      socket.emit('message', session.user.email)
-    })
+  //   socket.on('connect', () => {
+  //     socket.emit('message', session.user.email)
+  //   })
 
-    socket.on('limitExecuted', (message)=>{
-      setLimitExecuted(message);
-      setTimeout(()=>{
-        setLimitExecuted("");
-      }, [2000])
-    })
-  }
+  //   socket.on('limitExecuted', (message)=>{
+  //     setLimitExecuted(message);
+  //     setTimeout(()=>{
+  //       setLimitExecuted("");
+  //     }, [2000])
+  //   })
+  // }
 
   // ...rest of your component
 
@@ -186,6 +191,89 @@ function handleDone(){
       
     }
 
+    async function checkLimits(username, sold, bought, amountBought, amountSold, type){
+      if(type=="Buy"){
+              type="Sell"
+              const temp = sold;
+              sold=bought;
+              bought=temp;
+              const temp2 = amountSold;
+              amountSold=amountBought;
+              amountBought=temp2;
+            if(tp!=0){
+              let price=tp;
+              try{
+                await fetch('../api/ExperiencedTrading/LimitOrder',{
+                    method: 'POST',
+                    headers:{'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, price, sold, bought, amountBought, amountSold, type})
+                })
+
+            }
+            catch(error){
+                console.log(error);
+                return
+            }
+          }
+          
+          if(stop!=0){
+            let price=stop;
+            try{
+              await fetch('../api/ExperiencedTrading/LimitOrder',{
+                  method: 'POST',
+                  headers:{'Content-Type': 'application/json'},
+                  body: JSON.stringify({username, price, sold, bought, amountBought, amountSold, type})
+              })
+
+          }
+          catch(error){
+              console.log(error);
+              return
+          }
+          }
+      }
+
+      else{
+              type="Buy"
+              const temp = sold;
+              sold=bought;
+              bought=temp;
+              const temp2 = amountSold;
+              amountSold=amountBought;
+              amountBought=temp2;
+            if(tp2!=0){
+              let price=tp2;
+              try{
+                await fetch('../api/ExperiencedTrading/LimitOrder',{
+                    method: 'POST',
+                    headers:{'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, price, sold, bought, amountBought, amountSold, type})
+                })
+
+            }
+            catch(error){
+                console.log(error);
+                return
+            }
+          }
+          
+          if(stop2!=0){
+            let price=stop2;
+            try{
+              await fetch('../api/ExperiencedTrading/LimitOrder',{
+                  method: 'POST',
+                  headers:{'Content-Type': 'application/json'},
+                  body: JSON.stringify({username, price, sold, bought, amountBought, amountSold, type})
+              })
+
+          }
+          catch(error){
+              console.log(error);
+              return
+          }
+          }
+      }
+    }
     async function handleConfirmClick(){
 
 
@@ -203,6 +291,7 @@ function handleDone(){
        type="Buy";
        setAmount(0);
        setTotal(0);
+        checkLimits(username, sold, bought, amountBought, amountSold, type);
       }
       else{
           sold=coin;
@@ -212,6 +301,7 @@ function handleDone(){
           type="Sell";
           setAmountSell(0);
           setTotalSell(0);
+          checkLimits(username, sold, bought, amountBought, amountSold, type);
       }
       
       
@@ -252,12 +342,30 @@ function handleDone(){
 
 }
   const dropdownRef = useRef(null);
+  const dropdownRef2 = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         // Hide the dropdown if a click outside is detected
         setDrop(false)
+      }
+    };
+  
+    // Add when the component mounts
+    document.addEventListener("mousedown", handleClickOutside);
+    
+    // Return a function to remove the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []); 
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef2.current && !dropdownRef2.current.contains(event.target)) {
+        // Hide the dropdown if a click outside is detected
+        setDrop2(false)
       }
     };
   
@@ -495,10 +603,9 @@ function handleDone(){
   );
 
   function checkInputs(trade){
-    console.log(Number("-10"));
-    console.log(Number("10"));
+    
     if(trade=="buy"){
-      console.log(total, balance.amount, Amount)
+   
       if(Amount<=0){
         handleFocusError(1)
         return false;
@@ -544,6 +651,28 @@ function handleDone(){
 
         handleFocusError(6);
         return false;
+      }
+
+      if(tp2!=0){
+        if(tp>=price){
+          setIncorrectTp2(true);
+          
+          setTimeout(()=>{
+            setIncorrectTp2(false);
+        }, [2000])
+        return false;
+      }
+    }
+
+      if(stop2!=0){
+        if(stop2<=price){
+          setIncorrectStop2(true);
+          setTimeout(()=>{
+            setIncorrectStop2(false);
+        }, [2000])
+          return false;
+        }
+      
       }
   
     }
@@ -753,7 +882,7 @@ function handleDone(){
                          <input type="text" value={priceString} className={styles.input2} onClick={()=>{setDrop(true)}} readOnly/>
                       ):(
                         <>
-                        <input type="text" className={styles.input2} onChange={(e) =>{setPrice(Number(e.target.value))}}/>
+                        <input type="text" className={styles.input4} onChange={(e) =>{setPrice(Number(e.target.value))}}/>
                         <input type="text" className={styles.input3} value={Currency.curren} onClick={()=>{setDrop(true)}} readOnly/>
                         </>
                       )}
@@ -761,12 +890,12 @@ function handleDone(){
                     </div>
                     {drop && (
                       <div ref={dropdownRef} className={styles.drop}>
-                           <DropDown setCurrency={setCurrency} type={"fiat"} />
+                           <DropDown setCurrency={setCurrency} type={"fiat"} position={"absolute"}/>
                       </div>
                      
                       )}
                     <div className={styles.inputs} id="inputs">
-                      <input type="text" placeholder="Amount" id="AmountBuy" value={Amount} className={styles.input} onChange={(e)=>{console.log(e.target.value );setAmount(Number(e.target.value))}} onFocus={()=>{handleFocus(1)}}/>
+                      <input type="text" placeholder="Amount" id="AmountBuy" value={Amount} className={styles.input} onChange={(e)=>{setAmount(Number(e.target.value))}} onFocus={()=>{handleFocus(1)}}/>
                       <input type="text" value={coin} className={styles.input2} disabled/>
                     </div>
            
@@ -785,7 +914,7 @@ function handleDone(){
                      <div className={styles.errorMessage}>
                       {incorrectStop && (
                       <motion.div className={styles.message} variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}}>
-                                Stop Loss must be above current Price
+                                Stop Loss must be below current Price
                           </motion.div>
                       )}
                         <div className={styles.inputsSpecial} id="inputs">
@@ -810,12 +939,26 @@ function handleDone(){
               
               </form>
 
-              <form className={styles.sellform}>
-                  <div className={styles.sell}>
-                  <div className={styles.inputs} id="inputs">
-                      <input type="text" placeholder="Price" className={styles.input} onFocus={()=>{handleFocus(5)}}/>
-                      <input type="text" value={priceString} className={styles.input2} disabled/>
+              <form className={styles.form}>
+                  <div className={styles.buy}>
+                  <div className={styles.inputs} id="inputs" >
+                      <input type="text" placeholder="Price" className={styles.input} onFocus={()=>{handleFocus(0)}} disabled/>
+                      {tradeType=="spot" ?(
+                         <input type="text" value={priceString} className={styles.input2} onClick={()=>{setDrop2(true)}} readOnly/>
+                      ):(
+                        <>
+                        <input type="text" className={styles.input4} onChange={(e) =>{setPrice(Number(e.target.value))}}/>
+                        <input type="text" className={styles.input3} value={Currency.curren} onClick={()=>{setDrop2(true)}} readOnly/>
+                        </>
+                      )}
+                     
                     </div>
+                    {drop2 && (
+                      <div ref={dropdownRef2} className={styles.drop}>
+                           <DropDown setCurrency={setCurrency} type={"fiat"} position={"absolute"}/>
+                      </div>
+                     
+                      )}
                     <div className={styles.inputs} id="inputs">
                       <input type="text" placeholder="Amount" id="AmountSell" className={styles.input} value={AmountSell} onChange={(e)=>{setAmountSell(Number(e.target.value))}} onFocus={()=>{handleFocus(6)}}/>
                       <input type="text" value={coin} className={styles.input2} disabled/>
@@ -829,6 +972,33 @@ function handleDone(){
                       )}
                     <section className={styles.text}>Est. fee: <section className={styles.maxBuy}>{10 * AmountSell}{Currency.curren}</section></section>
                     <button type="button" className={styles.sellButton} onClick={()=>{setTrade("sell"); if(checkInputs("sell")){setConfirmed(true);}}}>Sell {symbol.split(":")[1]}</button>
+                  </div>
+
+                  <div className={styles.limits}>
+                     <div className={styles.errorMessage}>
+                      {incorrectStop2 && (
+                      <motion.div className={styles.message} variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}}>
+                                Stop Loss must be above current Price
+                          </motion.div>
+                      )}
+                        <div className={styles.inputsSpecial} id="inputs">
+                          <input type="text" placeholder="Price" className={styles.input} onChange={(e)=>{setStop2(Number(e.target.value));}} onFocus={()=>{handleFocus(8)}}/>   
+                          <input type="text" value="Stop Loss" className={styles.input2} disabled/>
+                      </div>
+  
+                    </div>
+                    <div className={styles.errorMessage}>
+                      {incorrectTp2 && (
+                        <motion.div className={styles.message} variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}}>
+                                  Take profit must be below current price
+                            </motion.div>
+                        )}
+                        <div className={styles.inputsSpecial} id="inputs">
+                        <input type="text" placeholder="Price" className={styles.input} onChange={(e)=>{setTp2(Number(e.target.value));}} onFocus={()=>{handleFocus(9)}}/>
+                        <input type="text" value="Take Profit" className={styles.input2} disabled/>
+                      </div>
+                    </div>
+                 
                   </div>
               </form>
 

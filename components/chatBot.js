@@ -7,9 +7,10 @@ import OpenAI from 'openai';
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import { faSpinner, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSession } from "next-auth/react";
 export default function chatBot(){
    const [onChatbot, setOnChatbot] = useState(false);
-
+    const {data:session} = useSession();
    const animations={
         initial:{
         y:'100%',
@@ -66,7 +67,9 @@ export default function chatBot(){
        setIsLoading(false);
    };
     return (
-       <motion.div className={styles.chatBot}>
+        <>
+    {session?.user.role==="Investor" && (
+        <motion.div className={styles.chatBot}>
             <motion.div className={styles.chatBotHover}  variants={animations2} animate="animate" transition={{duration:0.6, ease:"easeInOut"}}>
             <Image 
                 src={'/images/chatBotLogo.png'}
@@ -113,5 +116,8 @@ export default function chatBot(){
             </motion.div>
         )}
         </motion.div>
+    )}
+    </>
     )
+  
 }

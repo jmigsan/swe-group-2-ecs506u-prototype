@@ -19,13 +19,13 @@ const SocketHandler = (req, res) => {
         })
 
         socket.on('NewRequest', (message)=>{
-          console.log('here2');
+
           socket.broadcast.emit('GetRequests', message);
         })
         
 
         socket.on('Connected',  (message)=>{
-          console.log(message);
+         
           socket.broadcast.emit('Connected', message);
         })
        

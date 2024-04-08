@@ -256,6 +256,23 @@ export default class Investor{
         }
     }
 
+    async deleteRequest(username){
+        try{
+            await prisma.chatRequests.delete({
+                where:{
+                    userId:username,
+                }
+            })
+
+            return true;
+        }
+
+        catch(error){
+            console.error(error)
+            return false;
+        }
+    }
+
     async getRequests(){
         try{
             const requests = await prisma.chatRequests.findMany();

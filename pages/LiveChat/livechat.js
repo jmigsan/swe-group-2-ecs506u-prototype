@@ -8,7 +8,7 @@ import {motion} from 'framer-motion';
 export default function LiveChat(){
 
     const {data: session} = useSession();
-    const [requests, setRequests]= useState([]);
+    const [requests, setRequests]= useState(null);
     const [userId, setUserId] = useState("");
     const [waiting, setWaiting] = useState(true);
     const animations2={
@@ -38,10 +38,10 @@ export default function LiveChat(){
 
 
 useEffect(() => {
-    if(session){
+    if(session && requests){
         socketInitializer();
     }
-}, [session])
+}, [session, requests])
  
     const socketInitializer = async () => {
       await fetch('/api/LiveChat/livechat')
@@ -78,12 +78,15 @@ useEffect(() => {
         }
 
         if(session.user.role=="Staff"){
-                document.getElementById('form').addEventListener('submit', (e)=>{
+                document.getElementById('form2').addEventListener('submit', (e)=>{
                     e.preventDefault();
+                    
                     const key = document.getElementById('connect').getAttribute('data-key'); 
-                    setUserId(requests[key]);
+                    const id =requests[key].userId
+                    setUserId(id);
+                    deleteRequest(id);
                     socket.emit('Connected', 'Connected to user');
-                    document.getElementById('form').style.display = 'none';
+                    document.getElementById('form2').style.display = 'none';
                     document.getElementById('chat').style.display = 'flex';
                 });
                
@@ -155,6 +158,22 @@ useEffect(() => {
         }
     }
 
+    async function deleteRequest(username){
+      
+        console.log(username);
+        try{
+            await fetch('../api/LiveChat/deleteRequest', {
+                method: 'POST',
+                headers:{
+                    'Content-Type': 'Application/json'
+                },
+                body:JSON.stringify({username}),
+            })
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
    async function getRequests(){
     try{
         const res = await fetch('../api/LiveChat/getRequests',{
@@ -162,7 +181,6 @@ useEffect(() => {
         })
 
         const reqs = await res.json();
-        console.log(reqs);
         setRequests(reqs);
     }
     catch(error){
@@ -175,36 +193,41 @@ useEffect(()=>{
     getRequests();
 }, [])
     return (
-
-        
-        <div className={styles.chatWrapper}>
-          
-          {(waiting && session?.user.role=="Investor")&& (
-                <div className={styles.waiting}>
-                    <Image
-                      src={`/images/waitingSupport.png`}
-                      alt="cancel"
-                      width={80}
-                      height={80}
-                    />
-                    <section className={styles.waitingText}>
-                        A member of our support team will be with you shortly
-                    </section>
-                    <motion.div variants={animations2} initial="start" animate="end" className={styles.loadingAnimation} id="loading">
-                                    <motion.span variants={animations3} className={styles.dot} transition={{duration:0.4, repeatType: "mirror", repeat: Infinity,}}></motion.span>
-                                    <motion.span variants={animations3} className={styles.dot} transition={{duration:0.4, repeatType: "mirror", repeat: Infinity,}}></motion.span>
-                                    <motion.span variants={animations3} className={styles.dot} transition={{duration:0.4, repeatType: "mirror", repeat: Infinity,}}></motion.span>
-                    </motion.div>
-                </div>
-            )}
-                <form className={styles.chat} id="chat" onSubmit={(e)=>{e.preventDefault();}}>
+        <>
+        {session?.user.role=="Investor" ?(
+            <div className={styles.chatWrapper}>
+            {waiting && (
+                    <div className={styles.waiting}>
+                        <Image
+                        src={`/images/waitingSupport.png`}
+                        alt="cancel"
+                        width={80}
+                        height={80}
+                        />
+                        <section className={styles.waitingText}>
+                            A member of our support team will be with you shortly
+                        </section>
+                        <motion.div variants={animations2} initial="start" animate="end" className={styles.loadingAnimation} id="loading">
+                                        <motion.span variants={animations3} className={styles.dot} transition={{duration:0.4, repeatType: "mirror", repeat: Infinity,}}></motion.span>
+                                        <motion.span variants={animations3} className={styles.dot} transition={{duration:0.4, repeatType: "mirror", repeat: Infinity,}}></motion.span>
+                                        <motion.span variants={animations3} className={styles.dot} transition={{duration:0.4, repeatType: "mirror", repeat: Infinity,}}></motion.span>
+                        </motion.div>
+                    </div>
+                )}
+               <form className={styles.chat} id="chat" onSubmit={(e)=>{e.preventDefault();}}>
                         <div className={styles.messageBox} id="messageBox">
                         </div>
                         <input type="text" placeholder='Type message' id="message" className={styles.inputMessage} />               
                 </form>
-           
-           {session?.user.role=="Staff" && (
-                <form className={styles.connectRequests} id="form">
+            </div>
+        ): (
+            <div>
+                 <form className={styles.chat} id="chat" onSubmit={(e)=>{e.preventDefault();}}>
+                        <div className={styles.messageBox} id="messageBox">
+                        </div>
+                        <input type="text" placeholder='Type message' id="message" className={styles.inputMessage} />               
+                </form>
+                <form className={styles.connectRequests} id="form2">
                     <section className={styles.formTitle}>Live Chat Requests</section>
                         <div className={styles.connectBox}>
                             {requests?.map((req, i)=>{
@@ -217,8 +240,8 @@ useEffect(()=>{
                             })}
                         </div>           
                 </form>
-            )}
-        </div>
-      
+            </div>
+        )}
+        </>
     )
 }
