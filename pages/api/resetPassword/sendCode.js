@@ -2,9 +2,8 @@ import nodemailer from 'nodemailer';
 import Users from '@/pages/classes/User';
 import emailConfig from '@/pages/config';
 export default async function handler(req, res){
-
     const { email, password } = emailConfig;
- 
+
     const registry = Users.getInstance();
     console.log(password);
     const exists = await registry.findUniqueUser(req.body.to, [true, true, true]);
@@ -12,7 +11,7 @@ export default async function handler(req, res){
     if(exists){
       const body = req.body;
       const code = body.code;
-      const from ="meshoah2005@gmail.com";
+      const from =email;
       const to = body.to;
       const text = "Dear User, Here is your Verification code:" + code;
       const subject = "Verification Code";

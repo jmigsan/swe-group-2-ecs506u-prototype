@@ -1,5 +1,4 @@
 import { prisma } from '@/pages/prismaClient';
-import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {
     console.log("VIEW TICKET API ENDPOINT")
@@ -16,8 +15,8 @@ export default async function handler(req, res) {
             },
         });
 
-        console.log("email in viewTicket.js " ,userEmail )
-        console.log("user roleeeeee from endpoint", user.role)
+        // console.log("email in viewTicket.js " , userEmail )
+        // console.log("user roleeeeee from endpoint", user.role)
         // Check if the user exists
         if (!user) {
             // If the user doesn't exist, return an error response
@@ -38,6 +37,7 @@ export default async function handler(req, res) {
                     issueDescription: true,
                     dateCreated: true,
                     solved: true,
+                    comments: true,
                 },
             });
             console.log("tickets: ", tickets)
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
             });
         }else{
         //     user is admin
-            console.log("THIS IS ADMIN FETCH TICKETS")
+        //     console.log("THIS IS ADMIN FETCH TICKETS")
             const tickets = await prisma.Ticket.findMany({
                 select: {
                     id: true,
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
                     solved: true,
                 },
             });
-            console.log("ticket info ", tickets.solved)
+            // console.log("ticket info ", tickets.solved)
 
             // Return the tickets information for the admin
             res.status(200).json({
