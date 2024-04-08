@@ -205,7 +205,11 @@ function Portfolio()
         {
             list[i]=balance[i].currency;
         }
-
+        if(list.length === 0)
+        {
+            setPrices([]);
+            return;
+        }
         let coin =list.toString();
         let currency="USD";
         //call the function to get price with the list of owned currencies
