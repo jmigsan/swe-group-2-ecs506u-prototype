@@ -4,7 +4,7 @@ import {password} from '@/pages/config';
 export default async function handler(req, res){
  
     const registry = Users.getInstance();
-    
+    console.log(password);
     const exists = await registry.findUniqueUser(req.body.to, [true, true, true]);
 
     if(exists){
