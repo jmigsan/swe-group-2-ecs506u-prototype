@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import styles from '@/styles/portfolio.module.css';
 
 //Function to get data into format designed for original database (coin,amount,totalSpent)
-function setupPortfolio(balance,transactions,prices)
+function setupPortfolio(balance,transactions,prices,rates)
 {
     let portfolio = formatData(balance);
     let sum = 0;
@@ -19,7 +19,7 @@ function setupPortfolio(balance,transactions,prices)
             //Calculate the total spent on the given currency
             if((transactions[j].Bought == portfolio[i][0]) && (transactions[j].Type==="Buy"))
             {
-                sum = sum + (transactions[j].AmountBought * transactions[j].Price);
+                sum = sum + (transactions[j].AmountBought * transactions[j].Price / rates[transactions[j].Sold]);
             }
         }
         portfolio[i][2] = sum ;
@@ -31,6 +31,13 @@ function setupPortfolio(balance,transactions,prices)
     return portfolio;
 }
 
+function convertCurrency(price,currency)
+{
+    if(currency==="USD")
+    {
+        return price;
+    }
+}
 //function to get an individual price
 function getPrice(prices,data)
 {
@@ -121,8 +128,8 @@ function ListHeading({data})
 function List({data})
 {
    return(<table id={styles.ListTable}>
-        <thead><tr><ListHeading data="Coin"/><ListHeading data="Amount Owned"/><ListHeading data="Average Price of Purchase"/>
-        <ListHeading data="Current Price"/><ListHeading data="Expected Gain/Loss"/></tr></thead>
+        <thead><tr><ListHeading data="Coin"/><ListHeading data="Amount Owned"/><ListHeading data="Average Price of Purchase ($)"/>
+        <ListHeading data="Current Price ($)"/><ListHeading data="Expected Gain/Loss"/></tr></thead>
         <tbody>{data.map((item) => <ListRow data={item}/>)}</tbody>
     </table>);
 }
@@ -132,6 +139,7 @@ function Portfolio()
     const[balance,setBalance]=useState([]);
     const[transactions,setTransactions]=useState([]);
     const[prices,setPrices]=useState();
+    const[rates,setRates]=useState();
     const {data: session} = useSession();
 
     async function getBalance()
@@ -192,8 +200,8 @@ function Portfolio()
         {
             return;
         }
-        let coin =list.toString();
-        let currency="USD";
+        const coin =list.toString();
+        const currency="USD";
         //call the function to get price with the list of owned currencies
         try{
             const prices = await fetch('../api/ExperiencedTrading/getCryptoPrice', {
@@ -212,6 +220,26 @@ function Portfolio()
         }
     }
 
+    async function getRates()
+    {
+        const currency="USD";
+        try{
+            const prices = await fetch('../api/portfolio/marketRates', {
+                method: 'POST',
+                headers:{
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({currency})
+            })
+            const response =await prices.json();
+            setRates(response.conversion_rates);
+            console.log(rates);
+        }
+        catch(error)
+        {
+            res.status(404).json({message: "error fetching data"});
+        }
+    }
     //Single use calls to the database
     useEffect(()=>{
         getBalance();
@@ -222,7 +250,16 @@ function Portfolio()
     {
         getPrices(balance);
     }
-    let portfolio = setupPortfolio(balance,transactions,prices);
+
+    if(!rates)
+    {
+        getRates();
+        return(<>Loading</>);
+    }
+    //Set up the fetched values into the required format
+    let portfolio = setupPortfolio(balance,transactions,prices,rates);
+    //Calculate the total value of the users portfolio, based on the current market price
+    let totalValue = 0;
     //Pie chart formatting
     let pieData=[];
     //Remove the total spent from the list
@@ -230,20 +267,25 @@ function Portfolio()
     {
         pieData[i]=[portfolio[i][0],portfolio[i][1]];
     }
+
+    portfolio.forEach((item) => totalValue=totalValue+(item[1]*item[3]))
     //Add headings
     pieData.unshift(["Coin","Amount owned"]);
+
     if(portfolio.length > 0)
     {
         return(<>
             <div id={styles.PageHeader}>Portfolio</div>
             <PieChart data={pieData} />
+            <div id={styles.totalValue}>Total Value: ${totalValue}</div>
             <List data={portfolio}/>
         </>);
     }
-    //If no transactions have been made
+    //If the portfolio is empty
     else
     {
-        return(<>Portfolio empty</>);
+        return(<><div id={styles.PageHeader}>Portfolio</div>
+        <div id={styles.emptyMessage}>Your portfolio is empty. As you buy currencies, they will appear here</div></>);
     }
 
 }

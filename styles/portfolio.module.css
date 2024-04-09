@@ -30,3 +30,11 @@
     font-weight: bold;
     text-align: center;
 }
+#totalValue{
+    font-size: 1em;
+}
+
+#emptyMessage
+{
+    font-size: 1em;
+}
