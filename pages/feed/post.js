@@ -7,10 +7,9 @@ Modal.setAppElement('#__next');
 
 const PostModal = ({ isOpen, onClose, userEmail }) => {
   const [addPostValue, setAddPostValue] = useState('');
-  
-  async function handleSubmit(){
-    document.preventDefault();
-    console.log(userEmail);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     try {
       
         const res = await fetch('../api/feed/addPost', {
@@ -27,7 +26,7 @@ const PostModal = ({ isOpen, onClose, userEmail }) => {
   
         if (res.ok) {
           const data = await res.json();
-
+          
           /// finish this
           
         } 
@@ -54,7 +53,7 @@ const PostModal = ({ isOpen, onClose, userEmail }) => {
     >
 
     <div className={styles.postMessage}>
-        <form onSubmit={()=>{handleSubmit();}} className={styles.postForm}>
+        <form onSubmit={handleSubmit} className={styles.postForm}>
           <div className={styles.textContainer}>
               <label className={styles.textLabel}>Create Post</label>
               <textarea type="text" 

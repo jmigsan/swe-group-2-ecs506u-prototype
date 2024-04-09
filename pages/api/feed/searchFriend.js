@@ -28,13 +28,20 @@ export default async function handler(req,res){
         
         const userIsFriendArray =[]
         for (const user of users){
-            const isFriend = await prisma.friends.findUnique({
-                where:{
-                    userID_recipientID: {
-                        userID: userEmail,
-                        recipientID: user.email
-                }
-            }})
+            const isFriend = await prisma.friends.findFirst({
+                where: {
+                    OR: [
+                      { 
+                        userID: userEmail, 
+                        recipientID: user.email 
+                      },
+                      { 
+                        userID: user.email, 
+                        recipientID: userEmail 
+                      }
+                    ]
+                  }
+                });
 
             
             if (isFriend !== null){

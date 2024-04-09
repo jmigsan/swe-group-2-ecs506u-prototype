@@ -1,17 +1,25 @@
 'use client';
 
-import {useEffect, useState, useLayoutEffect} from 'react';
+import {useEffect, useState, useLayoutEffect, useRef} from 'react';
 import { motion } from 'framer-motion';
 import styles from '@/styles/support.module.css';
+
 import Modal from './adminComment';
+import TicketModal from './ticketView'
 
 
 export default function Support() {
-    const [viewingTickets, setViewingTickets] = useState(false);
+    const [viewingTickets, setViewingTickets] = useState(true);
     const [creatingTicket, setCreatingTicket] = useState(false);
     const [talkingToSupport, setTalkingToSupport] = useState(false);
     const [talkingToAI, setTalkingToAI] = useState(false);
     const [tickets, setTickets] = useState([]);
+    const [activeTickets, setActiveTickets] = useState([]) ;
+    const [resolvedTickets, setResolvedTickets] = useState([]);
+
+    const [showActiveTickets, setShowActiveTickets] = useState(false);
+    const [showSolvedTickets, setShowSolvedTickets] = useState(false);
+    const [currentTicket, setCurrentTicket] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -26,13 +34,49 @@ export default function Support() {
 
 
     const [showModal, setShowModal] = useState(false);
+    const [showTicketModal, setShowTicketModal] = useState(false);
+    const textareaRef = useRef(null);
 
+
+    const [sortByDateAscending, setSortByDateAscending] = useState(true);
+
+    const handleActiveTicketsClick = () => {
+        console.log("active tickets clicked")
+        setActiveTickets(tickets.filter((ticket) => !ticket.solved))
+        setShowActiveTickets(true);
+        setShowSolvedTickets(false);
+
+    };
+    const handleAllTicketsClick = () => {
+
+
+        console.log("all tickets")
+        setShowActiveTickets(false);
+        setShowSolvedTickets(false);
+    };
+    const handleSolvedTicketsClick = () => {
+        console.log("solved tickets clicked")
+        setActiveTickets(tickets.filter((ticket) => ticket.solved))
+        setShowActiveTickets(false);
+        setShowSolvedTickets(true);
+
+    };
 
     function handleOpenModal(){
         setShowModal(true);
     }
     function handleCloseModal(){
         setShowModal(false);
+    }
+    function handleOpenTicketModal(ticket){
+        setCurrentTicket(ticket);
+        setShowTicketModal(true);
+        console.log("comemement herere ",ticket.comment)
+    }
+    function handleCloseTicketModal(){
+        console.log("first ticket modal   ", showTicketModal)
+        setShowTicketModal(false);
+        console.log("ticket modal is now", showTicketModal)
     }
 
 
@@ -55,24 +99,37 @@ export default function Support() {
         animate: {y:0},
         exit: {y:-50},
     };
-    const animations2 = {
-        hidden: {x:100},
-        visible: {x:0},
-
-    };
-    const animations3={
-        start:{
-            y:"0%",
-        },
-        end:{
-            y:"100%",
-        }
-    }
 
     useEffect(() => {
-        // Fetch user session information when the component mounts
-        fetchUserSession();
-    }, []);
+
+        const fetchData = async () => {
+            try {
+
+                const userData = await fetchUserSession();
+
+                handleViewTickets();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+
+        console.log("on render")
+
+        fetchData();
+
+    }, [userEmail, userRole]);
+
+    useEffect(() => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+    }, [formData.issueDescription]);
+
+
 
     useLayoutEffect(() => {
         if (errorFlash) {
@@ -110,6 +167,7 @@ export default function Support() {
                 // view.style.backgroundColor = 'white';
                 view.classList.remove(styles.flash);
                 setSuccessFlash(false);
+                window.location.reload();
             }, 700);
 
             return () => clearTimeout(timer);
@@ -121,27 +179,29 @@ export default function Support() {
 
             const res = await fetch('../api/auth/session');
 
-            if (res) {
+            if (res.ok) {
                 const data = await res.json();
                 const email = data.user.email;
 
                 console.log("role is ", data.user.role)
                 setUserEmail(data.user.email);
                 setUserRole(data.user.role)
+                return data
             } else {
                 setError('Error fetching user session');
+                return null
             }
         } catch (error) {
             setError('Internal Server Error');
+            return null
         }
     };
+
 
     const handleViewTickets = async (index) => {
 
         const viewTicket = document.getElementById('viewTicket');
         const createTicket = document.getElementById('createTicket')
-        const agent = document.getElementById('agent')
-        const bot = document.getElementById('bot')
 
 
         viewTicket.style.transition = "border-bottom 0.5s ease-out";
@@ -149,13 +209,9 @@ export default function Support() {
 
         if (userRole !== 'Admin') {
             createTicket.style.transition = "border-bottom 0.5s ease-out";
-            agent.style.transition = "border-bottom 0.5s ease-out";
-            bot.style.transition = "border-bottom 0.5s ease-out";
 
 
             createTicket.style.borderBottom = "none"
-            agent.style.borderBottom = "none"
-            bot.style.borderBottom = "none"
         }
         // console.log("handleViewTickets")
         // console.log("---------retrieved session userEmail: ", userEmail)
@@ -168,7 +224,6 @@ export default function Support() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({userEmail}),
-                // body: JSON.stringify({ userEmail }),
             });
 
             if (res.ok) {
@@ -189,6 +244,7 @@ export default function Support() {
         }
     };
 
+
     const handleTicketSubmit = async (event) =>{
 
 
@@ -197,6 +253,7 @@ export default function Support() {
         try {
 
             if (formData.issueType === '' || formData.issueDescription === '') {
+                setErrorFlash(true)
                 console.log('Form is empty');
                 return;
             }
@@ -218,6 +275,7 @@ export default function Support() {
             if (response.ok) {
                 //successful form submission
                 const data = await response.json();
+                setSuccessFlash(true)
                 // console.log('Ticket created successfully:', data.ticket);
 
             } else {
@@ -232,13 +290,9 @@ export default function Support() {
     const handleCreateTicket = async =>{
         const viewTicket = document.getElementById('viewTicket');
         const createTicket = document.getElementById('createTicket')
-        const agent = document.getElementById('agent')
-        const bot = document.getElementById('bot')
 
         viewTicket.style.borderBottom = "none";
         createTicket.style.borderBottom = "7px solid #5AA056"
-        agent.style.borderBottom = "none"
-        bot.style.borderBottom = "none"
 
         setCreatingTicket(true);
         setViewingTickets(false);
@@ -252,39 +306,6 @@ export default function Support() {
         }));
     };
 
-
-    const handleAgent = async =>{
-        const viewTicket = document.getElementById('viewTicket');
-        const createTicket = document.getElementById('createTicket')
-        const agent = document.getElementById('agent')
-        const bot = document.getElementById('bot')
-
-        viewTicket.style.borderBottom = "none";
-        createTicket.style.borderBottom = "none"
-        agent.style.borderBottom = "7px solid #5AA056"
-        bot.style.borderBottom = "none"
-
-        setCreatingTicket(false);
-        setViewingTickets(false);
-        setTalkingToSupport(true);
-        setTalkingToAI(false);
-    };
-    const handleBot = async =>{
-        const viewTicket = document.getElementById('viewTicket');
-        const createTicket = document.getElementById('createTicket')
-        const agent = document.getElementById('agent')
-        const bot = document.getElementById('bot')
-
-        viewTicket.style.borderBottom = "none";
-        createTicket.style.borderBottom = "none"
-        agent.style.borderBottom = "none"
-        bot.style.borderBottom = "7px solid #5AA056"
-
-        setCreatingTicket(false);
-        setViewingTickets(false);
-        setTalkingToSupport(false);
-        setTalkingToAI(true);
-    };
 
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -304,10 +325,24 @@ export default function Support() {
         }, 2000); // Reset flash after 2 seconds
     }
 
+    function countActiveTickets(tickets){
+        let resolvedCount = 0;
+
+        // Iterate through the tickets array
+        tickets.forEach(ticket => {
+            if (!ticket.solved) {
+                resolvedCount++;
+            }
+        });
+
+        return resolvedCount;
+    }
+
     const  handleConfirmChange = async (ticketId, newValue) => {
         console.log("ticketId is ", ticketId)
         console.log("newValue is ", newValue)
         if(adminComments !== ""){
+            handleCloseModal()
             try {
                 // Submit the updated solved value to the updateTicket API endpoint
                 const response = await fetch(`/api/tickets/updateTicket?id=${ticketId}`, {
@@ -325,7 +360,6 @@ export default function Support() {
                     const data = await response.json();
                     setSuccessFlash(true);
                     console.log('Ticket updated successfully:', data.message);
-
                 } else {
 
                     console.error('Error with changing value:', response.statusText);
@@ -343,188 +377,412 @@ export default function Support() {
 
     };
 
+    const toggleSortOrder = () => {
+        // console.log("whoop whoop")
+        setSortByDateAscending(prevState => !prevState);
+        setTickets(prevTickets => {
+            const sortedTickets = [...prevTickets];
+            sortedTickets.sort((a, b) => {
+                if (sortByDateAscending) {
+                    return new Date(a.dateCreated) - new Date(b.dateCreated);
+                } else {
+                    return new Date(b.dateCreated) - new Date(a.dateCreated);
+                }
+            });
+            return sortedTickets;
+        });
+        setActiveTickets(prevTickets => {
+            const sortedTickets = [...prevTickets];
+            sortedTickets.sort((a, b) => {
+                if (sortByDateAscending) {
+                    return new Date(a.dateCreated) - new Date(b.dateCreated);
+                } else {
+                    return new Date(b.dateCreated) - new Date(a.dateCreated);
+                }
+            });
+            return sortedTickets;
+        });
+    };
+
 
     return (
 
         <div className= {styles.entireView} >
-        <motion.div className={styles.supportContainer}
-                    variants={animations} initial="initial" animate="animate" exit="exit" transition={{duration:0.5, ease: "easeOut"}}>
+            <motion.div className={styles.supportContainer}
+                        variants={animations} initial="initial" animate="animate" exit="exit"
+                        transition={{duration: 0.5, ease: "easeOut"}}>
 
 
-            <section className={styles.supportOptions}>
-                <div className={styles.option} id={"viewTicket"} onClick={handleViewTickets}>
-                    <h2>View Tickets</h2>
-                </div>
-                {userRole !== 'Admin' && (
+                <section className={styles.supportOptions}>
+                    <div className={styles.option} id={"viewTicket"} onClick={handleViewTickets}>
+                        <h2>View Tickets</h2>
+                    </div>
+                    {userRole !== 'Admin' && (
+                        <>
+                            <div className={styles.option} id={"createTicket"} onClick={handleCreateTicket}>
+                                <h2>Create Ticket</h2>
+                            </div>
+
+                        </>
+                    )}
+                </section>
+
+                {/* conditional rendering for different sections */}
+                {tickets.length > 0 && viewingTickets && (
                     <>
-                    <div className={styles.option} id={"createTicket"} onClick={handleCreateTicket}>
-                        <h2>Create Ticket</h2>
-                    </div>
-                    <div className={styles.option} id={"agent"} onClick={handleAgent}>
-                        <h2>Talk to Agent</h2>
-                    </div>
-                    <div className={styles.option} id={"bot"} onClick={handleBot}>
-                        <h2>Chat with AI bot</h2>
-                    </div>
+
+                    <motion.div className={styles.ticketSection} variants={animations} initial="initial"
+                                animate="animate"
+                                exit="exit" transition={{duration: 0.5, ease: "easeOut"}}>
+
+                        <ul className={styles.boxinfo}>
+                            <li className={`${styles.totalTickets} ${(!showActiveTickets && !showSolvedTickets) ? styles.clicked : ''}`} onClick={handleAllTicketsClick} >
+                                <span className={styles.text}>
+                                <h3 className={styles.h3} >{tickets.length}</h3>
+                                <p>Total Tickets</p>
+                                </span>
+                            </li>
+                            <li className={`${styles.otherTwo} ${showActiveTickets ? styles.clicked : ''}`} onClick={handleActiveTicketsClick}>
+                                <span className={styles.text}>
+                                <h3 className={styles.h3} >{countActiveTickets(tickets)}</h3>
+                                <p>Active Tickets</p>
+                                </span>
+                            </li>
+                            <li  className={`${styles.otherTwo} ${showSolvedTickets ? styles.clicked : ''}`} onClick={handleSolvedTicketsClick}>
+                                <span className={styles.text}>
+                                <h3 className={styles.h3} >{tickets.length - countActiveTickets(tickets)}</h3>
+                                <p>Resolved Tickets</p>
+                                </span>
+                            </li>
+                        </ul>
+
+                        <table className={styles.ticketsTable}>
+                            <thead>
+                            <tr>
+                                {userRole === 'Admin' && <th>User</th>}
+                                <th>Issue Type</th>
+                                <th className={styles.DateCreated}>Date Created
+                                    <img className={styles.changeOrder} src="/images/two-arrow.png" alt="Change Order" onClick={toggleSortOrder}/>
+                                </th>
+                                {userRole !== 'Admin' && showActiveTickets === false && showSolvedTickets === true &&
+                                    <th>Comments</th>}
+                                {adminTicketResolved && userRole === 'Admin' && <th>Resolved</th>}
+                                {adminTicketResolved && userRole === 'Admin' && <th></th>}
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {/*SHOW ONLY ACTIVE TICKETS*/}
+                            { showActiveTickets && showSolvedTickets === false &&(
+                                activeTickets.map((ticket, index) => (
+                                    <motion.tr
+                                        className={styles.ticketRow}
+                                        initial={"initial"}
+                                        animate={"animate"}
+                                        exit={"exit"}
+                                        variants={animations}
+                                        transition={{duration: 0.5, ease: "easeOut"}}
+                                        key={index}>
+                                        {userRole === 'Admin' && <td>{ticket.userEmail}</td>}
+                                        <td>{ticket.issueType}</td>
+                                        {/*<td>{ticket.issueDescription}</td>*/}
+                                        <td>{formatDate(ticket.dateCreated)}</td>
+
+                                        {userRole === 'Admin' ? (
+                                            <>
+                                                <td>
+                                                    <select
+                                                        className={styles.select}
+                                                        value={adminTicketResolved[ticket.id] !== undefined ? adminTicketResolved[ticket.id].toString() : ticket.solved.toString()}
+                                                        onChange={(e) => handleTempSolvedChange(ticket.id, e.target.value)}
+                                                    >
+                                                        <option value="true">Yes</option>
+                                                        <option value="false">No</option>
+                                                    </select>
+                                                </td>
+                                                {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined ? (
+                                                    <>
+                                                        <td>
+                                                        <button  className={styles.submitButton} onClick={handleOpenModal}>Enter comments</button>
+                                                        </td>
+                                                        {showModal && (
+                                                            <Modal
+                                                                adminComments={adminComments}
+                                                                setAdminComments={setAdminComments}
+                                                                handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
+                                                                onClose={handleCloseModal}
+                                                            />
+                                                        )}
+                                                    </>
+                                                ): (
+                                                    <td>
+                                                        <button className={styles.ticketButton}
+                                                                onClick={() => handleOpenTicketModal(ticket)}>
+                                                            <img className={styles.ticketButtonImage}
+                                                                 src="/images/selection.png"
+                                                                 alt="Add Ticket"/>
+                                                        </button>
+                                                    </td>
+                                                )}
+                                            </>
+                                        ): (
+                                            <td>
+                                                <button
+                                                    className={styles.ticketButton}
+                                                    onClick={() => handleOpenTicketModal(ticket)}
+                                                >
+                                                    <img
+                                                        className={styles.ticketButtonImage}
+                                                        src="/images/selection.png"
+                                                        alt="Add Ticket"
+                                                    />
+                                                </button>
+                                            </td>
+                                        )}
+
+
+                                    </motion.tr>
+
+                                )))
+
+                            }
+
+                            {/*SHOW ONLY SOLVED TICKETS*/}
+                            {showSolvedTickets && showActiveTickets === false && (
+                                activeTickets.map((ticket, index) => (
+                                    <motion.tr
+                                        className={styles.ticketRow}
+                                        initial={"initial"}
+                                        animate={"animate"}
+                                        exit={"exit"}
+                                        variants={animations}
+                                        transition={{duration: 0.5, ease: "easeOut"}} key={index}>
+                                        {userRole === 'Admin' && <td>{ticket.userEmail}</td>}
+                                        <td>{ticket.issueType}</td>
+                                        {/*<td>{ticket.issueDescription}</td>*/}
+                                        <td>{formatDate(ticket.dateCreated)}</td>
+
+                                        {userRole === 'Admin' ? (
+                                            <>
+                                                <td>
+                                                    <select
+                                                        className={styles.select}
+                                                        value={adminTicketResolved[ticket.id] !== undefined ? adminTicketResolved[ticket.id].toString() : ticket.solved.toString()}
+                                                        onChange={(e) => handleTempSolvedChange(ticket.id, e.target.value)}
+                                                    >
+                                                        <option value="true">Yes</option>
+                                                        <option value="false">No</option>
+                                                    </select>
+                                                </td>
+                                                {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined ? (
+                                                    <>
+                                                        <td>
+                                                            <button className={styles.submitButton}
+                                                                    onClick={handleOpenModal}>Enter comments
+                                                            </button>
+                                                        </td>
+                                                        {showModal && (
+                                                            <Modal
+                                                                adminComments={adminComments}
+                                                                setAdminComments={setAdminComments}
+                                                                handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
+                                                                onClose={handleCloseModal}
+                                                            />
+                                                        )}
+
+                                                    </>
+                                                ): (
+                                                    <td>
+                                                        <button className={styles.ticketButton}
+                                                                onClick={() => handleOpenTicketModal(ticket)}>
+                                                            <img className={styles.ticketButtonImage}
+                                                                 src="/images/selection.png"
+                                                                 alt="Add Ticket"/>
+                                                        </button>
+                                                    </td>
+                                                )}
+                                            </>
+                                        ): (
+                                            <>
+                                            <td>{ticket.comments}</td>
+
+                                            <td>
+
+                                                <button
+                                                    className={styles.ticketButton}
+                                                    onClick={() => handleOpenTicketModal(ticket)}
+                                                >
+                                                    <img
+                                                        className={styles.ticketButtonImage}
+                                                        src="/images/selection.png"
+                                                        alt="Add Ticket"
+                                                    />
+                                                </button>
+                                            </td>
+                                            </>
+                                        )}
+
+                                    </motion.tr>
+
+                                )))
+                            }
+
+                            {/*SHOW ALL TICKETS*/}
+                            {showActiveTickets===false && showSolvedTickets === false &&
+                                tickets.map((ticket, index) => (
+
+
+                                <motion.tr
+                                    className={styles.ticketRow}
+                                    initial={"initial"}
+                                    animate={"animate"}
+                                    exit={"exit"}
+                                    variants={animations}
+                                    transition={{duration: 0.5, ease: "easeOut"}} key={index}>
+
+                                    {userRole === 'Admin' && <td>{ticket.userEmail}</td>}
+                                    <td>{ticket.issueType}</td>
+                                    {/*<td>{ticket.issueDescription}</td>*/}
+                                    <td>{formatDate(ticket.dateCreated)}</td>
+
+                                    {userRole === 'Admin' ? (
+                                        <>
+                                            <td>
+                                                <select
+                                                    className={styles.select}
+                                                    value={adminTicketResolved[ticket.id] !== undefined ? adminTicketResolved[ticket.id].toString() : ticket.solved.toString()}
+                                                    onChange={(e) => handleTempSolvedChange(ticket.id, e.target.value)}
+                                                >
+                                                    <option value="true">Yes</option>
+                                                    <option value="false">No</option>
+                                                </select>
+                                            </td>
+                                            {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined ? (
+                                                <>
+                                                    <button className={styles.submitButton}
+                                                            onClick={handleOpenModal}>Enter comments
+                                                    </button>
+                                                    {showModal && (
+                                                        <Modal
+                                                            adminComments={adminComments}
+                                                            setAdminComments={setAdminComments}
+                                                            handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
+                                                            onClose={handleCloseModal}
+                                                        />
+                                                    )}
+                                                </>
+                                            ): (
+                                                <td>
+                                                    <button className={styles.ticketButton}
+                                                            onClick={() => handleOpenTicketModal(ticket)}>
+                                                        <img className={styles.ticketButtonImage}
+                                                             src="/images/selection.png"
+                                                             alt="Add Ticket"/>
+                                                    </button>
+                                                </td>
+                                            )}
+                                        </>
+                                    ): (
+                                        <>
+
+
+                                            <td>
+
+                                                <button
+                                                    className={styles.ticketButton}
+                                                    onClick={() => handleOpenTicketModal(ticket)}
+                                                >
+                                                    <img
+                                                        className={styles.ticketButtonImage}
+                                                        src="/images/selection.png"
+                                                        alt="Add Ticket"
+                                                    />
+                                                </button>
+                                            </td>
+                                        </>
+                                    )}
+                                </motion.tr>
+
+                            ))
+                            }
+
+                            </tbody>
+                        </table>
+
+                    </motion.div>
+
+                        {showTicketModal && (
+                            <TicketModal
+                                issueType={currentTicket.issueType}
+                                issueDescription={currentTicket.issueDescription}
+                                dateCreated={currentTicket.dateCreated}
+                                comment={currentTicket.comments}
+                                onClose={handleCloseTicketModal}
+                            />
+                        )}
                     </>
                 )}
-            </section>
 
-            {/* conditional rendering for different sections */}
-            {tickets.length > 0 && viewingTickets && (
-                <motion.div className={styles.ticketSection} variants={animations} initial="initial" animate="animate"
-                            exit="exit" transition={{duration: 0.5, ease: "easeOut"}}>
-                    <h2>Tickets:</h2>
-                    <table className={styles.ticketsTable}>
-                        <thead>
-                        <tr>
-                            {userRole === 'Admin' && <th>User</th>}
-                            <th>Issue Type</th>
-                            <th>Issue Description</th>
-                            <th>Date Created</th>
-                            <th>Resolved</th>
-                            {adminTicketResolved && userRole === 'Admin' && <th></th>}
-                            {adminTicketResolved && userRole === 'Admin' && <th></th>}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {tickets.map((ticket, index) => (
-                            <tr key={index}>
-                                {userRole === 'Admin' && <th>{ticket.userEmail}</th>}
-                                <td>{ticket.issueType}</td>
-                                <td>{ticket.issueDescription}</td>
-                                <td>{formatDate(ticket.dateCreated)}</td>
 
-                                {userRole === 'Admin' ? (
-                                    <>
-                                    <td>
+                {/*CREATE A TICKET*/}
+                {creatingTicket && (
+                    <div className={styles.createTicket}>
+                        <h2 className={styles.header}>New Ticket</h2>
+                        <div className={styles.modalContent}>
+                            <div className={styles.formContainer}>
+                                <div className={styles.formRow}>
+                                    <div className={styles.formField}>
+                                        <label htmlFor="issueType" className={styles.formLabel}>Issue Type:</label>
                                         <select
-                                            className={styles.select}
-                                            value={adminTicketResolved[ticket.id] !== undefined ? adminTicketResolved[ticket.id].toString() : ticket.solved.toString()}
-                                            onChange={(e) => handleTempSolvedChange(ticket.id, e.target.value)}
+                                            id="issueType"
+                                            name="issueType"
+                                            value={formData.issueType}
+                                            onChange={handleChange}
+                                            className={styles.issueTypeSelect}
                                         >
-                                            <option value="true">Yes</option>
-                                            <option value="false">No</option>
+                                            <option value="">Select Issue Type</option>
+                                            <option value="Bug">Bug</option>
+                                            <option value="Feature Request">Feature Request</option>
+                                            <option value="General Inquiry">General Inquiry</option>
+                                            <option value="Other">Other</option>
                                         </select>
-                                    </td>
-                                    {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined && (
-                                        <>
-                                            <button onClick={handleOpenModal}>submit comments</button>
-                                            {showModal && (
-                                                <Modal
-                                                    adminComments={adminComments}
-                                                    setAdminComments={setAdminComments}
-                                                    handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
-                                                    onClose={handleCloseModal}
-                                                />
-                                            )}
-                                        {/*<td className={styles.commentContainer}>*/}
-                                        {/*        <textarea*/}
-                                        {/*            className={styles.input}*/}
-                                        {/*            type="text"*/}
-                                        {/*            placeholder="Enter comments"*/}
-                                        {/*            onChange={(e) => setAdminComments(e.target.value)}*/}
-                                        {/*            value={adminComments}*/}
-                                        {/*        />*/}
-                                        {/*</td>*/}
 
-                                        {/*<td className={styles.commentContainer}>*/}
+                                        {formData.issueType === 'Other' && (
+                                            <input
+                                                type="text"
+                                                id="otherIssueType"
+                                                name="otherIssueType"
+                                                placeholder="Specify Issue Type"
+                                                value={formData.otherIssueType}
+                                                onChange={handleChange}
+                                                className={styles.otherIssueTypeInput}
+                                            />
+                                        )}
+                                    </div>
+                                    <div className={styles.formField}>
+                                        <label htmlFor="issueDescription" className={styles.formLabel}>Issue Description:</label>
+                                        <textarea
+                                            ref={textareaRef}
+                                            id="issueDescription"
+                                            name="issueDescription"
+                                            value={formData.issueDescription}
+                                            onChange={handleChange}
+                                            className={styles.issueDescriptionTextarea}
+                                        ></textarea>
+                                    </div>
+                                </div>
+                                <div className={styles.formActions}>
+                                    <button type="submit" className={styles.submitButton} onClick={handleTicketSubmit}>
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
 
-                                        {/*    <button*/}
-                                        {/*        className={styles.button}*/}
-                                        {/*        onClick={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}*/}
-                                        {/*    >*/}
-                                        {/*        Confirm*/}
-                                        {/*    </button>*/}
-                                        {/*</td>*/}
-                                        </>
-                                )}
-                            </>
-                        ) : (
-                            <td className={styles.solved}>{formatSolved(ticket.solved)}</td>
-                        )}
-                    </tr>
-
-                    ))}
-
-                </tbody>
-                </table>
-                </motion.div>
+                        </div>
+                    </div>
                 )}
 
-
-            {/*CREATE A TICKET*/}
-            {creatingTicket && (
-                <div className={styles.ticketSection}>
-                    <h2>New Ticket</h2>
-                    <table className={styles.ticketsTable}>
-                        <tbody>
-                        <tr>
-                            <td>
-                                <label htmlFor="issueType">Issue Type:</label>
-                                <select
-                                    id="issueType"
-                                    name="issueType"
-                                    value={formData.issueType}
-                                    onChange={handleChange}
-                                    className={styles.issueTypeSelect}
-                                >
-                                    <option value="">Select Issue Type</option>
-                                    <option value="Bug">Bug</option>
-                                    <option value="Feature Request">Feature Request</option>
-                                    <option value="General Inquiry">General Inquiry</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                                {formData.issueType === 'Other' && (
-                                    <input
-                                        type="text"
-                                        id="otherIssueType"
-                                        name="otherIssueType"
-                                        placeholder="Specify Issue Type"
-                                        value={formData.otherIssueType}
-                                        onChange={handleChange}
-                                        className={styles.otherIssueTypeInput}
-                                    />
-                                )}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label htmlFor="issueDescription">Issue Description:</label>
-                                <textarea
-                                    id="issueDescription"
-                                    name="issueDescription"
-                                    value={formData.issueDescription}
-                                    onChange={handleChange}
-                                    className={styles.issueDescriptionTextarea}
-                                ></textarea>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <button type="submit" className={styles.submitButton} onClick={handleTicketSubmit}>
-                        Submit
-                    </button>
-                </div>
-            )}
-
-            {
-                talkingToSupport && (
-                    <motion.div className={styles.ticketSection}>
-                        {/* Add stuff  */}
-                    </motion.div>
-                )
-            }
-
-            {
-                talkingToAI && (
-                    <motion.div className={styles.ticketSection}>
-                        {/* Add stuff  */}
-                    </motion.div>
-                )
-            }
-        </motion.div>
+            </motion.div>
         </div>
-)
-    ;
+    );
 }

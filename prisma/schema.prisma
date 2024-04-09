@@ -4,8 +4,6 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,13 +13,12 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-
-
-model favorites{
-  coin String
+model favorites {
+  coin   String
   symbol String
-  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  user   Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
   userId String
+
   @@id([userId, coin])
 }
 
@@ -42,18 +39,21 @@ model User {
 }
 
 model Staff {
-  userId      String @unique @id
-  user        User   @relation(fields: [userId], references: [email])
+  userId String @id @unique
+  user   User   @relation(fields: [userId], references: [email])
 }
 
 model Investor {
-  userId      String @unique @id
-  user        User   @relation(fields: [userId], references: [email])
-  Favorites favorites[]
-  Currencies Balance []
-  Trades Trade[]
+  userId      String       @id @unique
+  user        User         @relation(fields: [userId], references: [email])
+  Favorites   favorites[]
+  Currencies  Balance[]
+  Trades      Trade[]
   LimitOrders LimitOrder[]
 }
+
+
+
 
 
 model Cryptos{
@@ -63,49 +63,52 @@ model Cryptos{
   createDate DateTime @default(now())
 }
 
-model Balance{
+model Balance {
   currency String
-  amount Float
-  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  amount   Float
+  user     Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId   String
+
   @@id([userId, currency])
 }
 
-
-model Trade{
-  id Int @id @default(autoincrement())
-  Bought String
-  Sold String
-  Type String
-  Price Float
+model Trade {
+  id           Int      @id @default(autoincrement())
+  Bought       String
+  Sold         String
+  Type         String
+  Price        Float
   AmountBought Float
-  AmountSold Float
-  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  createDate DateTime @default(now())
+  AmountSold   Float
+  user         Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId       String
+  createDate   DateTime @default(now())
 }
 
-model LimitOrder{
-    id Int @id @default(autoincrement())
-  Bought String
-  Sold String
-  Type String
-  Price Float
+model LimitOrder {
+  id           Int      @id @default(autoincrement())
+  Bought       String
+  Sold         String
+  Type         String
+  Price        Float
   AmountBought Float
-  AmountSold Float
-  user Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  AmountSold   Float
+  user         Investor @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  userId       String
 }
 
-model chatRequests{
+model chatRequests {
   userId String @id
 }
 
-model chatPairs{
-  userId String 
+model chatPairs {
+  userId  String
   staffId String
+
   @@id([userId, staffId])
 }
+
+
 
 model Ticket {
   id               Int      @id @default(autoincrement())

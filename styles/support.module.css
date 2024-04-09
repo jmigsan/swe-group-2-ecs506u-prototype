@@ -1,31 +1,35 @@
 @keyframes flash {
     0% { background-color: rgba(90, 160, 86, 0); }
-    50% { background-color: rgba(90, 160, 86, 0.5);}  /* Adjust color as needed */
+    50% { background-color: rgba(90, 160, 86, 0.5);}
     60% { background-color: rgba(90, 160, 86, 0.4);}
-    70% { background-color: rgba(90, 160, 86, 0.3);} /* Adjust color as needed */
+    70% { background-color: rgba(90, 160, 86, 0.3);}
     100% { background-color: rgba(90, 160, 86, 0); }
 }
 
 @keyframes redFlash {
     0% { background-color: rgba(90, 160, 86, 0); }
-    50% { background-color: rgba(217, 1, 1, 0.5);}  /* Adjust color as needed */
+    50% { background-color: rgba(217, 1, 1, 0.5);}
     60% { background-color: rgba(217, 1, 1, 0.4);}
-    70% { background-color: rgba(217, 1, 1, 0.3);} /* Adjust color as needed */
+    70% { background-color: rgba(217, 1, 1, 0.3);}
     100% { background-color: rgba(217, 1, 1, 0); }
 }
 
-.entireView.flash {
+.entireView.flash,
+.formContainer.flash {
     animation: flash 0.8s ease-in-out;
 }
 
-.entireView.errorFlash {
+.entireView.errorFlash,
+.formContainer.errorFlash {
     animation: redFlash 0.8s ease-in-out;
 }
-
+.entireView {
+    min-height: 100vh;
+}
 /* YourComponent styles */
 .supportContainer {
     width: 100vw;
-    height: auto;
+    /*height: auto;*/
     max-width: 80%;
     margin: auto;
     max-height: 100%;
@@ -40,15 +44,14 @@
 .supportOptions {
     display: flex;
     flex-direction: row;
-    gap: 1.5em;
+
     align-items: center;
-    justify-content: space-between;
     font-family: Arial, Helvetica, sans-serif;
-    width: 90%;
-    margin-top: 2em;
+    width: 110%;
 }
 
 .option {
+    margin-right: 10%;
     border: none;
     background-color: transparent;
     box-shadow: none;
@@ -69,6 +72,7 @@
 }
 
 .ticketSection {
+    align-content: center;
     width: 95%;
     padding: 1em;
     margin-top: 2em;
@@ -80,16 +84,38 @@
     color: #484D56;
     margin-bottom: 1em;
 }
+.createTicket{
+    margin-top: 30px;
+    border-radius: 8px;
+    width: 500px; /* Adjust width as needed */
+    height: auto;
+
+}
 
 .ticketsTable {
-    width: 100%;
-    border-collapse: collapse;
+    /*font-size: 18px;*/
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0 auto;
+    /*border-collapse: collapse;*/
+    font-family: 'Roboto', sans-serif;
+}
+.ticketsTable th{
+    padding: 10px;
+
+    font-weight: 600;
+    color: #484D56;
+
+    font-size: 20px;
+    text-decoration: underline;
+
     font-family: 'Roboto', sans-serif;
 }
 
 .ticketsTable td {
-    padding: 1.5em;
-    margin-bottom: 10em;
+    padding: 1em;
+    text-align: center;
+    color: #666;
 }
 
 .ticketsTable label {
@@ -100,7 +126,6 @@
 }
 
 .issueTypeSelect,
-.otherIssueTypeInput,
 .issueDescriptionTextarea {
     width: 100%;
     padding: 0.5em;
@@ -110,7 +135,49 @@
     color: #666;
 }
 
+.otherIssueTypeInput{
+    margin-top: 2px;
+    width: 50%;
+    padding: 0.5em;
+    border: 1pt solid lightgray;
+    border-radius: 0.3em;
+    font-family: 'Roboto', sans-serif;
+    color: #666;
+}
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.formRow {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.formField {
+
+    flex: 1;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.formLabel {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
 .submitButton {
+    align-content: center;
     padding: 0.5em 1em;
     border: none;
     border-radius: 0.3em;
@@ -119,21 +186,13 @@
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 1em;
+
 }
 
 .submitButton:hover {
     background-color: #4a8848;
 }
 
-.ticketsTable th {
-    font-weight: 600;
-    color: #484D56;
-}
-
-.ticketsTable td {
-    color: #666;
-}
 
 .form {
     display: flex;
@@ -187,25 +246,50 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .modalContent {
-    background-color: #fff; /* White background for modal */
+    min-width: 40%;
+    max-width: 70%;
+    background-color: #fff;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+.modalHeader {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+.closeButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+
+}
+.modalBody {
+
+}
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .input {
-    width: 100%;
+    width: 95%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    resize: none; /* Disable textarea resizing */
+    resize: none;
 }
 
 .button {
+
     padding: 10px 20px;
     background-color: #5AA056;
     color: #fff;
@@ -214,11 +298,163 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+.button img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    background-color: transparent;
+}
 
 .button:hover {
     background-color: #4a8848;
 }
 
-.button + .button {
-    margin-left: 10px; /* Add space between buttons */
+
+.boxinfo {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
+    /*display: flex;*/
+    /*justify-content: center;*/
+
+    grid-gap: 24px;
+    margin-bottom: 2.5em;
+}
+.otherTwo{
+    padding: 24px;
+    background: rgb(238, 238, 238);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    grid-gap: 24px;
+}
+.otherTwo:hover{
+    background-color: rgb(200, 200, 200); /* Change background color on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow on hover */
+    transform: translateY(-4px);
+}
+.otherTwo.clicked {
+    background-color: rgb(200, 200, 200);
+    box-shadow: none;
+    transform: translateY(0);
+}
+
+.totalTickets{
+    padding: 24px;
+    background: rgb(238, 238, 238);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    grid-gap: 24px;
+}
+
+.totalTickets:hover{
+    background-color: rgb(200, 200, 200);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+.totalTickets.clicked {
+    background-color: rgb(200, 200, 200);
+    box-shadow: none;
+    transform: translateY(0);
+}
+.boxinfo p {
+    font-size: 25px;
+}
+.h3 {
+    font-size: 36px;
+    font-weight: 600;
+    color: #000000;
+}
+.ticketRow:hover {
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(5, 88, 63, 1);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.title {
+    font-size: 20px;
+    text-decoration: underline;
+    font-weight: bold;
+}
+.date {
+    font-size: 20px;
+    font-weight: bold;
+    color: #666;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+
+.issueDescriptionWrapper,
+.commentWrapper {
+
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.issueTypeLabel,
+.issueDescriptionLabel,
+.commentLabel {
+    display: inline-block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #666;
+
+}
+.issueType{
+    font-weight: bold;
+    margin:0;
+}
+
+.issueDescription,
+.comment {
+    max-width: 85%;
+    text-align: justify;
+    color: #333;
+}
+
+.ticketButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.ticketButtonImage {
+    transition: transform 0.3s ease;
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+.ticketButtonImage:hover {
+    transform: scale(1.2);
+
+}
+.DateCreated{
+    display: flex;
+    align-items: center;
+}
+
+.changeOrder{
+    transition: transform 0.5s ease;
+    filter: hue-rotate(-5deg);
+    margin-left: 10px;
+    width: 15px;
+    height: 15px;
+}
+.changeOrder:hover{
+    transform: scale(1.2);
 }

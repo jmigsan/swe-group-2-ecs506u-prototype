@@ -6,9 +6,9 @@ export default async function handler(req,res){
         const {postID} = req.body;
 
         
-            const users = await prisma.friends.delete({
+            const users = await prisma.post.delete({
                 where: {
-                    postID:postID
+                    id:postID
                 }
                     
                 })
