@@ -247,7 +247,6 @@ function Portfolio()
     for(let i=0; i<portfolio.length; i++)
     {
         pieData[i]=[portfolio[i][0],portfolio[i][1]];
-        pieData[i]
     }
     //Add headings
     pieData.unshift(["Coin","Amount owned"]);
