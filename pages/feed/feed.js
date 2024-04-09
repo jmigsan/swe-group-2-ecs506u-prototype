@@ -4,11 +4,14 @@ import {useEffect, useState, useLayoutEffect} from 'react';
 import { motion } from 'framer-motion';
 import styles from '@/styles/feed.module.css';
 import PostModal from './post';
+import EditModal from './editPost';
+import EditNameModal from './editName';
 
 
 export default function Support() {
     
   const [error, setError] = useState('');
+  const [userName, setUserName] = useState('')
   const [userEmail , setUserEmail] = useState('')
   const [userRole , setUserRole] = useState('')
   const [friendSearch,setFriendSearch] = useState('');
@@ -19,20 +22,24 @@ export default function Support() {
   const [posts, setPosts] = useState([]);
 
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openModalId, setOpenModalId] = useState(null);
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openModal = (postId) => {
+    setOpenModalId(postId);
   };
 
+
   const closeModal = () => {
-    setIsModalOpen(false);
+    setOpenModalId(null);
+    //window.location.reload()
     fetchAll();
   };
 
     useEffect(() => {
         // Fetch user session information when the component mounts
         fetchUserSession();
+        
+        
     }, []);
     useEffect(()=>{
       if (userEmail){
@@ -40,8 +47,9 @@ export default function Support() {
           handleViewFriends();
           handleViewFriendRequest();
           handleViewPost();
+          handleGetName();
         }
-        else if(userRole === "Admin"){
+        else if(userRole === "Staff"){
           handleViewPostAdmin();
         }
 
@@ -63,8 +71,9 @@ export default function Support() {
     function fetchAll (){
       handleViewFriendRequest()
       handleViewFriends()
-      handleViewPost()
+      
       handleSearchFriend();
+      handleViewPost()
       
     }
 
@@ -74,11 +83,13 @@ export default function Support() {
 
             if (res) {
                 const data = await res.json();
+                
                 const email = data.user.email;
                 console.log("email is ", data.user.email)
                 console.log("role is ", data.user.role)
                 setUserEmail(data.user.email);
-                setUserRole(data.user.role)
+                setUserRole(data.user.role);
+                
             } else {
                 setError('Error fetching user session');
             }
@@ -114,6 +125,33 @@ export default function Support() {
         }
       }
     }
+
+    const handleGetName = async () =>{
+      
+      try {
+          const res = await fetch('../api/feed/getName', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                userEmail:userEmail
+              }),  
+          });
+
+          if (res.ok) {
+              const data = await res.json(); 
+              console.log(data)
+              setUserName(data.name)  
+          } else {
+              setError('Error occurred while retrieving tickets');
+          }
+      } catch (error) {
+          console.error('Error:', error);
+          setError('Internal Server Error');
+      }
+    
+  }
 
     const handleAddFriend = async (recipientEmail) =>{
 
@@ -426,14 +464,24 @@ export default function Support() {
 
 
         {userRole ==="Investor" && (
-        <div>
 
-          <button onClick={openModal} className={styles.createButton}>
+        <div>
+          <button onClick={() => openModal("editName")}className={styles.createButton}>
+            <h1>EditName</h1>
+
+          </button>
+          {userName &&(
+            <EditNameModal isOpen={openModalId === "editName"} onClose={closeModal} userEmail={userEmail} name={userName} />
+          )}
+          
+          <button onClick={() => openModal("post")} className={styles.createButton}>
             <img className={styles.createButtonImg} src='/images/create.png'></img>
             <h1>Create</h1>
           </button>
-          <PostModal isOpen={isModalOpen} onClose={closeModal} userEmail={userEmail} />
+          <PostModal isOpen={openModalId === "post"} onClose={closeModal} userEmail={userEmail}/>
         </div>
+        
+        
 
         )}
 
@@ -442,15 +490,20 @@ export default function Support() {
         {posts.length > 0 ?(
           <>
             <div className={styles.title}>Activity</div>
-            {posts.map((post, index)=>(
-              <div key={index} className={styles.post}>
+            {posts.map((post)=>(
+              <div key={post.id} className={styles.post}>
                 <div className={styles.postNameDate}>
                   <div className={styles.name}>{post.userEmail}</div>
                   <div className={styles.date}>{convertToDate(post.dateCreated)}</div>
                 </div>
-                {userRole === "Admin" && (
-                  <button onClick={()=>handleRemovePost(post.id)}>x</button>
+                {(userRole === "Staff" || userEmail === post.userEmail) && (
+                  <button onClick={()=>handleRemovePost(post.id)}>remove</button>
                 )}
+                
+                <div>
+                  <button onClick={() => openModal(post.id)}>Edit</button>
+                  <EditModal isOpen={openModalId === post.id} onClose={closeModal} postID={post.id} postContent={post.post} />
+                </div>
                 <div className={styles.details}>{post.post}</div>
               </div>
             ))}
