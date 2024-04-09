@@ -2,23 +2,6 @@ import { Chart } from "react-google-charts";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import styles from '@/styles/portfolio.module.css';
-/**	
-Proposed table addition
-Portfolio: UserID, Coin (String), Amount (Int), AveragePrice (Float)
-@@id([UserID,coin])
-
-Graph component. Take amount values from table, use as proportions for graph. May be best done as independant component
-
-Take currencies and amount from list. Use average price across transactions to show change compared to current market
-Update when buying or selling. Need to recalculate average price
-(Amount*AveragePrice) +- (NewAmount*Price)
-
-ToDo:
-    Research API call, check how things are added. Can it be called for this, or should it be updated manually within DB
-    Add to database, check how things are called
-    Listing. Will need API call for current market price
-    Formatting. May reference any other front end designs to maintain consistency
-*/
 
 //Function to get data into format designed for original database (coin,amount,totalSpent)
 function setupPortfolio(balance,transactions,prices)
