@@ -138,7 +138,7 @@ function ListHeading({data})
 function List({data})
 {
    return(<table id={styles.ListTable}>
-        <thead><tr><ListHeading data="Coin"/><ListHeading data="Amount"/><ListHeading data="Average Price of Purchase"/>
+        <thead><tr><ListHeading data="Coin"/><ListHeading data="Amount Owned"/><ListHeading data="Average Price of Purchase"/>
         <ListHeading data="Current Price"/><ListHeading data="Expected Gain/Loss"/></tr></thead>
         <tbody>{data.map((item) => <ListRow data={item}/>)}</tbody>
     </table>);
@@ -207,7 +207,6 @@ function Portfolio()
         }
         if(list.length === 0)
         {
-            setPrices([]);
             return;
         }
         let coin =list.toString();
@@ -236,7 +235,7 @@ function Portfolio()
         getTransactions();
     }, [session]);
 
-    if(!prices)
+    if((!prices) && (balance.length>0))
     {
         getPrices(balance);
     }
