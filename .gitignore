@@ -13,6 +13,8 @@
 /.next/
 /out/
 /pages/config.js
+/prisma/dev.db
+/prisma/migrations
 # production
 /build
 
