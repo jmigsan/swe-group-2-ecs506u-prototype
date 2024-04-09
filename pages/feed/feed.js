@@ -385,7 +385,7 @@ export default function Support() {
             <img className={styles.createButtonImg} src='/images/create.png'></img>
             <h1>Create</h1>
           </button>
-          <PostModal isOpen={isModalOpen} onClose={closeModal} />
+          <PostModal isOpen={isModalOpen} onClose={closeModal} userEmail={userEmail} />
         </div>
         <div className={styles.feed}>
         {posts.length > 0 &&(

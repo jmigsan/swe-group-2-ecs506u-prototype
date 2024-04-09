@@ -1,7 +1,7 @@
 import { prisma } from '@/pages/prismaClient';
 
 export default async function handler(req, res) {
-    
+    console.log("here");
     try {
         const { userEmail, post } = req.body;
 

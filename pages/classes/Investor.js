@@ -248,7 +248,16 @@ export default class Investor{
                 userId:username,
             }
 
-            await prisma.chatRequests.create({data:data});
+            const exists = await prisma.chatRequests.findUnique({
+                where:{
+                    userId:username,
+                }
+            })
+
+            if(!exists){
+                await prisma.chatRequests.create({data:data});
+            }
+            
         }
         catch(error){
             console.error(error);
@@ -258,12 +267,19 @@ export default class Investor{
 
     async deleteRequest(username){
         try{
-            await prisma.chatRequests.delete({
+            const exists = await prisma.chatRequests.findUnique({
                 where:{
                     userId:username,
                 }
             })
-
+            if(exists){
+                await prisma.chatRequests.delete({
+                    where:{
+                        userId:username,
+                    }
+                })
+            }
+    
             return true;
         }
 

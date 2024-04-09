@@ -113,7 +113,7 @@ export default function TransactionHistory(){
                 {pageNumber+3<Math.ceil(transactions.length/10)  && <span>...</span>}
 
              
-                <button  className={styles.pageNumber} onClick={() => setPageNumber(Math.ceil(transactions.length/10) )}>{Math.ceil(transactions.length/10) }</button>
+                {transactions.length>10 && (<button  className={styles.pageNumber} onClick={() => setPageNumber(Math.ceil(transactions.length/10) )}>{Math.ceil(transactions.length/10) }</button>)}
                 
         </div>
 

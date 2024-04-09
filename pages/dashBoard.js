@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import LiveChat from './LiveChat/livechat';
+import Experienced from './ExperiencedTrading/experienced';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 export default function Dashboard(){
     const [onNav, setOnNav] = useState(false);
@@ -278,7 +279,7 @@ export default function Dashboard(){
                                 <section>Manage Posts</section>
                             </div>
 
-                            <div className={styles.option}>
+                            <div className={styles.option} onClick={()=>{setOption("cryptos")}}>
                                 <Image 
                                     src={'/images/crypto.png'}
                                     alt="profile"
@@ -373,6 +374,9 @@ export default function Dashboard(){
 
             {option=="chat" && (
                 <LiveChat />
+            )}
+            {option=="cryptos" && (
+                <Experienced  className={styles.manageCryptos}/>
             )}
                 
             </div>

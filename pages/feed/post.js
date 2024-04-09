@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import styles from '@/styles/post.module.css';
+import e from 'cors';
 
 Modal.setAppElement('#__next');
 
-const PostModal = ({ isOpen, onClose }) => {
+const PostModal = ({ isOpen, onClose, userEmail }) => {
   const [addPostValue, setAddPostValue] = useState('');
-
-  const handleSubmit = async () => {
+  
+  async function handleSubmit(){
+    document.preventDefault();
+    console.log(userEmail);
     try {
+      
         const res = await fetch('../api/feed/addPost', {
             method: 'POST',
             headers: {
@@ -23,7 +27,7 @@ const PostModal = ({ isOpen, onClose }) => {
   
         if (res.ok) {
           const data = await res.json();
-          window.location.reload();
+
           /// finish this
           
         } 
@@ -33,16 +37,13 @@ const PostModal = ({ isOpen, onClose }) => {
       } 
       catch (error) {
         console.error('Error:', error);
-        setError('Internal Server Error');
+      
       }  
     onClose();
   };
 
 
-  const handleAddPost = async ()=>{
-    
-  }
-
+  
   return (
     <Modal
       isOpen={isOpen}
@@ -53,7 +54,7 @@ const PostModal = ({ isOpen, onClose }) => {
     >
 
     <div className={styles.postMessage}>
-        <form onSubmit={handleAddPost} className={styles.postForm}>
+        <form onSubmit={()=>{handleSubmit();}} className={styles.postForm}>
           <div className={styles.textContainer}>
               <label className={styles.textLabel}>Create Post</label>
               <textarea type="text" 

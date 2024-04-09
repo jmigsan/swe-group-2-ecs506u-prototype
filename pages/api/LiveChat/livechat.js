@@ -23,7 +23,10 @@ const SocketHandler = (req, res) => {
           socket.broadcast.emit('GetRequests', message);
         })
         
-
+        socket.on("Ended", (message) =>{
+          console.log(message);
+          socket.broadcast.emit("Ended", "Chat has ended");
+        })
         socket.on('Connected',  (message)=>{
          
           socket.broadcast.emit('Connected', message);
