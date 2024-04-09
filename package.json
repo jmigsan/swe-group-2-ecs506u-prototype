@@ -15,7 +15,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@next-auth/prisma-adapter": "^0.4.4-canary.81",
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^5.12.1",
     "@prisma/extension-accelerate": "^1.0.0",
     "aos": "^2.3.4",
     "apexcharts": "^3.48.0",
@@ -35,12 +35,14 @@
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0-rc2",
     "react": "^18",
+    "react-apexcharts": "^1.4.1",
     "react-dom": "^18",
     "react-intersection-observer": "^9.8.1",
+    "react-modal": "^3.16.1",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
-    "prisma": "^5.11.0"
+    "prisma": "^5.12.1"
   }
 }

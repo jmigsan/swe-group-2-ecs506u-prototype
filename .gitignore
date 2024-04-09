@@ -13,6 +13,8 @@
 /.next/
 /out/
 /pages/config.js
+/prisma/dev.db
+/prisma/migrations
 # production
 /build
 
@@ -34,3 +36,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#database
+/prisma/dev.db
+/prisma/migrations/*

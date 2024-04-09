@@ -53,7 +53,8 @@ export default function Experienced(){
                 setMarketData(response.data.data);
             }
 
-             setShownData((shownData)=>{
+            
+                setShownData((shownData)=>{
                 return response.data.data.filter(function(item){
                     for(let i=0; i<allowedCrypto.data.length; i++){
                         if(item.name==allowedCrypto.data[i].coin){
@@ -64,7 +65,7 @@ export default function Experienced(){
                     return false;
                 })
             });
-
+            
             setAllowedCryptos(allowedCrypto.data)
         }
 
@@ -436,7 +437,7 @@ function toggle(index, element){
             }
         }
  }
- console.log(favorites);
+
     const url = '/ExperiencedTrading/chart?coin=' + coin_string + '&&watchlist=[' + watchlist_arr + ']' + '&&number=' + favorites.length;
     router.replace(url);
 
@@ -462,8 +463,9 @@ function toggle(index, element){
         console.error(error);
     }
 
+    
     new_arr[index]=!new_arr[index];
-
+    fetchFavorites();
     setLiked(new_arr);
   }
     function handleCoinChange(){
@@ -499,6 +501,8 @@ function toggle(index, element){
             console.error(error);
         }
 
+        fetchData();
+        handleButtonClick(0); setFilter("allowed"); handleNavClick("allowed");
     }
 
     function isAllowed(i){
@@ -527,6 +531,9 @@ function toggle(index, element){
         catch(error){
             console.error(error);
         }
+
+        fetchData();
+        handleButtonClick(0); setFilter("allowed"); handleNavClick("allowed");
     }
     return (
         <div className={styles.container} onClick={()=>{if(changeToggled){document.getElementById("dropdown").style.display="none"; setChangeToggled(false)}}}>

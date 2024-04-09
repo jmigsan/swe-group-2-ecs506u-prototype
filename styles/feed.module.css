@@ -12,6 +12,8 @@
     "sidebar feed feed feed postMessage";
     justify-content: space-between;
     margin-top: 2rem;
+    width: 100%;
+    
   }
 
 .title {
@@ -33,13 +35,10 @@
   padding-left: 1rem;
   display: flexbox;
   justify-content: center;
+  width: 80%;
 }
 
-.postMessage {
-  grid-area: postMessage;
-  width: 100%;
-  /* box-shadow: 0px -10px 10px -5px rgba(0, 0, 0, 0.2); */
-}
+
 .search {
   background-color: #0000000D;
   outline: none;
@@ -49,15 +48,39 @@
   border-radius: 20px;
   padding: 0.8rem;
   margin-top: 0.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+
   width: 90%;
 }
 
-.friends {
-  font-size: 1.4rem;
-  font-weight: bold;
+.addfriendbutton {
+  font-size: 1rem;
+  background-color: #21a00b;
+  color: white;
+  padding: 1rem;
+  border: 2px solid rgb(255, 255, 255);
+  border-radius: 30px;
+  width: 50%;
+  margin-bottom: 1rem;
 }
 
+.friends {
+  margin-top: 25vh;
+  padding-left: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  min-width: 10vw;
+  
+}
+.friendDetails{
+  margin-top: 30vh;
+}
+.friendRequest{
+  margin-top: 20vh;
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding-left: 0.5rem;
+}
 .friendList {
   list-style: none;
   padding: 0;
@@ -65,9 +88,18 @@
 }
 
 .friendListItem {
-  margin-bottom: 1rem;
+  
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  padding: 1rem;
+  max-width: 60%;
+  display: flex;
+  flex-direction: row;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),0 6px 20px 0 rgba(0, 0, 0, 0);
+  margin: 0.1rem 0.5rem 0.5rem 0.5rem;
 }
 
 .friendPicture {
@@ -77,25 +109,29 @@
   margin-right: 0.6rem;
 }
 
-.friendName {
-}
+
 
 .friendUsername {
   color: grey;
 }
 
+.addfriendbutton:hover,.rjct:hover,.acpt:hover,.postButton:hover {
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
 .acpt, .rjct {
   all: initial;
-}
-
-.acpt {
-  margin-right: 0.8rem;
   margin-left: 1rem;
 }
-
 .post {
-  width: 100%;
+  min-width: 100%;
   margin-bottom: 2rem;
+}
+
+.postNameDate{
+  display: flex;
+  justify-content:  space-between;
+  width: 100%
 }
 
 .picture {
@@ -128,7 +164,7 @@
 }
 
 .date {
-
+  text-align: right;
 }
 
 .profile {
@@ -140,7 +176,8 @@
 .details {
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
-  width: 100%;
+  padding: 1rem;
+  min-width: 100%;
   display: flex;
   flex-direction: row;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -159,7 +196,26 @@
   border-bottom-left-radius: 10px;
   /* margin-bottom: 1rem; */
 }
+.createButton {
+  background-color: transparent; /* Match background color */
+  border: none;
+  cursor: pointer;
+  padding-right: 100px; /* Adjust padding to make it smaller */
+  margin-right: 4rem;
+  margin-top: 8vh;
+  display: flex;
+  
+  
+}
 
+
+.createButton img {
+  width: 3rem; 
+
+}
+.createButton h1{
+  padding-left: 1.5rem;
+}
 .transaction {
   display: flex;
   flex-direction: row;
@@ -183,17 +239,9 @@
   justify-content: center;
 }
 
-.postForm {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
 
-.transactionLabel, .textLabel {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
+
+
 
 .transactionContainer {
   display: flex;
@@ -201,22 +249,9 @@
   margin-bottom: 1rem;
   width: 100%;
 }
-.textContainer {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
-  width: 100%;
-}
 
-.textBox {
-  font-size: 1.1rem;
-  width: 87%;
-  height: 10rem;
-  padding: 1rem;
-  border-radius: 20px;
-  vertical-align: top;
-  border: 2px solid #ccc;
-}
+
+
 
 .transactionSelect {
   font-size: 1.1rem;
@@ -232,11 +267,97 @@
   align-items: center;
 }
 
-.postButton {
-  font-size: 1.3rem;
+
+
+
+.searchDropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.searchBar {
+  width: 300px; /* Adjust width as needed */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+}
+
+.dropdown {
+  position: absolute;
+  width: 20rem; /* Adjust for border width */
+  max-height: 24vh; /* Adjust as needed */
+  overflow-y: auto;
+  
+  border-top: none;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  background-color: #fff;
+  z-index: 1;
+  
+}
+.dropdownFriend{
+  position: absolute;
+  width: 20rem; /* Adjust for border width */
+  max-height: 25vh; /* Adjust as needed */
+  overflow-y: auto;
+  width: 25vw;
+  border-top: none;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  background-color: #fff;
+  z-index: 1;
+}
+
+.dropdownList {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.dropdownListItem {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  
+}
+.userCardNameButton{
+  display: flex;
+  justify-content: space-between;
+}
+.userCard {
+  
+  align-items: center;
+  font-size: 0.5rem;
+}
+
+.userCardName {
+  font-weight: bold;
+  margin-right: 10px;
+  max-width: 70%;
+}
+
+.userCardEmail {
+  color: #555;
+}
+
+
+.addfriendButton {
+  
+  width: 25%; /* Adjust as needed */
+  
+  border: none;
+  border-radius: 4px;
   background-color: #21a00b;
-  color: white;
-  padding: 1rem;
-  border: 2px solid rgb(255, 255, 255);
-  border-radius: 30px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+.addfriendButtonImg{
+  width: 3rem;
+}
+
+.addfriendbutton:hover {
+  background-color: #2684e4;
 }

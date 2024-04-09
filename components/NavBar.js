@@ -61,7 +61,7 @@ export default function NavBar(){
 
     return (
         <>{(!(session?.user.role=="Staff")) && (
-            
+
         <div>
         <div className={styles.nav} id="nav">
             <motion.div variants={animations2} initial="initial" animate="animate" transition={{duration: 0.5, ease:"easeInOut"}} className={styles.navbar}>
@@ -77,7 +77,7 @@ export default function NavBar(){
                             />
                         </figure>
                     </Link>
-                    
+
                     <section className={styles.title}>
                         NovaTrade
                     </section>
@@ -91,7 +91,7 @@ export default function NavBar(){
                                     <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={walletIcon}
                                                     width={40}
                                                     height={30}
@@ -111,7 +111,7 @@ export default function NavBar(){
                                     <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={convert}
                                                     width={50}
                                                     height={50}
@@ -126,7 +126,7 @@ export default function NavBar(){
                                         </section>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={trade}
                                                     width={50}
                                                     height={50}
@@ -142,11 +142,11 @@ export default function NavBar(){
                                     </motion.div>
                             </div>
                             <div className={styles.dropDown}>
-                                    <Link className={styles.link} href="/feed">Feed</Link>
+                                    <Link className={styles.link} href="/feed/feed">Feed</Link>
                                     <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={posts}
                                                     width={45}
                                                     height={45}
@@ -161,7 +161,7 @@ export default function NavBar(){
                                         </section>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={create}
                                                     width={45}
                                                     height={45}
@@ -176,7 +176,7 @@ export default function NavBar(){
                                         </section>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={searchFriends}
                                                     width={45}
                                                     height={45}
@@ -192,11 +192,11 @@ export default function NavBar(){
                                     </motion.div>
                             </div>
                             <div className={styles.dropDown}>
-                                    <Link className={styles.link} href="/support">Support</Link>
+                                    <Link className={styles.link} href="/Support/support">Support</Link>
                                     <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={ticket}
                                                     width={50}
                                                     height={50}
@@ -205,13 +205,13 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section className={styles.boldText}>Ticket</section>
+                                                <section onClick={()=>{router.replace("/ExperiencedTrading/experienced")}} className={styles.boldText}>Ticket</section>
                                                 <section className={styles.subHeading}>See your ongoing tickets and open a new one if needed</section>
                                                 </section>
                                         </section>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={chat}
                                                     width={50}
                                                     height={50}
@@ -226,7 +226,7 @@ export default function NavBar(){
                                         </section>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
-                                                <Image 
+                                                <Image
                                                     src={bot}
                                                     width={50}
                                                     height={50}
@@ -241,16 +241,16 @@ export default function NavBar(){
                                         </section>
                                     </motion.div>
                             </div>
-                            
+
                             </>
                         ): (
                             <>
                                 <Link className={styles.link} href="/viewCryptos">Cryptocurrencies</Link>
                             </>
                         )}
-                
+
                 </section>
-        
+
             </div>
 
                 <section className={styles.loginLinks}>
@@ -264,10 +264,10 @@ export default function NavBar(){
                                 <Link className={styles.button} href="/signUp">Sign Up</Link>
                             </>
                         )}
-                
+
                 </section>
             <section className={styles.burgerMenu}>
-                <Image 
+                <Image
                     src={'/images/burger-menu.png'}
                     alt="burger"
                     width={30}
@@ -275,10 +275,10 @@ export default function NavBar(){
                     onClick={()=>{setOnBurger(true);}}
                 />
             </section>
-            </motion.div> 
+            </motion.div>
         </div>
     </div>
         )}</>
-       
+
     )
 }

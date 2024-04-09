@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "check",
+            "database": "${workspaceFolder:swe-group-2-ecs506u-prototype}/prisma/dev.db"
+        }
+    ]
+}

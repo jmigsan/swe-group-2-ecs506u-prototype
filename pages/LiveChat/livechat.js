@@ -11,6 +11,11 @@ export default function LiveChat(){
     const [requests, setRequests]= useState(null);
     const [userId, setUserId] = useState("");
     const [waiting, setWaiting] = useState(true);
+    const [trades , setUserTrades]= useState([]);
+    const [portfolio, setUserPortfolio] = useState([]);
+    const [tickets, setUserTickers] = useState([]);
+    const [details, setUserDetails] = useState([]);
+    const [ended, setEnded]= useState(false);
     const animations2={
         start:{
           x:100,
@@ -35,6 +40,7 @@ export default function LiveChat(){
               y:"100%",
           }
       }
+
 
 
 useEffect(() => {
@@ -80,18 +86,44 @@ useEffect(() => {
         if(session.user.role=="Staff"){
                 document.getElementById('form2').addEventListener('submit', (e)=>{
                     e.preventDefault();
-                    
                     const key = document.getElementById('connect').getAttribute('data-key'); 
-                    const id =requests[key].userId
+                    const id =requests[key].userId;
                     setUserId(id);
                     deleteRequest(id);
+                    fetchUserInformation(id);
                     socket.emit('Connected', 'Connected to user');
                     document.getElementById('form2').style.display = 'none';
                     document.getElementById('chat').style.display = 'flex';
+                    document.getElementById('info').style.display = 'flex';
                 });
                
             }
-        
+        document.getElementById('end').addEventListener('click', (e)=>{
+            socket.emit("Ended", "Chat has been closed");
+            if(session.user.role=="Investor"){
+                document.getElementById('chat').style.display = 'none';
+                setEnded(true);
+            }
+
+            else if(session.user.role=="Staff"){
+                document.getElementById('info').style.display = 'none';
+                document.getElementById('chat').style.display = 'none';
+                setEnded(true);
+            }
+        });
+
+        socket.on("Ended", (message)=>{
+            if(session.user.role=="Investor"){
+                document.getElementById('chat').style.display = 'none';
+                setEnded(true);
+            }
+
+            else if(session.user.role=="Staff"){
+                document.getElementById('info').style.display = 'none';
+                document.getElementById('chat').style.display = 'none';
+                setEnded(true);
+            }
+        })
         socket.on(userId, (message)=>{
             if(message.role=="Investor"){
                 handleMessageRecieve(message.msg);
@@ -123,6 +155,26 @@ useEffect(() => {
         
     }
 
+    async function fetchUserInformation(username){
+        try{
+            const info = await fetch('../api/Admin/fetchUserInfo', {
+                method: 'POST',
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+                body:JSON.stringify({username})
+            })
+  
+            const information = await info.json();
+            console.log(information);
+            setUserDetails(information.details);
+            setUserPortfolio(information.portfolio);
+            setUserTrades(information.trades);
+        }
+        catch(error){
+            console.error(error);
+        }
+    }
     function handleMessageSend(msg){
         
         document.getElementById('message').value = '';
@@ -192,6 +244,21 @@ useEffect(() => {
 useEffect(()=>{
     getRequests();
 }, [])
+
+function handleAccor(index){
+    const drops = document.querySelectorAll("#drop");
+
+    for(let i=0; i<drops.length; i++){
+        if(i==index){
+            drops[i].style.height="auto";
+            drops[i].style.padding="1em";
+        }
+        else{
+            drops[i].style.height="0%";
+            drops[i].style.padding="0em";
+        }
+    }
+}
     return (
         <>
         {session?.user.role=="Investor" ?(
@@ -217,16 +284,117 @@ useEffect(()=>{
                <form className={styles.chat} id="chat" onSubmit={(e)=>{e.preventDefault();}}>
                         <div className={styles.messageBox} id="messageBox">
                         </div>
-                        <input type="text" placeholder='Type message' id="message" className={styles.inputMessage} />               
+                        <div className={styles.bottomChat}> 
+                            <input type="text" placeholder='Type message' id="message" className={styles.inputMessage} />
+                            <button type="button" id="end" className={styles.endButton}>End</button>
+                        </div>              
                 </form>
+                {ended && (
+                    <div className={styles.ended}>
+                        <div className={styles.endedFlex}> 
+                            <Image
+                                src={'/images/tick.gif'}
+                                alt="tick"
+                                width={60}
+                                height={60}
+                            />
+                            <section className={styles.endedMessage}>The chat has now ended</section>
+                        </div>
+                    </div>
+                )}
             </div>
         ): (
-            <div>
-                 <form className={styles.chat} id="chat" onSubmit={(e)=>{e.preventDefault();}}>
-                        <div className={styles.messageBox} id="messageBox">
-                        </div>
-                        <input type="text" placeholder='Type message' id="message" className={styles.inputMessage} />               
-                </form>
+            <div className={styles.chatWrapper2}>
+                <div className={styles.userInfo} id="info">
+                    <form className={styles.chat} id="chat" onSubmit={(e)=>{e.preventDefault();}}>
+                            <div className={styles.messageBox} id="messageBox">
+                            </div>
+                            <div className={styles.bottomChat}> 
+                            <input type="text" placeholder='Type message' id="message" className={styles.inputMessage} />
+                            <button type="button" id="end" className={styles.endButton}>End</button>
+                        </div>             
+                    </form>
+
+                    <div className={styles.accordion}>
+                            <div className={styles.accor}>
+                                <section className={styles.accorTitle}>Details</section>
+                                <Image 
+                                    src={'/images/untoggledDesc.png'}
+                                    width={20}
+                                    height={20}
+                                    alt='down'
+                                    onClick={()=>{handleAccor(0)}}
+                                />
+                            </div>
+                            <div className={styles.accorDrop} id="drop">
+                                {details && (
+                                    <div className={styles.accorTicker}>
+                                        <div>{details.firstName}</div>
+                                        <div>{details.email}</div>
+                                    </div>
+                                )}
+                            </div>
+                            <div className={styles.accor}>
+                                <section className={styles.accorTitle}>Trades</section>
+                                <Image 
+                                    src={'/images/untoggledDesc.png'}
+                                    width={20}
+                                    height={20}
+                                    alt='down'
+                                    onClick={()=>{handleAccor(1)}}
+                                />
+                            </div>
+                            <div className={styles.accorDrop} id="drop">
+                            {trades && (
+                                        
+                                        trades.map((trade) =>{
+                                            return (
+                                            <div className={styles.accorTicker}>
+                                                <div>{trade.Type}</div>
+                                                <div> {trade.AmountBought}{trade.Bought}</div>
+                                                <div>{trade.AmountSold}{trade.Sold}</div>
+                                            </div>
+                                            )
+                                            })
+                                )}
+                            </div>
+                            <div className={styles.accor}>
+                                <section className={styles.accorTitle}>Tickets</section>
+                                <Image 
+                                    src={'/images/untoggledDesc.png'}
+                                    width={20}
+                                    height={20}
+                                    alt='down'
+                                    onClick={()=>{handleAccor(2)}}
+                                />
+                            </div>
+                            <div className={styles.accorDrop} id="drop">
+
+                            </div>
+                            <div className={styles.accor}>
+                                <section className={styles.accorTitle}>Portfolio</section>
+                                <Image 
+                                    src={'/images/untoggledDesc.png'}
+                                    width={20}
+                                    height={20}
+                                    alt='down'
+                                    onClick={()=>{handleAccor(3)}}
+                                />
+                            </div>
+                            <div className={styles.accorDrop} id="drop">
+                                {portfolio && (
+                                    portfolio.map((p) =>{
+                                        return (
+                                        <div className={styles.accorTicker}>
+                                            <div>{p.amount}</div>
+                                            <div>{p.currency}</div>
+                                        </div>
+                                        )
+                                    })
+                                )}
+                            </div>
+                    </div>
+                </div>
                 <form className={styles.connectRequests} id="form2">
                     <section className={styles.formTitle}>Live Chat Requests</section>
                         <div className={styles.connectBox}>
@@ -240,6 +408,19 @@ useEffect(()=>{
                             })}
                         </div>           
                 </form>
+                {ended && (
+                    <div className={styles.ended}>
+                        <div className={styles.endedFlex}> 
+                            <Image
+                                src={'/images/tick.gif'}
+                                alt="tick"
+                                width={60}
+                                height={60}
+                            />
+                            <section className={styles.endedMessage}>The chat has now ended</section>
+                        </div>
+                    </div>
+                )}
             </div>
         )}
         </>
