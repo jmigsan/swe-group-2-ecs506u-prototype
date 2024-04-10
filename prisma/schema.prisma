@@ -50,6 +50,7 @@ model Investor {
   Currencies  Balance[]
   Trades      Trade[]
   LimitOrders LimitOrder[]
+  Key Keys?
 }
 
 
@@ -143,4 +144,11 @@ model Post {
 
   user      User   @relation(fields: [userEmail], references: [email])
   userEmail String // Foreign key
+}
+
+
+model Keys{
+  key String 
+  user Investor @relation(fields: [userId], references: [userId])
+  userId String @id
 }

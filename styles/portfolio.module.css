@@ -1,5 +1,5 @@
 .ListTableContainer {
-    max-height: 225px; /* Adjust based on how many rows you want to show before scrolling */
+    max-height: 180px; 
     overflow-y: auto;
     border-collapse: collapse;
     margin: auto;
@@ -37,9 +37,25 @@
     border: 2px solid rgb(149, 149, 149);
 }
 
-/* Last child border removal */
-.ListItem:last-child {
-    border-bottom: none;
+#totalValue {
+    font-size: 20px; 
+    padding: 3px; 
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    margin-left: 1em;
+    margin-right: 57em;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    background-color: rgb(223, 223, 223);
+    border-radius: 10px;
+}
+
+#totalValue:hover{
+background-color: rgb(24, 181, 24);
+
 }
 
 #PageHeader
@@ -51,4 +67,7 @@
     text-align: center;
 }
 
-
+#emptyMessage
+{
+    font-size: 1em;
+}
