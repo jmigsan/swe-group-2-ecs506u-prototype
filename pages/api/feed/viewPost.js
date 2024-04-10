@@ -18,6 +18,13 @@ export default async function handler(req, res) {
             },
             orderBy: {
                 dateCreated: 'desc' // Order posts by createdAt field in descending order
+            },
+            include: {
+                user: {
+                    select: {
+                        firstName: true // Select the name field from the user table
+                    }
+                }
             }
         });
 
