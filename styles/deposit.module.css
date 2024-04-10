@@ -108,6 +108,10 @@
     border-top-left-radius: 0.5em;
 }
 
+.button:hover, .button2:hover {
+    cursor: pointer;
+}
+
 .button2{
     grid-area: button2;
     font-weight: bold;
@@ -130,6 +134,9 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
+}
+.payWidget:hover {
+    cursor: pointer;
 }
 
 .confirmCancel{
@@ -226,6 +233,10 @@
     gap:1em;
     width:88%;
 }
+.currencyTicker:hover {
+    cursor: pointer;
+}
+
 .search{
     width:80%;
     margin-top: 5%;
@@ -267,6 +278,9 @@
     gap:0.5em;
 }
 
+.currencyButton:hover, .depositButton:hover, .payButton:hover, .confirmButton:hover  {
+    cursor: pointer;
+}
 
 
 .text{
@@ -335,6 +349,10 @@
     font-size: 1.5em;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
+}
+
+.option:hover {
+    cursor: pointer;
 }
 
 
