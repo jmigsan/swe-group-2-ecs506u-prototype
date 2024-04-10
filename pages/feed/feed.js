@@ -476,7 +476,6 @@ export default function Support() {
           )}
           <div className={styles.choices}>
             <button onClick={() => openModal("editName")}className={styles.createButton}>
-              <h1>{userName}</h1>
               <div className={styles.option}>Edit Name</div>
               <img className={styles.createButtonImg} src='https://cdn-icons-png.freepik.com/512/5996/5996708.png'></img>
 
@@ -505,7 +504,7 @@ export default function Support() {
             {posts.map((post)=>(
               <div key={post.id} className={styles.post}>
                 <div className={styles.postNameDate}>
-                  <div className={styles.name}>{post.userEmail}</div>
+                  <div className={styles.name}>{post.user.firstName}</div>
                   <div className={styles.date}>{convertToDate(post.dateCreated)}</div>
                 </div>
                 <div className={styles.details}>{post.post}</div>
