@@ -207,7 +207,7 @@ export default function Support() {
         viewTicket.style.transition = "border-bottom 0.5s ease-out";
         viewTicket.style.borderBottom = "7px solid #5AA056";
 
-        if (userRole !== 'Admin') {
+        if (userRole !== 'Staff') {
             createTicket.style.transition = "border-bottom 0.5s ease-out";
 
 
@@ -417,7 +417,7 @@ export default function Support() {
                     <div className={styles.option} id={"viewTicket"} onClick={handleViewTickets}>
                         <h2>View Tickets</h2>
                     </div>
-                    {userRole !== 'Admin' && (
+                    {userRole !== 'Staff' && (
                         <>
                             <div className={styles.option} id={"createTicket"} onClick={handleCreateTicket}>
                                 <h2>Create Ticket</h2>
@@ -459,15 +459,15 @@ export default function Support() {
                         <table className={styles.ticketsTable}>
                             <thead>
                             <tr>
-                                {userRole === 'Admin' && <th>User</th>}
+                                {userRole === 'Staff' && <th>User</th>}
                                 <th>Issue Type</th>
                                 <th className={styles.DateCreated}>Date Created
                                     <img className={styles.changeOrder} src="/images/two-arrow.png" alt="Change Order" onClick={toggleSortOrder}/>
                                 </th>
-                                {userRole !== 'Admin' && showActiveTickets === false && showSolvedTickets === true &&
+                                {userRole !== 'Staff' && showActiveTickets === false && showSolvedTickets === true &&
                                     <th>Comments</th>}
-                                {adminTicketResolved && userRole === 'Admin' && <th>Resolved</th>}
-                                {adminTicketResolved && userRole === 'Admin' && <th></th>}
+                                {adminTicketResolved && userRole === 'Staff' && <th>Resolved</th>}
+                                {adminTicketResolved && userRole === 'Staff' && <th></th>}
                                 <th></th>
                             </tr>
                             </thead>
@@ -483,12 +483,12 @@ export default function Support() {
                                         variants={animations}
                                         transition={{duration: 0.5, ease: "easeOut"}}
                                         key={index}>
-                                        {userRole === 'Admin' && <td>{ticket.userEmail}</td>}
+                                        {userRole === 'Staff' && <td>{ticket.userEmail}</td>}
                                         <td>{ticket.issueType}</td>
                                         {/*<td>{ticket.issueDescription}</td>*/}
                                         <td>{formatDate(ticket.dateCreated)}</td>
 
-                                        {userRole === 'Admin' ? (
+                                        {userRole === 'Staff' ? (
                                             <>
                                                 <td>
                                                     <select
@@ -557,12 +557,12 @@ export default function Support() {
                                         exit={"exit"}
                                         variants={animations}
                                         transition={{duration: 0.5, ease: "easeOut"}} key={index}>
-                                        {userRole === 'Admin' && <td>{ticket.userEmail}</td>}
+                                        {userRole === 'Staff' && <td>{ticket.userEmail}</td>}
                                         <td>{ticket.issueType}</td>
                                         {/*<td>{ticket.issueDescription}</td>*/}
                                         <td>{formatDate(ticket.dateCreated)}</td>
 
-                                        {userRole === 'Admin' ? (
+                                        {userRole === 'Staff' ? (
                                             <>
                                                 <td>
                                                     <select
@@ -640,12 +640,12 @@ export default function Support() {
                                     variants={animations}
                                     transition={{duration: 0.5, ease: "easeOut"}} key={index}>
 
-                                    {userRole === 'Admin' && <td>{ticket.userEmail}</td>}
+                                    {userRole === 'Staff' && <td>{ticket.userEmail}</td>}
                                     <td>{ticket.issueType}</td>
                                     {/*<td>{ticket.issueDescription}</td>*/}
                                     <td>{formatDate(ticket.dateCreated)}</td>
 
-                                    {userRole === 'Admin' ? (
+                                    {userRole === 'Staff' ? (
                                         <>
                                             <td>
                                                 <select
@@ -659,17 +659,20 @@ export default function Support() {
                                             </td>
                                             {adminTicketResolved[ticket.id] !== ticket.solved && adminTicketResolved[ticket.id] !== undefined ? (
                                                 <>
+                                                <td>
                                                     <button className={styles.submitButton}
                                                             onClick={handleOpenModal}>Enter comments
                                                     </button>
-                                                    {showModal && (
-                                                        <Modal
-                                                            adminComments={adminComments}
-                                                            setAdminComments={setAdminComments}
-                                                            handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
-                                                            onClose={handleCloseModal}
-                                                        />
-                                                    )}
+                                                </td>
+                                                {showModal && (
+                                                    <Modal
+                                                        adminComments={adminComments}
+                                                        setAdminComments={setAdminComments}
+                                                        handleConfirmChange={() => handleConfirmChange(ticket.id, adminTicketResolved[ticket.id])}
+                                                        onClose={handleCloseModal}
+                                                    />
+                                                )}
+
                                                 </>
                                             ): (
                                                 <td>

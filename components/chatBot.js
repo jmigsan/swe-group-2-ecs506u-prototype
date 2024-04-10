@@ -3,7 +3,7 @@ import Image from "next/image";
 import styles from '@/styles/chatbot.module.css';
 import { useState, useEffect } from "react";
 import {animate, motion} from 'framer-motion'
-import OpenAI from 'openai';
+
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import { faSpinner, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,37 +32,47 @@ export default function chatBot(){
    const [chatHistory, setChatHistory] = useState([]);
    const [isLoading, setIsLoading] = useState(false);
 
-   const context = { role: 'assistant', content: "You are assigned a crypto currency live chat role, you will reply to users with advice to crypto, you work for a company named Novatrade and your name is Novatrade AI, try to keep replies short and informative, sometimes mention your name to make conversations feel more human.Dont mention your name at the end of your sentence, only mention it mid conversation. If any questions are asked that are completely irrelevant to cryptocurrencies, reply with something along the lines of (I cannot help you with that as I am trained specifically for advice on cryptocurrencies). However if they greet you, respond with a greeting and mention who you are. If they ask for your name, reply and say what company you work for"};
 
-   const openai = new OpenAI({
-       apiKey: "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",
-       dangerouslyAllowBrowser: true,
-     });
+
+   
 
    const handleUserInput = async () => {
-       // Start the loading state
+       
        setIsLoading(true);
    
-       // Add the user's message to the chat history
+       
        setChatHistory((prevChat) => [
          ...prevChat,
          { role: 'user', content: userInput, name: "You" },
        ]);
-   
-       // Make a request to OpenAI for the chat completion
-       const chatCompletion = await openai.chat.completions.create({
-         messages: [context, ...chatHistory, { role: 'assistant', content: userInput}],
-         model: 'gpt-3.5-turbo-0125',
-       });
-   
-       // Add the assistant's response to the chat history
-       setChatHistory((prevChat) => [
-         ...prevChat,
-         { role: 'assistant', content: chatCompletion.choices[0].message.content, name: "NovatradeAI"},
-       ]);
-       
-   
-       // Clear the user input field and end the loading state
+
+       try {
+        
+        const res = await fetch('api/Chatbot/chatbot',{
+            method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                chatHistory:chatHistory,
+                userInput:userInput
+              }), });
+
+        if (res.ok) {
+            const data = await res.json();
+            setChatHistory((prevChat) => [
+                ...prevChat,
+                { role: 'assistant', content: data.content, name: "NovatradeAI"},
+              ]);
+            
+            
+        } else {
+            console.error('Error fetching user session');
+        }
+    } catch (error) {
+        console.error('Internal Server Error');
+    }
+ 
        setUserInput('');
        setIsLoading(false);
    };

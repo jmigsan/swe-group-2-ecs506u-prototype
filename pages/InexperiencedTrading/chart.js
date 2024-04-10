@@ -810,9 +810,9 @@ function TradingViewWidget() {
           Spot
         </button>
       </div>
-      <div className={styles.forms}>
-        <form className={styles.form}>
-          <div className={styles.buy}>
+      <div className={styles.formsInexperienced}>
+        <form className={styles.buyFormInexperienced}>
+          <div className={styles.buyInexperienced}>
             <div className={styles.inputs} id='inputs'>
               <input
                 type='text'
@@ -936,7 +936,7 @@ function TradingViewWidget() {
             </button>
           </div>
 
-          <div className={styles.limits}>
+          {/* <div className={styles.limits}>
             <div className={styles.errorMessage}>
               {incorrectStop && (
                 <motion.div
@@ -949,7 +949,7 @@ function TradingViewWidget() {
                   Stop Loss must be above current Price
                 </motion.div>
               )}
-              {/* <div className={styles.inputsSpecial} id='inputs'>
+              <div className={styles.inputsSpecial} id='inputs'>
                 <input
                   type='text'
                   placeholder='Price'
@@ -967,9 +967,9 @@ function TradingViewWidget() {
                   className={styles.input2}
                   disabled
                 />
-              </div> */}
+              </div>
             </div>
-            {/* <div className={styles.errorMessage}>
+            <div className={styles.errorMessage}>
               {incorrectTp && (
                 <motion.div
                   className={styles.message}
@@ -1000,12 +1000,12 @@ function TradingViewWidget() {
                   disabled
                 />
               </div>
-            </div> */}
-          </div>
+            </div>
+          </div> */}
         </form>
 
-        <form className={styles.sellform}>
-          <div className={styles.sell}>
+        <form className={styles.sellFormInexperienced}>
+          <div className={styles.sellInexperienced}>
             <div className={styles.inputs} id='inputs'>
               <input
                 type='text'
