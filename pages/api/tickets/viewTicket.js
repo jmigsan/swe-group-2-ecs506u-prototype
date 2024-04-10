@@ -23,7 +23,7 @@ export default async function handler(req, res) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        if(user.role !=='Admin') {
+        if(user.role !=='Staff') {
             console.log("THIS IS specific user FETCH TICKETS")
             // Assuming there's a foreign key relationship between users and tickets table,
             // Query tickets related to the user
