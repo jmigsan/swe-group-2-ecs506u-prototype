@@ -95,7 +95,7 @@ function PieChart({data})
     return(<Chart 
         chartType="PieChart"
         data={data}
-        options={{is3D:true, height:300}} //Colours can be changed in options, but need to ensure enough colours are present
+        options={{is3D:true, height:330}} //Colours can be changed in options, but need to ensure enough colours are present
     />)
 }
 
@@ -120,11 +120,14 @@ function ListHeading({data})
 
 function List({data})
 {
-   return(<table id={styles.ListTable}>
+   return(
+    <div className={styles.ListTableContainer}>
+   <table id={styles.ListTable}>
         <thead><tr><ListHeading data="Coin"/><ListHeading data="Amount Owned"/><ListHeading data="Average Price of Purchase"/>
         <ListHeading data="Current Price"/><ListHeading data="Expected Gain/Loss"/></tr></thead>
         <tbody>{data.map((item) => <ListRow data={item}/>)}</tbody>
-    </table>);
+    </table>
+    </div>);
 }
 
 function Portfolio()
