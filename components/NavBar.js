@@ -220,7 +220,7 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section className={styles.boldText} onClick={()=>{router.replacd("/LiveChat/livechat")}}>Chat</section>
+                                                <section className={styles.boldText} onClick={()=>{router.replace("/LiveChat/livechat")}}>Chat</section>
                                                 <section className={styles.subHeading}>Chat with a member of our support team</section>
                                                 </section>
                                         </section>
