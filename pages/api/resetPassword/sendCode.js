@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
 import Users from '@/pages/classes/User';
-import emailConfig from '@/pages/config';
+import { password } from '@/pages/config';
 export default async function handler(req, res){
-    const { email, password } = emailConfig;
+
 
     const registry = Users.getInstance();
     console.log(password);
@@ -11,7 +11,7 @@ export default async function handler(req, res){
     if(exists){
       const body = req.body;
       const code = body.code;
-      const from =email;
+      const from ="meshoah2005@gmail.com";
       const to = body.to;
       const text = "Dear User, Here is your Verification code:" + code;
       const subject = "Verification Code";
@@ -21,7 +21,7 @@ export default async function handler(req, res){
               port: 465,
               secure: true,
               auth: {
-                user: email,
+                user: "meshoah2005@gmail.com",
                 pass: password,
               },
             });

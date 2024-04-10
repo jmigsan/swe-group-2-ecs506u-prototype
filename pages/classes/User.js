@@ -142,7 +142,7 @@ export default class Users{
                     }
 
                 else{
-                    if(getUser.role=="Investor" || getUser.role=="Admin"){
+                    if(getUser.role=="Investor"){
                     const validPassword = await bcrypt.compare(inputted_password, getUser.password);
                     if(validPassword){
                         return getUser;
