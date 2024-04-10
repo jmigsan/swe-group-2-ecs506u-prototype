@@ -4,14 +4,17 @@ export default async function handler(req, res) {
     
     try {
         
-        
-        
-        
-
         // Create a new ticket associated with the user
         const posts = await prisma.post.findMany({
             orderBy: {
                 dateCreated: 'desc' // Order posts by createdAt field in descending order
+            },
+            include: {
+                user: {
+                    select: {
+                        firstName: true // Select the name field from the user table
+                    }
+                }
             }
         });
 

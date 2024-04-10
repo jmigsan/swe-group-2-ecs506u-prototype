@@ -69,11 +69,16 @@ export default function Support() {
     },[friendSearch])
 
     function fetchAll (){
+      if (userRole==="Investor"){
       handleViewFriendRequest()
       handleViewFriends()
-      
       handleSearchFriend();
-      handleViewPost()
+      handleViewPost();
+      }
+      else{
+        handleViewPostAdmin()
+      }
+      
       
     }
 
@@ -467,7 +472,8 @@ export default function Support() {
 
         <div>
           <button onClick={() => openModal("editName")}className={styles.createButton}>
-            <h1>EditName</h1>
+            <h1>{userName}</h1>
+            <h2>Edit Name</h2>
 
           </button>
           {userName &&(
@@ -493,7 +499,7 @@ export default function Support() {
             {posts.map((post)=>(
               <div key={post.id} className={styles.post}>
                 <div className={styles.postNameDate}>
-                  <div className={styles.name}>{post.userEmail}</div>
+                  <div className={styles.name}>{post.user.firstName}</div>
                   <div className={styles.date}>{convertToDate(post.dateCreated)}</div>
                 </div>
                 {(userRole === "Staff" || userEmail === post.userEmail) && (
