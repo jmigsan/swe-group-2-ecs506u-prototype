@@ -155,7 +155,7 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section className={styles.boldText}>View your Feed</section>
+                                                <section className={styles.boldText} onClick={()=>{router.replace("/feed/feed")}}>View your Feed</section>
                                                 <section className={styles.subHeading}>See your friends and following's posts</section>
                                                 </section>
                                         </section>
@@ -170,7 +170,7 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section className={styles.boldText}>Create Post</section>
+                                                <section className={styles.boldText} onClick={()=>{router.replace("/feed/feed")}}>Create Post</section>
                                                 <section className={styles.subHeading}>Make your own post to share</section>
                                                 </section>
                                         </section>
@@ -185,7 +185,7 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section className={styles.boldText}>Search Friends</section>
+                                                <section className={styles.boldText} onClick={()=>{router.replace("/feed/feed")}}>Search Friends</section>
                                                 <section className={styles.subHeading}>Search for a friend</section>
                                                 </section>
                                         </section>
@@ -205,7 +205,7 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section onClick={()=>{router.replace("/ExperiencedTrading/experienced")}} className={styles.boldText}>Ticket</section>
+                                                <section onClick={()=>{router.replace("/Support/support")}} className={styles.boldText}>Ticket</section>
                                                 <section className={styles.subHeading}>See your ongoing tickets and open a new one if needed</section>
                                                 </section>
                                         </section>
@@ -220,23 +220,28 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section className={styles.boldText}>Chat</section>
+                                                <section className={styles.boldText} onClick={()=>{router.replacd("/LiveChat/livechat")}}>Chat</section>
                                                 <section className={styles.subHeading}>Chat with a member of our support team</section>
                                                 </section>
                                         </section>
+                                    </motion.div>
+                            </div>
+                            <div className={styles.dropDown}>
+                                    <Link className={styles.link} href="/Support/support">Solutions</Link>
+                                    <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
                                                 <Image
-                                                    src={bot}
-                                                    width={50}
-                                                    height={50}
+                                                    src={'/images/solution.png'}
+                                                    width={60}
+                                                    height={60}
                                                     alt="Logo"
                                                     className={styles.Icon}
                                                 />
-                                            </figure>
+                                                </figure>
                                                 <section className={styles.rightOption}>
-                                                    <section className={styles.boldText}>Assistant</section>
-                                                    <section className={styles.subHeading}>Chat with our built in Chatbot</section>
+                                                <section onClick={()=>{router.replace("/Support/support")}} className={styles.boldText}>API</section>
+                                                <section className={styles.subHeading}>Integare NovaTrade API into your system</section>
                                                 </section>
                                         </section>
                                     </motion.div>
