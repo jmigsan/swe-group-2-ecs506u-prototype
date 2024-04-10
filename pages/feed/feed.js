@@ -472,7 +472,7 @@ export default function Support() {
 
         <div className={styles.postMessage}>
           {userName &&(
-            <div className={styles.sideName}><img src='/images/pfp.png'></img>{userName}</div>
+            <div className={styles.sideName}>{userName}<img src='https://www.iconpacks.net/icons/2/free-user-icon-3297-thumb.png'></img></div>
           )}
           <div className={styles.choices}>
             <button onClick={() => openModal("editName")}className={styles.createButton}>
@@ -504,7 +504,10 @@ export default function Support() {
             {posts.map((post)=>(
               <div key={post.id} className={styles.post}>
                 <div className={styles.postNameDate}>
-                  <div className={styles.name}>{post.user.firstName}</div>
+                  <div className={styles.userInfo}>
+                    <div className={styles.name}>{post.user.firstName}</div>
+                    <div className={styles.email}>{post.userEmail}</div>
+                  </div>
                   <div className={styles.date}>{convertToDate(post.dateCreated)}</div>
                 </div>
                 <div className={styles.details}>{post.post}</div>
