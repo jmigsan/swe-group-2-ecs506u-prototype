@@ -1,37 +1,70 @@
-#ListTable
-{
+.ListTableContainer {
+    max-height: 180px; 
+    overflow-y: auto;
+    border-collapse: collapse;
+    margin: auto;
+}
+
+#ListTable {
     width: 100%;
+    max-width: 95%; /* this will help not to touch the sides */
+    margin-left: 2rem ;
+    margin-right: 2rem;
+    border-collapse: collapse;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 2px solid rgb(149, 149, 149);
+    overflow: hidden; 
+}
+
+.ListHeader {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    border: 2px solid rgb(149, 149, 149);
+    padding: 12px 15px;
+}
+
+.ListRow {
+    transition: background-color 0.3s ease; /* For a hover effect */
+}
+
+.ListRow:hover {
+    background-color: #f5f5f5; /* Highlight on hover */
+}
+
+.ListItem {
+    padding: 12px 15px;
     text-align: center;
-    border: 1px solid black;
-    border-collapse: collapse;
+    border: 2px solid rgb(149, 149, 149);
 }
 
-.ListRow
-{
-    border: 1px solid black;
-    border-collapse: collapse;
+#totalValue {
+    font-size: 20px; 
+    padding: 3px; 
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    margin-left: 1em;
+    margin-right: 57em;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    background-color: rgb(223, 223, 223);
+    border-radius: 10px;
 }
 
-.ListItem
-{
-    border: 1px solid black;
-    border-collapse: collapse;
-}
+#totalValue:hover{
+background-color: rgb(24, 181, 24);
 
-.ListHeader
-{
-    border: 1px solid black;
-    border-collapse: collapse;
 }
 
 #PageHeader
 {
+    margin-top: 0.2rem;
     font-size: 2em;
     font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
     text-align: center;
-}
-#totalValue{
-    font-size: 1em;
 }
 
 #emptyMessage

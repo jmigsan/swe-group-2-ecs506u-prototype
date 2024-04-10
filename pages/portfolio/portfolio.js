@@ -127,11 +127,14 @@ function ListHeading({data})
 
 function List({data})
 {
-   return(<table id={styles.ListTable}>
+   return(
+    <div className={styles.ListTableContainer}>
+    <table id={styles.ListTable}>
         <thead><tr><ListHeading data="Coin"/><ListHeading data="Amount Owned"/><ListHeading data="Average Price of Purchase ($)"/>
         <ListHeading data="Current Price ($)"/><ListHeading data="Expected Gain/Loss"/></tr></thead>
         <tbody>{data.map((item) => <ListRow data={item}/>)}</tbody>
-    </table>);
+    </table>
+    </div>);
 }
 
 function Portfolio()
@@ -276,8 +279,8 @@ function Portfolio()
     {
         return(<>
             <div id={styles.PageHeader}>Portfolio</div>
-            <PieChart data={pieData} />
             <div id={styles.totalValue}>Total Value: ${totalValue}</div>
+            <PieChart data={pieData} />
             <List data={portfolio}/>
         </>);
     }
@@ -291,3 +294,4 @@ function Portfolio()
 }
 
 export default Portfolio;
+
