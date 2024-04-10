@@ -227,7 +227,7 @@ export default function NavBar(){
                                     </motion.div>
                             </div>
                             <div className={styles.dropDown}>
-                                    <Link className={styles.link} href="/Support/support">Solutions</Link>
+                                    <Link className={styles.link} href="/Solutions/api">Solutions</Link>
                                     <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
                                         <section className={styles.menuOption}>
                                             <figure className={styles.Icon}>
@@ -240,7 +240,7 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section onClick={()=>{router.replace("/Support/support")}} className={styles.boldText}>API</section>
+                                                <section onClick={()=>{router.replace("/Solutions/api")}} className={styles.boldText}>API</section>
                                                 <section className={styles.subHeading}>Integare NovaTrade API into your system</section>
                                                 </section>
                                         </section>

@@ -324,4 +324,61 @@ export default class Investor{
             return null;
         }
     }
+
+    async createKey(username, key){
+        try{
+            const user = await prisma.keys.findUnique({
+                where:{
+                    userId:username
+                }
+            })
+
+            if(user){
+                await prisma.keys.update({
+                  where:{
+                    userId:username
+                  } ,
+                  
+                  data:{
+                    key:key,
+                  }
+                })
+            }
+
+            else{
+                const data={
+                    userId:username,
+                    key:key,
+                }
+
+                await prisma.keys.create({data:data})
+            }
+        }
+        catch(error){
+            console.error(error)
+            return false;
+        }
+    }
+
+    async checkKey(key){
+       
+        try{
+            const user = await prisma.keys.findMany({
+                where:{
+                    key:key,
+                }
+            })
+
+            if(user.length!=0){
+                return user;
+            }
+
+            else{
+                return false;
+            }
+        }
+        catch(error){
+            return false;
+        }
+    }
 }
