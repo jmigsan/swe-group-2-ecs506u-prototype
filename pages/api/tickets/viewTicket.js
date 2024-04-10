@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
 
         // user from the database based on the provided email
-        const user = await prisma.User.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 email: userEmail,
             },

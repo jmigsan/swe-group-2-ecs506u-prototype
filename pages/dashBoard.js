@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import LiveChat from './LiveChat/livechat';
 import Experienced from './ExperiencedTrading/experienced';
 import Support from './Support/support'
-
+import Post from './feed/feed';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 export default function Dashboard(){
     const [onNav, setOnNav] = useState(false);
@@ -221,7 +221,7 @@ export default function Dashboard(){
                                 />
                                 <section>Hesham Ahmed</section>
                             </div>
-                            <div className={styles.option} onClick={()=>{router.replace("/dashBoard")}}>
+                            <div className={styles.option} onClick={()=>{setOption("home")}}>
                                 <Image 
                                     src={'/images/dashboard.png'}
                                     alt="profile"
@@ -271,7 +271,7 @@ export default function Dashboard(){
                                 <section>Feedback</section>
                             </div>
 
-                            <div className={styles.option}>
+                            <div className={styles.option} onClick={()=>{setOption("posts")}}>
                                 <Image 
                                     src={'/images/postDash.png'}
                                     alt="profile"
@@ -383,6 +383,10 @@ export default function Dashboard(){
             )}
             {option=="cryptos" && (
                 <Experienced  className={styles.manageCryptos}/>
+            )}
+
+            {option=="posts" && (
+                <Post />
             )}
 
             </div>
