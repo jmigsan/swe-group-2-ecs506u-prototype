@@ -137,6 +137,14 @@ function List({data})
     </div>);
 }
 
+function addTotal(amount)
+{
+    if(isNaN(amount))
+    {
+        return 0
+    }
+    return amount;
+}
 function Portfolio()
 {
     const[balance,setBalance]=useState([]);
@@ -236,7 +244,6 @@ function Portfolio()
             })
             const response =await prices.json();
             setRates(response.conversion_rates);
-            console.log(rates);
         }
         catch(error)
         {
@@ -265,21 +272,27 @@ function Portfolio()
     let totalValue = 0;
     //Pie chart formatting
     let pieData=[];
+    let count = 0;
     //Remove the total spent from the list
     for(let i=0; i<portfolio.length; i++)
     {
-        pieData[i]=[portfolio[i][0],portfolio[i][1]];
+        if(typeof portfolio[i][3] === 'number')
+        {
+            pieData[count]=[portfolio[i][0],portfolio[i][1]];
+            count += 1;
+        }
     }
 
-    portfolio.forEach((item) => totalValue=totalValue+(item[1]*item[3]))
+    portfolio.forEach((item) => totalValue=totalValue+addTotal(item[1]*item[3]))
     //Add headings
     pieData.unshift(["Coin","Amount owned"]);
+
 
     if(portfolio.length > 0)
     {
         return(<>
             <div id={styles.PageHeader}>Portfolio</div>
-            <div id={styles.totalValue}>Total Value: ${totalValue}</div>
+            <div id={styles.totalValue}>Total Cryoto Value: ${totalValue}</div>
             <PieChart data={pieData} />
             <List data={portfolio}/>
         </>);
