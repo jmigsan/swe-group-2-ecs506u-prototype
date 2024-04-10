@@ -28,6 +28,8 @@ const EditNameModal = ({ isOpen, onClose, userEmail,name }) => {
   
         if (res.ok) {
           const data = await res.json();
+          window.location.reload();
+
  
         } 
         else {
