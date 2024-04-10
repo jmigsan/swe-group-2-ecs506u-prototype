@@ -428,7 +428,7 @@ export default function Support() {
                 </section>
 
                 {/* conditional rendering for different sections */}
-                {tickets.length > 0 && viewingTickets && (
+                {viewingTickets && (
                     <>
 
                     <motion.div className={styles.ticketSection} variants={animations} initial="initial"
