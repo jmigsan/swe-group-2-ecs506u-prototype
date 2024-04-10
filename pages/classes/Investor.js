@@ -299,6 +299,16 @@ export default class Investor{
         }
     }
 
+    async transfer(from, to, coin, amount){
+        try{
+            await this.updateBalance(-amount, coin, from);
+            await this.updateBalance(amount, coin, to);
+            return true;      
+        }
+        catch(error){
+            return false;
+        }
+    }
     async getLimitOrders(username){
         try{
             const orders = await prisma.limitOrder.findMany({

@@ -35,7 +35,12 @@ export default function Experienced(){
         try{
              const response=await axios.get('http://localhost:3000/api/ExperiencedTrading/experienced');
              const allowedCrypto = await axios.get('http://localhost:3000/api/ExperiencedTrading/allowedCryptos');
-             if(session?.user.role=="Investor"){
+             if(session?.user.role=="Staff"){
+                setMarketData(response.data.data);
+            }
+
+            else{
+                
                 setMarketData((marketData)=>{
                     return response.data.data.filter(function(item){
                         for(let i=0; i<allowedCrypto.data.length; i++){
@@ -47,10 +52,6 @@ export default function Experienced(){
                         return false;
                     })
                 });
-            }
-
-            else{
-                setMarketData(response.data.data);
             }
 
             
@@ -78,10 +79,10 @@ export default function Experienced(){
 
 
  useEffect(()=>{
-    if(session){
+
         fetchData();
         fetchFavorites();
-    }
+    
 
  }, [session]);
 
@@ -413,34 +414,36 @@ function toggle(index, element){
   }
 
   function showChart(i){
-    const index= (pageNumber-1)*30 +i;
-    const coin = shownData[index];
-    const coin_string ="BINANCE:" + coin.symbol.toUpperCase() + "USDT";
-    const watchlist_arr=[];
-    let temp_coin_string;
-    const sortedData = shownData.sort((a, b)=>{
-        if(a.name>b.name){
-            return -1;
-        }
-        else if(a.name<b.name){
-            return 1;
-        }
-        else{return 0;}
-    });
-    
-        for(let j=0; j<sortedData.length; j++){
-            for(let i=0; i<favorites.length; i++){
-                if(sortedData[j].name==favorites[i].coin){
-                    temp_coin_string='{ "name":' + '"BINANCE:' + sortedData[j].symbol.toUpperCase() + 'USDT"' + "," + '"displayName":' + '"' + sortedData[j].name + '"' + "}";
-                    watchlist_arr.push(temp_coin_string);
-                }{
+
+    if(session && session.user.role=="Investor"){
+        const index= (pageNumber-1)*30 +i;
+        const coin = shownData[index];
+        const coin_string ="BINANCE:" + coin.symbol.toUpperCase() + "USDT";
+        const watchlist_arr=[];
+        let temp_coin_string;
+        const sortedData = shownData.sort((a, b)=>{
+            if(a.name>b.name){
+                return -1;
             }
-        }
- }
+            else if(a.name<b.name){
+                return 1;
+            }
+            else{return 0;}
+        });
+        
+            for(let j=0; j<sortedData.length; j++){
+                for(let i=0; i<favorites.length; i++){
+                    if(sortedData[j].name==favorites[i].coin){
+                        temp_coin_string='{ "name":' + '"BINANCE:' + sortedData[j].symbol.toUpperCase() + 'USDT"' + "," + '"displayName":' + '"' + sortedData[j].name + '"' + "}";
+                        watchlist_arr.push(temp_coin_string);
+                    }{
+                }
+            }
+    }
 
-    const url = '/ExperiencedTrading/chart?coin=' + coin_string + '&&watchlist=[' + watchlist_arr + ']' + '&&number=' + favorites.length;
-    router.replace(url);
-
+        const url = '/ExperiencedTrading/chart?coin=' + coin_string + '&&watchlist=[' + watchlist_arr + ']' + '&&number=' + favorites.length;
+        router.replace(url);
+    }
   }
   async function changeLiked(index){
   
@@ -666,6 +669,22 @@ function toggle(index, element){
                 </div>
             </div>
             <nav className={styles.searchBar}>
+                    {session==null && (
+                        <section className={styles.options}>
+                            <div className={styles.filterClick}>
+                                <button className={styles.button} onClick={()=>{handleButtonClick(0); setFilter("all"); handleNavClick("all");}} id="filter"><section>All Cryptos</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                            <div className={styles.filterClick}>
+                            <button className={styles.button} onClick={()=>{handleButtonClick(1)}} id="filter"><section>Meme</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                            <div className={styles.filterClick}>
+                                <button className={styles.button} onClick={()=>{handleButtonClick(2)}} id="filter"><section>AI</section></button>
+                                <div className={styles.underline} id="underline"></div>
+                            </div>
+                          </section>
+                    )}
                     {session?.user.role=="Investor" && (
                         <section className={styles.options}>
                             <div className={styles.filterClick}>

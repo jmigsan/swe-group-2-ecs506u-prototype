@@ -120,8 +120,8 @@ export default function NavBar(){
                                                 />
                                                 </figure>
                                                 <section className={styles.rightOption}>
-                                                <section className={styles.boldText}>Convert Crypto</section>
-                                                <section className={styles.subHeading}>Convert Crypto to other Crypto's</section>
+                                                <section className={styles.boldText} onClick={()=>{router.replace("/transfer")}}>Transfer</section>
+                                                <section className={styles.subHeading}>Send and Recieve Crypto with NovaTrade users</section>
                                                 </section>
                                         </section>
                                         <section className={styles.menuOption}>
@@ -245,7 +245,7 @@ export default function NavBar(){
                             </>
                         ): (
                             <>
-                                <Link className={styles.link} href="/viewCryptos">Cryptocurrencies</Link>
+                                <Link className={styles.link} href="/ExperiencedTrading/experienced">Cryptocurrencies</Link>
                             </>
                         )}
 

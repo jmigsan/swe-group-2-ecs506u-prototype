@@ -219,7 +219,7 @@ export default function Dashboard(){
                                 />
                                 <section>Hesham Ahmed</section>
                             </div>
-                            <div className={styles.option} onClick={()=>{router.replace("/dashBoard")}}>
+                            <div className={styles.option} onClick={()=>{setOption("home")}}>
                                 <Image 
                                     src={'/images/dashboard.png'}
                                     alt="profile"
