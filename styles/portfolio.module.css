@@ -39,11 +39,7 @@
 
 #totalValue {
     font-size: 20px; 
-    padding: 3px; 
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
+    padding: 10px 20px;
     margin-left: 1em;
     margin-right: 57em;
     text-align: center;
@@ -51,11 +47,14 @@
     font-weight: bold;
     background-color: rgb(223, 223, 223);
     border-radius: 10px;
+    transition: all 0.3s ease; /* Smooth transition for all changes */
+    /* Your other styles */
 }
 
 #totalValue:hover{
-background-color: rgb(24, 181, 24);
-
+    background-color: rgb(24, 181, 24);
+    cursor: pointer;
+    transform: scale(1.03); /* Slightly increases the size */
 }
 
 #PageHeader

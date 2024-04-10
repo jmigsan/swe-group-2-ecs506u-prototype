@@ -292,7 +292,7 @@ function Portfolio()
     {
         return(<>
             <div id={styles.PageHeader}>Portfolio</div>
-            <div id={styles.totalValue}>Total Cryoto Value: ${totalValue}</div>
+            <div id={styles.totalValue}>Total Crypto Value: ${totalValue}</div>
             <PieChart data={pieData} />
             <List data={portfolio}/>
         </>);
