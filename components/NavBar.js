@@ -245,7 +245,7 @@ export default function NavBar(){
                                                 </figure>
                                                 <section className={styles.rightOption}>
                                                 <section onClick={()=>{router.replace("/Solutions/api")}} className={styles.boldText}>API</section>
-                                                <section className={styles.subHeading}>Integare NovaTrade API into your system</section>
+                                                <section className={styles.subHeading}>Integrate NovaTrade API into your system</section>
                                                 </section>
                                         </section>
                                     </motion.div>
