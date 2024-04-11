@@ -281,7 +281,7 @@ export default function Login(){
                                     )}
                                 {onVerification && (
                                     <motion.div className={styles.emailVerification} variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}}>
-                                            <form className={styles.emailForm}>
+                                            <form className={styles.emailForm} onSubmit={(e)=>{e.preventDefault();}}>
                                                 <section className={styles.emailTop}>
                                                     <section className={styles.verificationTitle}>Security Verification</section>
                                                     <figure className={styles.close} onClick={()=>{handleClose();}}>

@@ -89,7 +89,6 @@ useEffect(() => {
          </motion.section>
       </div>
 
-      <Options controls={controls}/>
       
 
     </div>

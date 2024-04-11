@@ -8,6 +8,7 @@ import LiveChat from './LiveChat/livechat';
 import Experienced from './ExperiencedTrading/experienced';
 import Support from './Support/support'
 import Post from './feed/feed';
+import { signOut } from 'next-auth/react';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 export default function Dashboard(){
     const [onNav, setOnNav] = useState(false);
@@ -147,6 +148,22 @@ export default function Dashboard(){
         return arr2
     }
 
+
+  async function handleLogOut(){
+    try{
+        await signOut({
+            redirect:false,
+        }
+        )
+
+        router.replace("/");
+    }
+
+    catch(error){
+        console.error(error)
+    }
+  }
+
     function summarizeTrades3(trades){
         const arr2 ={};
     
@@ -251,26 +268,7 @@ export default function Dashboard(){
                                 <section>Chat Requests</section>
                             </div>
 
-                            <div className={styles.option}>
-                                <Image 
-                                    src={'/images/analytic.png'}
-                                    alt="profile"
-                                    width={40}
-                                    height={40}
-                                />
-                                <section>Analytics</section>
-                            </div>
-
-                            <div className={styles.option}>
-                                <Image 
-                                    src={'/images/feedback.png'}
-                                    alt="profile"
-                                    width={50}
-                                    height={50}
-                                />
-                                <section>Feedback</section>
-                            </div>
-
+                        
                             <div className={styles.option} onClick={()=>{setOption("posts")}}>
                                 <Image 
                                     src={'/images/postDash.png'}
@@ -289,6 +287,15 @@ export default function Dashboard(){
                                     height={40}
                                 />
                                 <section>Manage Cryptos</section>
+                            </div>
+                            <div className={styles.option} onClick={()=>{handleLogOut();}}>
+                                <Image 
+                                    src={'/images/logout.png'}
+                                    alt="profile"
+                                    width={40}
+                                    height={40}
+                                />
+                                <section>Log out</section>
                             </div>
                            
                 </motion.div>
@@ -363,12 +370,15 @@ export default function Dashboard(){
                 <div className={styles.BottomWidget}>
                         <div className={styles.bottomWidget}>
                              <section className={styles.WidgetTitle}>Tickets</section>
+                             <section className={styles.value}>4</section>
                         </div>
                         <div className={styles.bottomWidget}>
                             <section className={styles.WidgetTitle}>Posts</section>
+                            <section className={styles.value}>2</section>
                         </div>
                         <div className={styles.bottomWidget}>
                             <section className={styles.WidgetTitle}>Feedback</section>
+                            <section className={styles.value}>75%</section>
                         </div>  
                 </div>
             </div>

@@ -50,28 +50,28 @@ function TradingViewWidget() {
   const [incorrectStop2, setIncorrectStop2] =useState(false);
   const [incorrectTp2, setIncorrectTp2] = useState(false);
   const [limitExecuted, setLimitExecuted] = useState("");
-  // useEffect(() => {
-  //   if(session){
-  //     socketInitializer()
-  //   }}, [session])
+  useEffect(() => {
+    if(session){
+      socketInitializer()
+    }}, [session])
 
-  // async function socketInitializer(){
-  //   await fetch('../api/ExperiencedTrading/limitSocket')
-  //   socket = io()
+  async function socketInitializer(){
+    await fetch('../api/ExperiencedTrading/limitSocket')
+    socket = io()
 
-  //   socket.on('connect', () => {
-  //     socket.emit('message', session.user.email)
-  //   })
+    socket.on('connect', () => {
+      socket.emit('message', session.user.email)
+    })
 
-  //   socket.on('limitExecuted', (message)=>{
-  //     setLimitExecuted(message);
-  //     setTimeout(()=>{
-  //       setLimitExecuted("");
-  //     }, [2000])
-  //   })
-  // }
+    socket.on('limitExecuted', (message)=>{
+      setLimitExecuted(message);
+      setTimeout(()=>{
+        setLimitExecuted("");
+      }, [2000])
+    })
+  }
 
-  // ...rest of your component
+
 
   useEffect(() => {
     confirmRef.current = confirmed;
@@ -395,7 +395,10 @@ function handleDone(){
 
   useEffect(()=>{
     if(coin){
-    fetchPrice();
+      setInterval(()=>{
+        console.log("here");
+        fetchPrice();
+      }, [10000])
     }
   }, [coin, Currency])
 
@@ -414,8 +417,9 @@ function handleDone(){
           body: JSON.stringify({coin, currency})
         })
 
-        const coin_price =(await price.json()).data;
-
+        const coin_p =await price.json();
+        const coin_price = coin_p.data;
+        console.log(coin_price[coin].quote[Currency.curren].price)
         setPrice(coin_price[coin].quote[Currency.curren].price);
         setPriceString(coin_price[coin].quote[Currency.curren].price.toFixed(2) + Currency.curren)
     }
@@ -423,6 +427,8 @@ function handleDone(){
       console.error(error);
     }
   }
+
+  
   async function fetchFavorites(){
     const username = session.user.email;
     try{
