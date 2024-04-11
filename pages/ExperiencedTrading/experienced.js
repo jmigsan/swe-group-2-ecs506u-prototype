@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState, useContext } from "react"
 import styles from "@/styles/experienced.module.css"
 import axios from "axios"
 import Image from "next/image";
@@ -15,6 +15,7 @@ import nextLeft from "@/public/images/nextLeft.png";
 import nextRight from "@/public/images/nextRight.png";
 import noNextLeft from "@/public/images/noNextLeft.png";
 import noNextRight from "@/public/images/noNextRight.png";
+import { ModeContext } from "../_app";
 const HRNumbers = require('human-number');
 export default function Experienced(){
     const [marketData, setMarketData]= useState([]);
@@ -30,12 +31,12 @@ export default function Experienced(){
     const [allowedCryptos, setAllowedCryptos] = useState([])
     const {data: session} = useSession();
     const router = useRouter();
-  
+    const {mode, setMode} = useContext(ModeContext);
     async function fetchData(){        
         try{
              const response=await axios.get('http://localhost:3000/api/ExperiencedTrading/experienced');
              const allowedCrypto = await axios.get('http://localhost:3000/api/ExperiencedTrading/allowedCryptos');
-             if(session?.user.role=="Staff"){
+             if(session.user.role=="Staff"){
                 setMarketData(response.data.data);
             }
 
@@ -52,10 +53,10 @@ export default function Experienced(){
                         return false;
                     })
                 });
-            }
+            
 
             
-                setShownData((shownData)=>{
+            setShownData((shownData)=>{
                 return response.data.data.filter(function(item){
                     for(let i=0; i<allowedCrypto.data.length; i++){
                         if(item.name==allowedCrypto.data[i].coin){
@@ -66,7 +67,7 @@ export default function Experienced(){
                     return false;
                 })
             });
-            
+        }
             setAllowedCryptos(allowedCrypto.data)
         }
 
@@ -79,11 +80,15 @@ export default function Experienced(){
 
 
  useEffect(()=>{
-
+    if(session){
         fetchData();
+        setInterval(()=>{
+            console.log("here");
+            fetchData();
+        },[10000])
+        
         fetchFavorites();
-    
-
+    }
  }, [session]);
 
 
@@ -440,8 +445,13 @@ function toggle(index, element){
                 }
             }
     }
-
-        const url = '/ExperiencedTrading/chart?coin=' + coin_string + '&&watchlist=[' + watchlist_arr + ']' + '&&number=' + favorites.length;
+        let url;
+        if(mode=="Pro"){
+         url = '/ExperiencedTrading/chart?coin=' + coin_string + '&&watchlist=[' + watchlist_arr + ']' + '&&number=' + favorites.length;
+        }
+        else{
+            url = '/InexperiencedTrading/chart?coin=' + coin_string + '&&watchlist=[' + watchlist_arr + ']' + '&&number=' + favorites.length;
+        }
         router.replace(url);
     }
   }
@@ -505,7 +515,6 @@ function toggle(index, element){
         }
 
         fetchData();
-        handleButtonClick(0); setFilter("allowed"); handleNavClick("allowed");
     }
 
     function isAllowed(i){
@@ -536,7 +545,6 @@ function toggle(index, element){
         }
 
         fetchData();
-        handleButtonClick(0); setFilter("allowed"); handleNavClick("allowed");
     }
     return (
         <div className={styles.container} onClick={()=>{if(changeToggled){document.getElementById("dropdown").style.display="none"; setChangeToggled(false)}}}>

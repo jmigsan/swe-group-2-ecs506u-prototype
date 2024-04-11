@@ -4,7 +4,7 @@ import Logo from '@/public/images/crypto-logo.png'
 import Menu from '@/public/images/menu.png'
 import styles from '@/styles/Navbar.module.css'
 import Link from 'next/link';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import {motion} from 'framer-motion'
 import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
@@ -17,17 +17,19 @@ import posts from '@/public/images/posts.png'
 import searchFriends from '@/public/images/searchFriends.png'
 import trade from '@/public/images/trade.png'
 import ticket from '@/public/images/ticket.png'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import { ModeContext } from '@/pages/_app';
 export default function NavBar(){
     const {data: session} = useSession();
     const router = useRouter();
     const [onBurger, setOnBurger] = useState(false);
+    const [onLite, setOnLite] = useState(true);
     const animations = {
     initial: {opacity:0},
     animate: {opacity:1},
     exit: {opacity:0},
   };
-
+  const {mode, setMode} = useContext(ModeContext);
   const animations2={
     initial: {
         opacity:0,
@@ -41,7 +43,9 @@ export default function NavBar(){
   }
 
   useEffect(()=>{
-    console.log(session);
+    if(session?.user.role=="Staff"){
+        router.replace("/dashBoard")
+    }
   }, [session])
  
   async function handleLogOut(){
@@ -246,7 +250,26 @@ export default function NavBar(){
                                         </section>
                                     </motion.div>
                             </div>
-
+                            <div className={styles.dropDown}>
+                                <section className={styles.link} >Portfolio</section>
+                                    <motion.div variants={animations} initial="initial" animate="animate" transition={{duration:0.4, ease:"easeInOut"}} className={styles.toggleMenu}>
+                                        <section className={styles.menuOption}>
+                                            <figure className={styles.Icon}>
+                                                <Image
+                                                    src={walletIcon}
+                                                    width={40}
+                                                    height={30}
+                                                    alt="Logo"
+                                                    className={styles.Icon}
+                                                />
+                                                </figure>
+                                                <section className={styles.rightOption}>
+                                                <section className={styles.boldText} onClick={()=>{router.replace("/portfolio/portfolio")}}>View Portfolio</section>
+                                                <section className={styles.subHeading}>View your current assets</section>
+                                                </section>
+                                        </section>
+                                    </motion.div>
+                            </div>
                             </>
                         ): (
                             <>
@@ -261,6 +284,23 @@ export default function NavBar(){
                 <section className={styles.loginLinks}>
                         {session?.user?.email? (
                             <>
+                                {onLite ? (
+                                    <section className={styles.lite}>Lite</section>
+                                ):(
+                                    <section className={styles.lite}>Pro</section>
+                                )
+                                }
+                                <label class={styles.switch}>
+                                    <input type="checkbox" onClick={()=>{setOnLite((onLite)=>{return !onLite}); setMode((mode)=>{
+                                        if(mode=="Pro"){
+                                            return "Lite";
+                                        }
+                                        else{
+                                            return "Pro";
+                                        }
+                                    })}}/>
+                                    <span class={styles.slider}></span>
+                                    </label>
                                 <button className={styles.button}onClick={()=>{handleLogOut();}}>Log Out</button>
                             </>
                         ): (
